@@ -3,25 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journal de Classe - Enseignement Catholique</title>
+    <title>Journal de Classe Maternelle — Réseau Catholique</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Nunito', sans-serif; background-color: #f0fdfa; }
         .maternelle-card { border-radius: 2rem; }
-        .bg-pastel-blue { background-color: #e0f2fe; }
-        .bg-pastel-green { background-color: #f0fdf4; }
-        .bg-pastel-pink { background-color: #fdf2f8; }
-        .bg-pastel-orange { background-color: #fff7ed; }
         
         @media print {
             .no-print { display: none !important; }
             .print-grid { display: block !important; }
-            .day-column { page-break-after: always; border: 2px solid #e2e8f0 !important; margin-bottom: 20px; }
+            .day-column { page-break-after: always; border: 2px solid #cbd5e1 !important; margin-bottom: 20px; page-break-inside: avoid; }
             body { background: white; }
         }
 
-        /* Personnalisation des barres de défilement */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #99f6e4; border-radius: 10px; }
@@ -29,35 +24,39 @@
 </head>
 <body class="p-0 m-0 text-slate-700">
 
+    <!-- EN-TÊTE DE L'APPLICATION -->
     <header class="bg-teal-400 text-white p-6 shadow-lg no-print relative overflow-hidden">
-        <div class="absolute top-0 right-0 opacity-20 text-9xl">🎈</div>
+        <div class="absolute top-0 right-0 opacity-20 text-9xl">🧸</div>
         <div class="max-w-7xl mx-auto flex justify-between items-center relative z-10">
             <div class="flex items-center space-x-4">
-                <span class="text-5xl">🎒</span>
+                <span class="text-5xl">🎨</span>
                 <div>
-                    <h1 class="text-3xl font-800 tracking-tight">Mon Journal de Classe</h1>
-                    <p class="text-teal-100 font-semibold">Programme Enseignement Catholique (SeGEC)</p>
+                    <h1 class="text-3xl font-extrabold tracking-tight">Mon Journal SeGEC Maternelle</h1>
+                    <p class="text-teal-50 font-semibold">Programme Officiel de l'Enseignement Catholique Wallonie</p>
                 </div>
             </div>
             <div class="flex space-x-3">
                 <button onclick="window.print()" class="bg-white text-teal-600 hover:bg-teal-50 px-6 py-3 rounded-full font-bold shadow-md transition transform hover:scale-105">
-                    🖨️ Imprimer
+                    🖨️ Imprimer la Semaine
                 </button>
                 <button onclick="clearAll()" class="bg-rose-400 text-white hover:bg-rose-500 px-6 py-3 rounded-full font-bold shadow-md transition transform hover:scale-105">
-                    🗑️ Reset
+                    🗑️ Réinitialiser
                 </button>
             </div>
         </div>
     </header>
 
+    <!-- ZONE PRINCIPALE -->
     <main class="max-w-7xl mx-auto p-6">
         
+        <!-- FORMULAIRE D'ENCODAGE -->
         <section class="bg-white p-8 maternelle-card shadow-xl border-4 border-teal-100 mb-10 no-print">
             <h2 class="text-2xl font-bold text-teal-600 mb-6 flex items-center">
-                <span class="bg-teal-100 p-2 rounded-full mr-3">📝</span> Nouvel encodage
+                <span class="bg-teal-100 p-2 rounded-full mr-3">📝</span> Préparer une activité
             </h2>
             
             <form id="activityForm" class="space-y-6">
+                <!-- BLOCS LOGISTIQUES -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-500 mb-2">📅 Jour</label>
@@ -66,16 +65,16 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">⏰ Moment</label>
+                        <label class="block text-sm font-bold text-slate-500 mb-2">⏰ Moment de la journée</label>
                         <select id="moment" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
-                            <option>Accueil / Rituels</option>
-                            <option>Activités dirigées (Matin)</option>
+                            <option>Accueil / Rituels du matin</option>
+                            <option>Activités dirigées (Matinée)</option>
                             <option>Collation / Récréation</option>
-                            <option>Ateliers tournants</option>
-                            <option>Psychomotricité</option>
-                            <option>Repas / Sieste</option>
-                            <option>Activités (Après-midi)</option>
-                            <option>Regroupement / Départ</option>
+                            <option>Ateliers autonomes / Tournants</option>
+                            <option>Séance de Psychomotricité</option>
+                            <option>Repas / Temps de repos / Sieste</option>
+                            <option>Activités d'expression (Après-midi)</option>
+                            <option>Regroupement / Bilan / Départ</option>
                         </select>
                     </div>
                     <div>
@@ -85,89 +84,265 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">👥 Dispositif</label>
+                        <label class="block text-sm font-bold text-slate-500 mb-2">👥 Dispositif social</label>
                         <select id="mode" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
                             <option>Collectif (Grand groupe)</option>
                             <option>Petit groupe dirigé</option>
                             <option>Individuel / Autonomie</option>
-                            <option>Par deux</option>
+                            <option>Travail par paires (2 enfants)</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-teal-50 p-4 rounded-3xl">
-                    <div>
-                        <label class="block text-xs font-bold text-teal-700 uppercase mb-1">Matière</label>
-                        <select id="subject" onchange="updateDomains()" class="w-full border-0 rounded-xl p-2 shadow-sm outline-none"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-teal-700 uppercase mb-1">Domaine</label>
-                        <select id="domain" onchange="updateCompetencies()" class="w-full border-0 rounded-xl p-2 shadow-sm outline-none"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-teal-700 uppercase mb-1">Compétence</label>
-                        <select id="competency" onchange="updateObjectives()" class="w-full border-0 rounded-xl p-2 shadow-sm outline-none"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-teal-700 uppercase mb-1">Objectif (visé)</label>
-                        <select id="objective" class="w-full border-0 rounded-xl p-2 shadow-sm outline-none"></select>
+                <!-- CASCADE PROGRAMME SEGEC (DYNAMIQUE) -->
+                <div class="bg-teal-50/50 p-6 rounded-3xl border-2 border-teal-100/50 space-y-4">
+                    <h3 class="text-sm font-bold text-teal-700 uppercase tracking-wider">🎯 Liens avec le Programme National SeGEC</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Matière</label>
+                            <select id="subject" onchange="updateDomains()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Domaine</label>
+                            <select id="domain" onchange="updateCompetencies()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Compétence</label>
+                            <select id="competency" onchange="updateObjectives()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Objectif Spécifique</label>
+                            <select id="objective" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
+                        </div>
                     </div>
                 </div>
 
+                <!-- BLOCS DE DESCRIPTION DE L'ACTIVITÉ -->
                 <div class="space-y-4">
-                    <input type="text" id="title" placeholder="Titre de l'activité (ex: Peinture aux doigts)" class="w-full border-2 border-slate-100 rounded-2xl p-3 font-bold text-lg outline-none focus:border-teal-400">
-                    <textarea id="description" rows="2" placeholder="Description de l'activité..." class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-500 mb-1">✏️ Titre de l'activité</label>
+                        <input type="text" id="title" placeholder="Ex: Graphisme : les ponts à l'encre" class="w-full border-2 border-slate-100 rounded-2xl p-3 font-bold text-lg outline-none focus:border-teal-400" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-500 mb-1">📖 Description du déroulement (Consignes, étapes...)</label>
+                        <textarea id="description" rows="3" placeholder="Que font les enfants ? Quelle est la consigne principale ?" class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400" required></textarea>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <textarea id="setup" placeholder="Dispositif spatial / Matériel..." class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
-                        <textarea id="evaluation" placeholder="Évaluation / Observations..." class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-500 mb-1">🛠️ Dispositif spatial & Matériel requis</label>
+                            <textarea id="setup" rows="2" placeholder="Ex: Tables en U, gouache rouge et jaune, grands pinceaux..." class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-500 mb-1">⭐ Évaluation / Critères de réussite / Notes</label>
+                            <textarea id="evaluation" rows="2" placeholder="Comment observer la réussite ? (Ex: L'enfant tient son outil avec la pince tridactyle)" class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
                     <button type="submit" class="bg-teal-500 text-white px-10 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-teal-600 transition transform hover:-translate-y-1">
-                        ✨ Ajouter au journal
+                        ✨ Insérer dans mon Journal
                     </button>
                 </div>
             </form>
         </section>
 
+        <!-- GRILLE D'AFFICHAGE DU JOURNAL DE CLASSE -->
         <div id="journalGrid" class="grid grid-cols-1 xl:grid-cols-5 gap-6 print-grid"></div>
 
     </main>
 
     <script>
-        // --- DONNÉES SEGEC (Simplifiées pour l'exemple, à compléter selon vos besoins) ---
+        // =========================================================================
+        // BASE DE DONNÉES COMPLÈTE DU PROGRAMME SEGEC POUR L'ÉCOLE MATERNELLE
+        // =========================================================================
         const segecData = {
-            "Développement Cognitif": {
-                "Mathématiques": {
-                    "Nombres et Opérations": ["Dénombrer", "Comparer des quantités", "Associer chiffre et quantité"],
-                    "Solides et Figures": ["Reconnaître les formes", "Trier selon la forme"],
-                    "Grandeurs": ["Comparer des tailles", "Mesurer avec un étalon"]
+            "🦚 Français & Communication": {
+                "Langage Oral (Parler)": {
+                    "S'exprimer et oser communiquer": [
+                        "Prendre la parole de manière compréhensible devant le groupe",
+                        "Formuler des phrases correctement structurées (Sujet-Verbe-Complément)",
+                        "Raconter un événement vécu ou une histoire lue de manière chronologique",
+                        "Utiliser un vocabulaire de plus en plus précis et adapté au contexte"
+                    ],
+                    "Entrer en dialogue": [
+                        "Interagir de manière constructive avec ses pairs et l'adulte",
+                        "Répondre à une question ouverte de manière pertinente",
+                        "Participer activement aux cercles de parole et débats régulés"
+                    ]
                 },
-                "Éveil Scientifique": {
-                    "Le monde vivant": ["Observer la croissance", "Identifier les parties du corps"],
-                    "La matière": ["Expérimenter les mélanges", "Flotte ou coule"]
+                "Langage Oral (Écouter)": {
+                    "Compréhension de messages": [
+                        "Écouter attentivement une consigne complexe et l'exécuter pas à pas",
+                        "Comprendre une histoire lue ou racontée par l'adulte",
+                        "Identifier les personnages principaux et la trame d'un récit simple"
+                    ],
+                    "Éveil à la conscience phonologique": [
+                        "Scanner et dénombrer les syllabes orales d'un mot",
+                        "Repérer, identifier et produire des rimes ou des assonances",
+                        "Isoler et identifier un son-voyelle initial dans un mot"
+                    ]
+                },
+                "Entrée dans l'Écrit (Lire)": {
+                    "Fréquentation des supports écrits": [
+                        "Différencier l'écriture, le dessin et le chiffre",
+                        "Identifier visuellement son prénom et celui de ses camarades",
+                        "Reconnaître des mots fonctionnels familiers (jours, météo, étiquettes)",
+                        "Comprendre l'orientation et le sens de la lecture (gauche à droite, haut en bas)"
+                    ]
+                },
+                "Graphisme & Écriture (Produire)": {
+                    "Développement des compétences graphiques": [
+                        "Maîtriser la tenue de l'outil scripteur (pince tridactyle)",
+                        "Tracer des lignes de base (verticales, horizontales, obliques)",
+                        "Tracer des formes continues complexes (ponts, vagues, boucles, spirales)",
+                        "Respecter un espace graphique donné (lignes, cadres, limites de la feuille)"
+                    ],
+                    "Production d'écrits": [
+                        "Copier des mots significatifs en lettres capitales d'imprimerie",
+                        "Écrire son propre prénom de mémoire en lettres capitales"
+                    ]
                 }
             },
-            "Langues et Communication": {
-                "Français - Oral": {
-                    "Parler": ["Prendre la parole", "Raconter un récit"],
-                    "Écouter": ["Comprendre une consigne", "Écouter une histoire"]
+            "🧮 Mathématiques": {
+                "Nombres et Opérations": {
+                    "Construction du concept de nombre": [
+                        "Réciter la comptine numérique orale de manière stable",
+                        "Dénombrer une collection d'objets en respectant le principe cardinal",
+                        "Associer une quantité d'objets à son écriture chiffrée (jusqu'à 5 ou 10)",
+                        "Comparer des collections d'objets (termes : plus que, moins que, autant que)",
+                        "Réaliser des partages équitables ou des distributions d'objets"
+                    ],
+                    "Structuration des suites de nombres": [
+                        "Ordonner des nombres du plus petit au plus grand",
+                        "Intercaler un nombre manquant dans une suite numérique logique"
+                    ]
                 },
-                "Français - Écrit": {
-                    "Lecture": ["Reconnaître son prénom", "Identifier des logos"],
-                    "Écriture": ["Graphisme (lignes)", "Tracer des lettres"]
+                "Solides et Figures (Géométrie)": {
+                    "Reconnaissance et classement des formes": [
+                        "Identifier et nommer les formes géométriques planes de base (rond, carré, triangle, rectangle)",
+                        "Trier et classer des objets selon un ou plusieurs critères de forme",
+                        "Assembler des formes géométriques pour reproduire un modèle plan (Tangram)"
+                    ]
+                },
+                "Les Grandeurs": {
+                    "Comparaison et mesurage": [
+                        "Classer des objets du plus petit au plus grand (sériation logique)",
+                        "Comparer directement des longueurs, des masses ou des capacités",
+                        "Utiliser un étalon non conventionnel (bandelette, gobelet) pour mesurer"
+                    ]
+                },
+                "Structuration de l'Espace": {
+                    "Repérage et orientation spatiale": [
+                        "Utiliser et comprendre le vocabulaire spatial (sur, sous, devant, derrière, entre...)",
+                        "Se repérer et organiser des éléments dans un quadrillage ou un labyrinthe",
+                        "Suivre, décoder ou coder un parcours ou un déplacement dans l'espace-classe"
+                    ]
                 }
             },
-            "Développement Artistique": {
-                "Arts Plastiques": {
-                    "Techniques": ["Découper", "Peindre", "Modeler"],
-                    "Couleurs": ["Identifier les primaires", "Créer des mélanges"]
+            "🌱 Éveil (Sciences, Temps, Espace)": {
+                "Éveil Scientifique (Le Vivant)": {
+                    "Observation de la faune, la flore et le corps": [
+                        "Identifier et respecter les besoins vitaux des plantes et des animaux de la classe",
+                        "Découvrir, nommer et schématiser les différentes parties du corps humain",
+                        "Mobiliser à bon escient ses 5 sens lors d'activités de découverte sensorielle"
+                    ]
+                },
+                "Éveil Scientifique (La Matière)": {
+                    "Expérimentation physique": [
+                        "Différencier et observer les états de l'eau (liquide, solide/glace)",
+                        "Mener une démarche expérimentale sur le phénomène de flottaison (flotte ou coule)",
+                        "Manipuler, transvaser et mélanger diverses matières (pâte, sable, eau, argile)"
+                    ]
+                },
+                "Structuration du Temps": {
+                    "Repérage et orientation temporelle": [
+                        "Utiliser à bon escient les indicateurs temporels (hier, aujourd'hui, demain)",
+                        "Se situer précisément dans les différents moments de la journée scolaire",
+                        "Se repérer sur le calendrier de la semaine et identifier le cycle des saisons",
+                        "Ordonner chronologiquement une série d'images séquentielles (récit historique de la classe)"
+                    ]
+                }
+            },
+            "🎨 Éducation Artistique & Culturelle": {
+                "Arts Plastiques et Visuels": {
+                    "Expérimentation créative": [
+                        "Diversifier l'usage d'outils de peinture (pinceaux, brosses, éponges, doigts)",
+                        "Explorer des médiums variés (peinture, encre, craies de cire, pastels secs)",
+                        "Pratiquer le modelage, le découpage minutieux et l'assemblage de matériaux",
+                        "Distinguer, associer des couleurs et expérimenter les mélanges chromatiques"
+                    ]
+                },
+                "Éducation Musicale": {
+                    "Chant, écoute et rythme": [
+                        "Mémoriser, reproduire et interpréter un répertoire de comptines et chants de groupe",
+                        "Suivre et reproduire un rythme simple (corporel ou avec petites percussions)",
+                        "Distinguer et qualifier les paramètres du son (grave/aigu, fort/doux, long/court)",
+                        "Pratiquer l'écoute active et identifier des bruits de l'environnement quotidien"
+                    ]
+                },
+                "Expression Corporelle & Théâtrale": {
+                    "Jeu dramatique": [
+                        "Imiter corporellement des personnages, des actions ou des animaux (mimétisme)",
+                        "Donner vie à une marionnette pour théâtraliser un récit ou une émotion",
+                        "Exprimer et décoder des émotions fondamentales via les expressions du visage"
+                    ]
+                }
+            },
+            "🏃 Psychomotricité": {
+                "Motricité Globale": {
+                    "Coordination et déplacements": [
+                        "Se déplacer de différentes manières en sécurité (courir, sauter, ramper, grimper)",
+                        "Évoluer en équilibre dynamique sur un support surélevé ou étroit (poutre, banc)",
+                        "Coordonner ses mouvements globaux dans des parcours moteurs chronométrés"
+                    ]
+                },
+                "Motricité Fine & Latéralisation": {
+                    "Précision du geste manuel": [
+                        "Affiner la motricité digitale via des activités de précision (enfiler, visser, boutonner)",
+                        "Utiliser des ciseaux de manière autonome pour découper sur une ligne droite ou courbe",
+                        "Affirmer et installer sa préférence manuelle (gauche ou droite) dans les tâches précises"
+                    ]
+                },
+                "Schéma Corporel": {
+                    "Représentation de soi": [
+                        "Représenter un bonhomme complet et structuré graphiquement (tête, tronc, membres)",
+                        "Situer et nommer les articulations principales sur soi ou sur un mannequin"
+                    ]
+                }
+            },
+            "🤝 Philosophie & Citoyenneté (EPC)": {
+                "Vivre ensemble en communauté": {
+                    "Règles et relations sociales": [
+                        "Comprendre, accepter et respecter les règles de vie collective de la classe",
+                        "Partager spontanément le matériel et attendre son tour de parole ou de jeu",
+                        "Coopérer activement avec un ou plusieurs camarades pour réaliser un projet commun",
+                        "Apprendre à verbaliser un désaccord ou un conflit sans recourir à la violence"
+                    ]
+                },
+                "Autonomie et Identité": {
+                    "Développement de la confiance en soi": [
+                        "Prendre soin de ses effets personnels et assurer son habillage autonome (veste, chaussures)",
+                        "Faire des choix conscients et assumer une responsabilité lors des ateliers libres",
+                        "Exprimer de manière adaptée ses besoins physiques, ses sentiments et opinions"
+                    ]
+                }
+            },
+            "⛪ Éveil Religieux (Catholique)": {
+                "Éveil à la intériorité & Récits Bibliques": {
+                    "Découverte de la foi et des valeurs chrétiennes": [
+                        "Écouter, comprendre et s'approprier des récits imagés de la vie de Jésus",
+                        "Repérer et fêter les grands repères de l'année liturgique chrétienne (Noël, Pâques...)",
+                        "Mettre en pratique des valeurs évangéliques au quotidien (partage, pardon, accueil de l'autre)",
+                        "Vivre et apprécier des moments de silence collectif, d'intériorité ou de prière adaptée"
+                    ]
                 }
             }
         };
 
-        // --- GESTION DES MENUS DÉROULANTS LIÉS ---
+        // =========================================================================
+        // LOGIQUE INTERACTIVE DES MENUS DÉROULANTS LIÉS (CASCADE)
+        // =========================================================================
         function populateDropdown(id, items) {
             const select = document.getElementById(id);
             select.innerHTML = '';
@@ -199,11 +374,14 @@
             populateDropdown('objective', segecData[subject][domain][competency]);
         }
 
-        // --- LOGIQUE APPLICATION ---
-        let journalData = JSON.parse(localStorage.getItem('journalSegec')) || [];
+        // =========================================================================
+        // LOGIQUE DE SAUVEGARDE ET DE RENDU DU JOURNAL DE CLASSE
+        // =========================================================================
+        let journalData = JSON.parse(localStorage.getItem('journalSegecFull')) || [];
 
         document.getElementById('activityForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const act = {
                 id: Date.now(),
                 day: document.getElementById('day').value,
@@ -219,14 +397,15 @@
                 setup: document.getElementById('setup').value,
                 evaluation: document.getElementById('evaluation').value
             };
+            
             journalData.push(act);
             saveAndRender();
             this.reset();
-            updateDomains();
+            updateDomains(); // Réinitialise la cascade de menus
         });
 
         function saveAndRender() {
-            localStorage.setItem('journalSegec', JSON.stringify(journalData));
+            localStorage.setItem('journalSegecFull', JSON.stringify(journalData));
             renderJournal();
         }
 
@@ -236,7 +415,7 @@
         }
 
         function clearAll() {
-            if(confirm("Effacer toute la semaine ?")) {
+            if (confirm("Voulez-vous vider tout votre journal pour cette semaine ?")) {
                 journalData = [];
                 saveAndRender();
             }
@@ -249,30 +428,45 @@
 
             days.forEach(d => {
                 const col = document.createElement('div');
-                col.className = "day-column bg-white rounded-[2rem] p-4 shadow-md border-2 border-teal-50";
-                col.innerHTML = `<h3 class="text-xl font-800 text-teal-500 mb-4 text-center border-b-2 border-teal-50 pb-2">${d}</h3>`;
+                col.className = "day-column bg-white rounded-[2rem] p-4 shadow-md border-2 border-teal-50 flex flex-col";
+                col.innerHTML = `<h3 class="text-xl font-extrabold text-teal-500 mb-4 text-center border-b-2 border-teal-50 pb-2">${d}</h3>`;
                 
                 const acts = journalData.filter(a => a.day === d);
+                
+                if (acts.length === 0) {
+                    col.innerHTML += `<p class="text-xs text-slate-300 italic text-center my-6 no-print">Aucun moment encodé</p>`;
+                }
+
                 acts.forEach(a => {
                     const card = document.createElement('div');
-                    card.className = "relative p-4 mb-4 rounded-3xl border-2 border-slate-50 bg-teal-50/30 hover:bg-teal-50 transition";
+                    card.className = "relative p-4 mb-4 rounded-3xl border-2 border-slate-50 bg-teal-50/20 hover:bg-teal-50/50 transition flex flex-col justify-between";
                     card.innerHTML = `
-                        <button onclick="deleteActivity(${a.id})" class="no-print absolute top-2 right-2 text-slate-300 hover:text-rose-500">✕</button>
-                        <div class="flex items-center space-x-2 mb-2">
-                            <span class="text-[10px] font-bold bg-white px-2 py-1 rounded-full shadow-sm text-teal-600">${a.moment}</span>
-                            <span class="text-[10px] font-bold bg-teal-200 px-2 py-1 rounded-full text-teal-800">${a.duration}</span>
-                        </div>
-                        <h4 class="font-bold text-teal-700 leading-tight mb-1 uppercase text-xs">${a.title}</h4>
-                        <p class="text-[11px] text-slate-500 mb-2 italic">${a.mode}</p>
-                        
-                        <div class="text-[10px] bg-white/80 p-2 rounded-xl border border-teal-100 mb-2">
-                            <strong class="text-teal-600">Comp :</strong> ${a.competency}<br>
-                            <strong class="text-teal-600">Obj :</strong> ${a.objective}
-                        </div>
+                        <button onclick="deleteActivity(${a.id})" class="no-print absolute top-3 right-3 text-slate-300 hover:text-rose-500 font-bold transition">✕</button>
+                        <div>
+                            <div class="flex flex-wrap gap-1 items-center mb-2">
+                                <span class="text-[10px] font-bold bg-white px-2 py-0.5 rounded-full shadow-xs text-teal-600 border border-teal-50">${a.moment}</span>
+                                <span class="text-[10px] font-bold bg-teal-100 px-2 py-0.5 rounded-full text-teal-800">${a.duration}</span>
+                            </div>
+                            
+                            <h4 class="font-extrabold text-slate-800 leading-tight mb-1 text-sm">${a.title}</h4>
+                            <p class="text-[11px] text-teal-600 font-semibold mb-2">${a.mode}</p>
+                            
+                            <div class="text-[10px] bg-white p-2 rounded-xl border border-slate-100 mb-3 text-slate-600 space-y-0.5">
+                                <div><span class="font-bold text-teal-500">Matière :</span> ${a.subject}</div>
+                                <div><span class="font-bold text-teal-500">Domaine :</span> ${a.domain}</div>
+                                <div><span class="font-bold text-teal-500">Compétence :</span> ${a.competency}</div>
+                                <div><span class="font-bold text-teal-500">Objectif :</span> ${a.objective}</div>
+                            </div>
 
-                        <p class="text-[11px] text-slate-600 line-clamp-3">${a.description}</p>
+                            <p class="text-[12px] text-slate-600 font-normal bg-white/50 p-2 rounded-xl whitespace-pre-line border border-dotted border-slate-200">${a.description}</p>
+                        </div>
                         
-                        ${a.evaluation ? `<div class="mt-2 pt-2 border-t border-teal-100 text-[10px] text-rose-500 italic">⭐ ${a.evaluation}</div>` : ''}
+                        ${a.setup || a.evaluation ? `
+                        <div class="mt-3 pt-2 border-t border-dashed border-slate-200 text-[11px] space-y-1">
+                            ${a.setup ? `<div><span class="font-bold text-amber-600">🛠️ Matériel :</span> ${a.setup}</div>` : ''}
+                            ${a.evaluation ? `<div class="text-emerald-600 bg-emerald-50/50 p-1.5 rounded-lg"><span class="font-bold">⭐ Obs/Éval :</span> ${a.evaluation}</div>` : ''}
+                        </div>
+                        ` : ''}
                     `;
                     col.appendChild(card);
                 });
@@ -280,7 +474,9 @@
             });
         }
 
-        // Init
+        // =========================================================================
+        // INITIALISATION AU CHARGEMENT DE LA PAGE
+        // =========================================================================
         populateDropdown('subject', Object.keys(segecData));
         updateDomains();
         renderJournal();
