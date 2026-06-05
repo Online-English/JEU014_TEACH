@@ -20,16 +20,14 @@
 </head>
 <body class="bg-amber-50/40 min-h-screen text-gray-800 antialiased">
 
-    <!-- CONTENEUR PRINCIPAL DE L'APPLICATION -->
     <div id="appWrapper" class="max-w-7xl mx-auto p-4 md:p-6">
         
-        <!-- EN-TÊTE ULTRA-LUDIQUE -->
         <header class="mb-6 bg-gradient-to-r from-yellow-100 via-pink-100 to-teal-100 p-6 rounded-3xl shadow-sm border-2 border-dashed border-orange-200 flex justify-between items-center flex-wrap gap-4">
             <div class="text-center md:text-left">
                 <h1 class="text-3xl text-orange-600 tracking-wide flex items-center justify-center md:justify-start gap-2">
                     🎒 Mon Espace Maternelle
                 </h1>
-                <p class="text-gray-600 text-sm font-semibold mt-1">Mon Journal de classe magique, coloré et organisé ✨</p>
+                <p class="text-gray-600 text-sm font-semibold mt-1">Mon Journal de classe magique, coloré et organized ✨</p>
             </div>
             
             <div class="flex items-center gap-2 no-print bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border-2 border-teal-200 shadow-sm">
@@ -47,7 +45,6 @@
             </div>
         </header>
 
-        <!-- BARRE DE NAVIGATION -->
         <div class="flex gap-2 no-print overflow-x-auto pb-2 border-b-2 border-orange-100 mb-6">
             <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-orange-400 text-white shadow-sm whitespace-nowrap transition">📋 Journal de classe</button>
             <button id="tabPresencesBtn" onclick="changerOnglet('presences')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-yellow-50">🗓️ Présences</button>
@@ -55,7 +52,6 @@
             <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-teal-50">📊 Bilans & Étoiles</button>
         </div>
 
-        <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
         <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="space-y-4 no-print">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-orange-100">
@@ -125,7 +121,6 @@
             </div>
         </div>
 
-        <!-- ================= ONGLET 2 : PRÉSENCES DU JOUR ================= -->
         <div id="ongletPresences" class="hidden bg-white p-6 rounded-3xl shadow-sm border-2 border-yellow-100 print-full-width">
             <div class="flex justify-between items-center border-b-2 border-dashed border-gray-100 pb-3 mb-4 flex-wrap gap-2">
                 <div>
@@ -140,7 +135,6 @@
             <div id="listePresencesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
         <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-pink-100 h-fit no-print">
                 <h2 class="text-lg text-pink-500 mb-3 flex items-center gap-1">🧸 Accueillir un Enfant</h2>
@@ -170,7 +164,6 @@
                         <input type="date" id="elNaissance" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                     </div>
 
-                    <!-- ADRESSES -->
                     <div>
                         <label class="text-gray-400 block mb-0.5">ADRESSE PRINCIPALE</label>
                         <input type="text" id="elAdresse1" placeholder="Rue de l'Église 12, 7130 Binche" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
@@ -183,7 +176,6 @@
                         <button type="button" onclick="toggleAdresse2Field()" class="text-[11px] text-pink-500 font-bold hover:underline">➕ Gérer la seconde adresse</button>
                     </div>
 
-                    <!-- SITUATION FAMILIALE -->
                     <div>
                         <label class="text-gray-400 block mb-0.5">STATUT MARITAL DES PARENTS</label>
                         <select id="elStatutMarital" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
@@ -194,7 +186,6 @@
                         </select>
                     </div>
 
-                    <!-- COORDONNÉES MAMAN -->
                     <div class="bg-pink-50/40 p-2.5 rounded-2xl border-2 border-pink-100 space-y-2">
                         <span class="text-[10px] uppercase font-bold text-pink-600 block">👩 MAMAN</span>
                         <div class="grid grid-cols-2 gap-2">
@@ -207,7 +198,6 @@
                         </div>
                     </div>
 
-                    <!-- COORDONNÉES PAPA -->
                     <div class="bg-sky-50/40 p-2.5 rounded-2xl border-2 border-sky-100 space-y-2">
                         <span class="text-[10px] uppercase font-bold text-sky-600 block">👨 PAPA</span>
                         <div class="grid grid-cols-2 gap-2">
@@ -220,7 +210,6 @@
                         </div>
                     </div>
 
-                    <!-- NUMÉROS ET EMAILS EXTRA -->
                     <div class="space-y-2 bg-gray-50/50 p-2 rounded-2xl border border-gray-100">
                         <div id="containerTelsSupp" class="space-y-1"></div>
                         <button type="button" onclick="ajouterChampTelSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">📞 Ajouter un téléphone supplémentaire</button>
@@ -229,7 +218,6 @@
                         <button type="button" onclick="ajouterChampEmailSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">✉️ Ajouter un e-mail supplémentaire</button>
                     </div>
 
-                    <!-- AUTRE NUMÉRO DE CONTACT / URGENCE -->
                     <div>
                         <label class="text-gray-400 block mb-0.5">🚨 PERSONNE DE CONTACT ALTERNATIVE (Urgence)</label>
                         <input type="text" id="elContactUrgence" placeholder="Ex: Grand-Mère Nicole (0477/12.34.56)" class="w-full rounded-xl border-2 border-gray-100 p-2 text-xs outline-none focus:border-pink-300">
@@ -268,7 +256,6 @@
             </div>
         </div>
 
-        <!-- ================= ONGLET 4 : BILANS & STATS ================= -->
         <div id="ongletBilan" class="hidden space-y-6 print-full-width">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-teal-100 h-fit">
@@ -291,7 +278,6 @@
 
     </div>
 
-    <!-- ================= ZONE SPECIALE ÉTIQUETTES DE RITUEL ================= -->
     <div id="zoneImpressionCartes" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
         <div class="no-print mb-8 bg-pink-50 border-2 border-dashed border-pink-200 p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <h3 class="text-lg font-bold text-pink-700 mb-1">✂️ Mode Impression : Cartes de Rituel</h3>
@@ -304,7 +290,6 @@
         <div id="grilleCartesImpression" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-5xl mx-auto"></div>
     </div>
 
-    <!-- SCRIPT LOGICIEL INDEXEDDB -->
     <script>
         const objectifsParDomaine = {
             transversal: ["🤝 Coopérer, respecter les règles collectives et vivre ensemble", "🌱 Construire son identité, la confiance en soi et l'autonomie", "💬 S'exprimer, communiquer ses émotions et écouter l'autre", "💡 Développer sa curiosité, sa créativité et l'esprit d'initiative"],
@@ -375,7 +360,7 @@
         function initApp() { remplirSelectClasses(); changerClasseGlobale(currentClasse); }
         
         function remplirSelectClasses() {
-            document.getElementById('globalClasseSelect').innerHTML = classesData.map(c => `<option value="${c}" ${c===currentClasse?'selected':''}>${c}</option>`).join('');
+            document.getElementById('globalClasseSelect').innerHTML = classesData.map(c => `<option value="${c}" ${c === currentClasse ? 'selected' : ''}>${c}</option>`).join('');
         }
 
         function changerClasseGlobale(classeForcee = null) {
@@ -483,13 +468,12 @@
                 const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge inconnu";
                 const avatar = e.photo ? `<img src="${e.photo}" class="w-14 h-14 rounded-full object-cover border-2 border-pink-200 shadow-sm">` : `<div class="w-14 h-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg border-2 border-pink-200">${e.prenom[0]}</div>`;
                 
-                // Traitement et rendu dynamique des tableaux d'extras (tél/emails)
                 let extraContactsHtml = "";
                 if(e.telsSupp && e.telsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">📞 <strong>Tél. sup :</strong> ${e.telsSupp.join(' | ')}</p>`;
                 if(e.emailsSupp && e.emailsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">✉️ <strong>E-mails sup :</strong> ${e.emailsSupp.join(' | ')}</p>`;
                 
                 grille.innerHTML += `
-                    <div class="bg-white p-5 rounded-3xl shadow-sm border-2 ${e.sante ? 'border-red-200 bg-red-50/20' : 'border-pink-50'} space-y-2 relative page-break-inside-avoid">
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border-2 ${e.sante ? 'border-red-200 bg-red-50/20' : 'border-pink-50'} space-y-2 relative page-break-inside-avoid hover:shadow-md transition">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center gap-3">${avatar}<div><h3 class="text-md font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3><p class="text-[11px] text-gray-400">🎈 Gâteau le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p></div></div>
                             <div class="no-print flex gap-2 text-[11px] font-bold text-gray-400"><button onclick="editerEleve('${e.id}')" class="text-pink-500 hover:underline">Modifier</button><button onclick="supprimerEleve('${e.id}')" class="text-red-400 hover:underline">Supprimer</button></div>
