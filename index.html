@@ -3,483 +3,687 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journal de Classe Maternelle — Réseau Catholique</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Mon Journal de Classe Maternelle - Style TEETSH (SeGEC)</title>
     <style>
-        body { font-family: 'Nunito', sans-serif; background-color: #f0fdfa; }
-        .maternelle-card { border-radius: 2rem; }
-        
-        @media print {
-            .no-print { display: none !important; }
-            .print-grid { display: block !important; }
-            .day-column { page-break-after: always; border: 2px solid #cbd5e1 !important; margin-bottom: 20px; page-break-inside: avoid; }
-            body { background: white; }
+        :root {
+            --primary: #4a6fa5;
+            --primary-light: #edf2f8;
+            --secondary: #ffb703;
+            --accent: #fb8500;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --border: #dcdcdc;
+            
+            /* Couleurs par matières SeGEC */
+            --color-fr: #e63946;
+            --color-math: #1d3557;
+            --color-sci: #2a9d8f;
+            --color-human: #9b5de5;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #99f6e4; border-radius: 10px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Panneau de saisie / Formulaire */
+        .form-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-panel h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            background-color: var(--light);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+        }
+
+        .inline-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--primary-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        button.btn-add {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        button.btn-add:hover {
+            background-color: #365582;
+        }
+
+        /* Partie Agenda Visuelle (Style Teetsh) */
+        .agenda-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .day-tabs {
+            display: flex;
+            gap: 5px;
+            background: #e0e4ec;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .journal-timeline {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            min-height: 500px;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .activity-card {
+            border-left: 6px solid #ccc;
+            background: #fff;
+            border-top: 1px solid #eaeaea;
+            border-right: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 15px;
+        }
+
+        .card-time {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.95rem;
+            border-right: 1px solid #eee;
+            padding-right: 5px;
+        }
+
+        .card-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-right: 5px;
+            text-transform: uppercase;
+        }
+
+        .badge-level { background: #e0f2fe; color: #0369a1; }
+        .badge-mat { color: white; }
+
+        .segec-path {
+            font-size: 0.8rem;
+            color: #666;
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin: 8px 0;
+            font-style: italic;
+        }
+
+        .card-details {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            white-space: pre-line;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .btn-export {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media print {
+            .form-panel, .day-tabs, .btn-delete, .btn-export, header button {
+                display: none !important;
+            }
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .activity-card {
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
-<body class="p-0 m-0 text-slate-700">
+<body>
 
-    <!-- EN-TÊTE DE L'APPLICATION -->
-    <header class="bg-teal-400 text-white p-6 shadow-lg no-print relative overflow-hidden">
-        <div class="absolute top-0 right-0 opacity-20 text-9xl">🧸</div>
-        <div class="max-w-7xl mx-auto flex justify-between items-center relative z-10">
-            <div class="flex items-center space-x-4">
-                <span class="text-5xl">🎨</span>
-                <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight">Mon Journal SeGEC Maternelle</h1>
-                    <p class="text-teal-50 font-semibold">Programme Officiel de l'Enseignement Catholique Wallonie</p>
-                </div>
-            </div>
-            <div class="flex space-x-3">
-                <button onclick="window.print()" class="bg-white text-teal-600 hover:bg-teal-50 px-6 py-3 rounded-full font-bold shadow-md transition transform hover:scale-105">
-                    🖨️ Imprimer la Semaine
-                </button>
-                <button onclick="clearAll()" class="bg-rose-400 text-white hover:bg-rose-500 px-6 py-3 rounded-full font-bold shadow-md transition transform hover:scale-105">
-                    🗑️ Réinitialiser
-                </button>
-            </div>
+    <header>
+        <h1>📖 Mon Journal de Classe Numérique - Enseignement Maternelle</h1>
+        <div>
+            <button class="btn-export" onclick="window.print()">🖨️ Imprimer la journée</button>
+            <button class="btn-export" style="background: #e63946;" onclick="clearLocalStorage()">🗑️ Tout effacer</button>
         </div>
     </header>
 
-    <!-- ZONE PRINCIPALE -->
-    <main class="max-w-7xl mx-auto p-6">
-        
-        <!-- FORMULAIRE D'ENCODAGE -->
-        <section class="bg-white p-8 maternelle-card shadow-xl border-4 border-teal-100 mb-10 no-print">
-            <h2 class="text-2xl font-bold text-teal-600 mb-6 flex items-center">
-                <span class="bg-teal-100 p-2 rounded-full mr-3">📝</span> Préparer une activité
-            </h2>
-            
-            <form id="activityForm" class="space-y-6">
-                <!-- BLOCS LOGISTIQUES -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">📅 Jour</label>
-                        <select id="day" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
-                            <option>Lundi</option><option>Mardi</option><option>Mercredi</option><option>Jeudi</option><option>Vendredi</option>
-                        </select>
+    <div class="container">
+        <div class="form-panel">
+            <h2>➕ Planifier une activité</h2>
+            <form id="activityForm">
+                <div class="inline-group">
+                    <div class="form-group">
+                        <label for="timeStart">Heure Début</label>
+                        <input type="time" id="timeStart" required value="08:30">
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">⏰ Moment de la journée</label>
-                        <select id="moment" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
-                            <option>Accueil / Rituels du matin</option>
-                            <option>Activités dirigées (Matinée)</option>
-                            <option>Collation / Récréation</option>
-                            <option>Ateliers autonomes / Tournants</option>
-                            <option>Séance de Psychomotricité</option>
-                            <option>Repas / Temps de repos / Sieste</option>
-                            <option>Activités d'expression (Après-midi)</option>
-                            <option>Regroupement / Bilan / Départ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">⏳ Durée</label>
-                        <select id="duration" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
-                            <option>10 min</option><option>15 min</option><option>20 min</option><option>30 min</option><option>45 min</option><option>60 min</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-2">👥 Dispositif social</label>
-                        <select id="mode" class="w-full border-2 border-slate-100 rounded-2xl p-3 bg-slate-50 focus:border-teal-400 outline-none">
-                            <option>Collectif (Grand groupe)</option>
-                            <option>Petit groupe dirigé</option>
-                            <option>Individuel / Autonomie</option>
-                            <option>Travail par paires (2 enfants)</option>
-                        </select>
+                    <div class="form-group">
+                        <label for="timeEnd">Heure Fin</label>
+                        <input type="time" id="timeEnd" required value="09:15">
                     </div>
                 </div>
 
-                <!-- CASCADE PROGRAMME SEGEC (DYNAMIQUE) -->
-                <div class="bg-teal-50/50 p-6 rounded-3xl border-2 border-teal-100/50 space-y-4">
-                    <h3 class="text-sm font-bold text-teal-700 uppercase tracking-wider">🎯 Liens avec le Programme National SeGEC</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Matière</label>
-                            <select id="subject" onchange="updateDomains()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Domaine</label>
-                            <select id="domain" onchange="updateCompetencies()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Compétence</label>
-                            <select id="competency" onchange="updateObjectives()" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Objectif Spécifique</label>
-                            <select id="objective" class="w-full border-2 border-white rounded-xl p-2.5 shadow-sm outline-none bg-white focus:border-teal-400"></select>
-                        </div>
+                <div class="form-group">
+                    <label>Niveau / Groupe ciblé</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="level" value="Accueil"> Acc</label>
+                        <label><input type="checkbox" name="level" value="M1"> M1</label>
+                        <label><input type="checkbox" name="level" value="M2"> M2</label>
+                        <label><input type="checkbox" name="level" value="M3"> M3</label>
                     </div>
                 </div>
 
-                <!-- BLOCS DE DESCRIPTION DE L'ACTIVITÉ -->
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-1">✏️ Titre de l'activité</label>
-                        <input type="text" id="title" placeholder="Ex: Graphisme : les ponts à l'encre" class="w-full border-2 border-slate-100 rounded-2xl p-3 font-bold text-lg outline-none focus:border-teal-400" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-500 mb-1">📖 Description du déroulement (Consignes, étapes...)</label>
-                        <textarea id="description" rows="3" placeholder="Que font les enfants ? Quelle est la consigne principale ?" class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400" required></textarea>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-500 mb-1">🛠️ Dispositif spatial & Matériel requis</label>
-                            <textarea id="setup" rows="2" placeholder="Ex: Tables en U, gouache rouge et jaune, grands pinceaux..." class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-500 mb-1">⭐ Évaluation / Critères de réussite / Notes</label>
-                            <textarea id="evaluation" rows="2" placeholder="Comment observer la réussite ? (Ex: L'enfant tient son outil avec la pince tridactyle)" class="w-full border-2 border-slate-100 rounded-2xl p-3 outline-none focus:border-teal-400"></textarea>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="title">Intitulé / Titre de l'activité</label>
+                    <input type="text" id="title" placeholder="Ex: Atelier de dénombrement des collations" required>
                 </div>
 
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-teal-500 text-white px-10 py-4 rounded-full font-bold text-lg shadow-lg hover:bg-teal-600 transition transform hover:-translate-y-1">
-                        ✨ Insérer dans mon Journal
-                    </button>
+                <div class="form-group">
+                    <label for="matiere">Matière SeGEC (Volume)</label>
+                    <select id="matiere" onchange="updateDomaines()"></select>
                 </div>
+
+                <div class="form-group">
+                    <label for="domaine">Domaine / Champ</label>
+                    <select id="domaine" onchange="updateCompetences()"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="competence">Compétence Spécifique</label>
+                    <select id="competence" onchange="updateObjectifs()"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="objectif">Objectif / Repère Attendu</label>
+                    <select id="objectif"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="deroulement">Consignes & Déroulement pédagogique</label>
+                    <textarea id="deroulement" rows="4" placeholder="Description des étapes, consignes de départ et rôles de l'institutrice..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="materiel">Matériel requis</label>
+                    <input type="text" id="materiel" placeholder="Ex: jetons, boîtes à œufs, pinces...">
+                </div>
+
+                <button type="submit" class="btn-add">Ajouter au Journal de Classe</button>
             </form>
-        </section>
+        </div>
 
-        <!-- GRILLE D'AFFICHAGE DU JOURNAL DE CLASSE -->
-        <div id="journalGrid" class="grid grid-cols-1 xl:grid-cols-5 gap-6 print-grid"></div>
+        <div class="agenda-panel">
+            <div class="day-tabs">
+                <button class="tab-btn active" onclick="switchDay('Lundi')">LUNDI</button>
+                <button class="tab-btn" onclick="switchDay('Mardi')">MARDI</button>
+                <button class="tab-btn" onclick="switchDay('Mercredi')">MERCREDI</button>
+                <button class="tab-btn" onclick="switchDay('Jeudi')">JEUDI</button>
+                <button class="tab-btn" onclick="switchDay('Vendredi')">VENDREDI</button>
+            </div>
 
-    </main>
+            <div class="journal-timeline">
+                <div class="timeline-header">
+                    <h2 id="currentDayTitle">🗓️ Agenda : Lundi</h2>
+                </div>
+                <div id="activitiesContainer">
+                    </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // =========================================================================
-        // BASE DE DONNÉES COMPLÈTE DU PROGRAMME SEGEC POUR L'ÉCOLE MATERNELLE
-        // =========================================================================
-        const segecData = {
-            "🦚 Français & Communication": {
-                "Langage Oral (Parler)": {
-                    "S'exprimer et oser communiquer": [
-                        "Prendre la parole de manière compréhensible devant le groupe",
-                        "Formuler des phrases correctement structurées (Sujet-Verbe-Complément)",
-                        "Raconter un événement vécu ou une histoire lue de manière chronologique",
-                        "Utiliser un vocabulaire de plus en plus précis et adapté au contexte"
-                    ],
-                    "Entrer en dialogue": [
-                        "Interagir de manière constructive avec ses pairs et l'adulte",
-                        "Répondre à une question ouverte de manière pertinente",
-                        "Participer activement aux cercles de parole et débats régulés"
-                    ]
-                },
-                "Langage Oral (Écouter)": {
-                    "Compréhension de messages": [
-                        "Écouter attentivement une consigne complexe et l'exécuter pas à pas",
-                        "Comprendre une histoire lue ou racontée par l'adulte",
-                        "Identifier les personnages principaux et la trame d'un récit simple"
-                    ],
-                    "Éveil à la conscience phonologique": [
-                        "Scanner et dénombrer les syllabes orales d'un mot",
-                        "Repérer, identifier et produire des rimes ou des assonances",
-                        "Isoler et identifier un son-voyelle initial dans un mot"
-                    ]
-                },
-                "Entrée dans l'Écrit (Lire)": {
-                    "Fréquentation des supports écrits": [
-                        "Différencier l'écriture, le dessin et le chiffre",
-                        "Identifier visuellement son prénom et celui de ses camarades",
-                        "Reconnaître des mots fonctionnels familiers (jours, météo, étiquettes)",
-                        "Comprendre l'orientation et le sens de la lecture (gauche à droite, haut en bas)"
-                    ]
-                },
-                "Graphisme & Écriture (Produire)": {
-                    "Développement des compétences graphiques": [
-                        "Maîtriser la tenue de l'outil scripteur (pince tridactyle)",
-                        "Tracer des lignes de base (verticales, horizontales, obliques)",
-                        "Tracer des formes continues complexes (ponts, vagues, boucles, spirales)",
-                        "Respecter un espace graphique donné (lignes, cadres, limites de la feuille)"
-                    ],
-                    "Production d'écrits": [
-                        "Copier des mots significatifs en lettres capitales d'imprimerie",
-                        "Écrire son propre prénom de mémoire en lettres capitales"
-                    ]
+        // DONNÉES DU PROGRAMME MATERNELLE SEGEC (FédEFOC Belgique)
+        const segecProgram = {
+            "Français": {
+                "color": "var(--color-fr)",
+                "champs": {
+                    "Parler (Langage Oral)": {
+                        "1.1 Orienter sa prise de parole": [
+                            "1.1.1 Analyser la situation de communication (Qui parle à qui, pourquoi, intention)",
+                            "Oser prendre la parole face aux autres pour s'exprimer",
+                            "Participer à une conversation / Engager la prise de parole"
+                        ],
+                        "1.2 Élaborer un message oral": [
+                            "1.2.1 Utiliser un vocabulaire précis et adapté à la situation de communication",
+                            "1.2.2 Élaborer des contenus (Exprimer un fait, une idée, un ressenti, une émotion)",
+                            "Émettre une ou plusieurs suites plausibles d'un message entendu"
+                        ],
+                        "1.3 Assurer l'organisation d'un message oral": [
+                            "1.3.1 Assurer la cohérence du message (Emploi des pronoms personnels)",
+                            "1.3.2 Appliquer les caractéristiques de la structure du message",
+                            "1.3.3 Élaborer la chronologie (Connecteurs temporels : d'abord, ensuite, enfin)"
+                        ]
+                    },
+                    "Écouter (Compréhension Orale)": {
+                        "2.1 Orienter son écoute": [
+                            "2.1.1 Analyser la situation de communication (Intention d'écoute)",
+                            "2.1.2 Se déterminer un but d'écoute"
+                        ],
+                        "2.2 Comprendre un message oral": [
+                            "2.2.1 Traiter le vocabulaire / Enrichir le bagage lexical",
+                            "2.2.2 Percevoir le sens global (Reformuler ou exécuter une consigne)",
+                            "2.2.4 Dégager des informations implicites (Inférer)"
+                        ]
+                    },
+                    "Lire (Entrée dans l'écrit)": {
+                        "3.1 Orienter sa lecture": [
+                            "3.1.1 Analyser la situation de communication (Dégager la fonction des écrits)",
+                            "Repérer un document dans la bibliothèque de la classe selon un besoin"
+                        ],
+                        "3.3 Percevoir l'organisation": [
+                            "3.3.2 Dégager les caractéristiques de la silhouette du texte (Recette, invitation...)"
+                        ]
+                    }
                 }
             },
-            "🧮 Mathématiques": {
-                "Nombres et Opérations": {
-                    "Construction du concept de nombre": [
-                        "Réciter la comptine numérique orale de manière stable",
-                        "Dénombrer une collection d'objets en respectant le principe cardinal",
-                        "Associer une quantité d'objets à son écriture chiffrée (jusqu'à 5 ou 10)",
-                        "Comparer des collections d'objets (termes : plus que, moins que, autant que)",
-                        "Réaliser des partages équitables ou des distributions d'objets"
-                    ],
-                    "Structuration des suites de nombres": [
-                        "Ordonner des nombres du plus petit au plus grand",
-                        "Intercaler un nombre manquant dans une suite numérique logique"
-                    ]
-                },
-                "Solides et Figures (Géométrie)": {
-                    "Reconnaissance et classement des formes": [
-                        "Identifier et nommer les formes géométriques planes de base (rond, carré, triangle, rectangle)",
-                        "Trier et classer des objets selon un ou plusieurs critères de forme",
-                        "Assembler des formes géométriques pour reproduire un modèle plan (Tangram)"
-                    ]
-                },
-                "Les Grandeurs": {
-                    "Comparaison et mesurage": [
-                        "Classer des objets du plus petit au plus grand (sériation logique)",
-                        "Comparer directement des longueurs, des masses ou des capacités",
-                        "Utiliser un étalon non conventionnel (bandelette, gobelet) pour mesurer"
-                    ]
-                },
-                "Structuration de l'Espace": {
-                    "Repérage et orientation spatiale": [
-                        "Utiliser et comprendre le vocabulaire spatial (sur, sous, devant, derrière, entre...)",
-                        "Se repérer et organiser des éléments dans un quadrillage ou un labyrinthe",
-                        "Suivre, décoder ou coder un parcours ou un déplacement dans l'espace-classe"
-                    ]
+            "Formation Mathématique": {
+                "color": "var(--color-math)",
+                "champs": {
+                    "Les nombres et opérations": {
+                        "1.1 Appréhender/Découvrir les nombres": [
+                            "1.1.1 Construire le sens du nombre (Dégager l'invariance du nombre, usage des doigts)",
+                            "1.1.2 Composer, décomposer et recomposer les nombres (Ex: 5 c'est 3 et 2)",
+                            "1.1.4 Dénombrer (Pointage, cardinalisation finale : répondre à 'Combien ?')",
+                            "1.1.5 Dire, lire, écrire (Réciter la litanie de la chaîne numérique stable)",
+                            "1.1.6 Situer, ordonner (Aspect ordinal : premier, deuxième, dernier)"
+                        ],
+                        "1.2 Opérer sur les nombres": [
+                            "1.2.1 Identifier et effectuer des opérations en situation (Ajouter, retirer, partager)"
+                        ]
+                    },
+                    "Les solides et figures": {
+                        "2.1 (Se) placer, (se) déplacer": [
+                            "2.1.1 Se situer, situer, se placer, placer des objets (Vocabulaire spatial de position)",
+                            "2.1.3 Représenter un déplacement sur un plan ou un quadrillage"
+                        ],
+                        "2.2 Découvrir les formes": [
+                            "2.2.1 Reconnaitre, comparer des solides, les différencier, les classer (Cube, cylindre...)",
+                            "2.2.3 Reconnaitre, comparer des figures géométriques planes (Carré, disque, triangle, rectangle)"
+                        ]
+                    },
+                    "Les grandeurs": {
+                        "3.1 Découvrir des grandeurs": [
+                            "3.1.1 Comparer des grandeurs de manière directe (Plus long/court, plus lourd/léger)",
+                            "3.1.2 Ordonner des grandeurs (Rangement croissant / décroissant)",
+                            "3.1.3 Mesurer des grandeurs en ayant recours à un étalon non conventionnel"
+                        ]
+                    },
+                    "Le traitement de données": {
+                        "4.1 Organiser selon un critère": [
+                            "Définir un critère d'organisation (Tri, classement par catégories)"
+                        ],
+                        "4.2 Lire un tableau": [
+                            "Prélever une donnée dans un tableau à simple ou à double entrée"
+                        ]
+                    }
                 }
             },
-            "🌱 Éveil (Sciences, Temps, Espace)": {
-                "Éveil Scientifique (Le Vivant)": {
-                    "Observation de la faune, la flore et le corps": [
-                        "Identifier et respecter les besoins vitaux des plantes et des animaux de la classe",
-                        "Découvrir, nommer et schématiser les différentes parties du corps humain",
-                        "Mobiliser à bon escient ses 5 sens lors d'activités de découverte sensorielle"
-                    ]
-                },
-                "Éveil Scientifique (La Matière)": {
-                    "Expérimentation physique": [
-                        "Différencier et observer les états de l'eau (liquide, solide/glace)",
-                        "Mener une démarche expérimentale sur le phénomène de flottaison (flotte ou coule)",
-                        "Manipuler, transvaser et mélanger diverses matières (pâte, sable, eau, argile)"
-                    ]
-                },
-                "Structuration du Temps": {
-                    "Repérage et orientation temporelle": [
-                        "Utiliser à bon escient les indicateurs temporels (hier, aujourd'hui, demain)",
-                        "Se situer précisément dans les différents moments de la journée scolaire",
-                        "Se repérer sur le calendrier de la semaine et identifier le cycle des saisons",
-                        "Ordonner chronologiquement une série d'images séquentielles (récit historique de la classe)"
-                    ]
+            "Formation Scientifique": {
+                "color": "var(--color-sci)",
+                "champs": {
+                    "Les vivants": {
+                        "1.1 Besoins physiologiques": [
+                            "Manifester et réagir à un besoin physiologique (Hygiène, hydratation, repos)",
+                            "Adapter sa tenue vestimentaire en fonction des observations de la météo"
+                        ],
+                        "1.2 Caractériser le vivant": [
+                            "Observer et caractériser les cycles de vie des animaux ou des végétaux"
+                        ]
+                    },
+                    "La matière": {
+                        "2.1 Propriétés sensorielles": [
+                            "Dégager des caractéristiques à l'aide des sens (Doux, rugueux, dur, mou, lisse)"
+                        ]
+                    }
                 }
             },
-            "🎨 Éducation Artistique & Culturelle": {
-                "Arts Plastiques et Visuels": {
-                    "Expérimentation créative": [
-                        "Diversifier l'usage d'outils de peinture (pinceaux, brosses, éponges, doigts)",
-                        "Explorer des médiums variés (peinture, encre, craies de cire, pastels secs)",
-                        "Pratiquer le modelage, le découpage minutieux et l'assemblage de matériaux",
-                        "Distinguer, associer des couleurs et expérimenter les mélanges chromatiques"
-                    ]
-                },
-                "Éducation Musicale": {
-                    "Chant, écoute et rythme": [
-                        "Mémoriser, reproduire et interpréter un répertoire de comptines et chants de groupe",
-                        "Suivre et reproduire un rythme simple (corporel ou avec petites percussions)",
-                        "Distinguer et qualifier les paramètres du son (grave/aigu, fort/doux, long/court)",
-                        "Pratiquer l'écoute active et identifier des bruits de l'environnement quotidien"
-                    ]
-                },
-                "Expression Corporelle & Théâtrale": {
-                    "Jeu dramatique": [
-                        "Imiter corporellement des personnages, des actions ou des animaux (mimétisme)",
-                        "Donner vie à une marionnette pour théâtraliser un récit ou une émotion",
-                        "Exprimer et décoder des émotions fondamentales via les expressions du visage"
-                    ]
-                }
-            },
-            "🏃 Psychomotricité": {
-                "Motricité Globale": {
-                    "Coordination et déplacements": [
-                        "Se déplacer de différentes manières en sécurité (courir, sauter, ramper, grimper)",
-                        "Évoluer en équilibre dynamique sur un support surélevé ou étroit (poutre, banc)",
-                        "Coordonner ses mouvements globaux dans des parcours moteurs chronométrés"
-                    ]
-                },
-                "Motricité Fine & Latéralisation": {
-                    "Précision du geste manuel": [
-                        "Affiner la motricité digitale via des activités de précision (enfiler, visser, boutonner)",
-                        "Utiliser des ciseaux de manière autonome pour découper sur une ligne droite ou courbe",
-                        "Affirmer et installer sa préférence manuelle (gauche ou droite) dans les tâches précises"
-                    ]
-                },
-                "Schéma Corporel": {
-                    "Représentation de soi": [
-                        "Représenter un bonhomme complet et structuré graphiquement (tête, tronc, membres)",
-                        "Situer et nommer les articulations principales sur soi ou sur un mannequin"
-                    ]
-                }
-            },
-            "🤝 Philosophie & Citoyenneté (EPC)": {
-                "Vivre ensemble en communauté": {
-                    "Règles et relations sociales": [
-                        "Comprendre, accepter et respecter les règles de vie collective de la classe",
-                        "Partager spontanément le matériel et attendre son tour de parole ou de jeu",
-                        "Coopérer activement avec un ou plusieurs camarades pour réaliser un projet commun",
-                        "Apprendre à verbaliser un désaccord ou un conflit sans recourir à la violence"
-                    ]
-                },
-                "Autonomie et Identité": {
-                    "Développement de la confiance en soi": [
-                        "Prendre soin de ses effets personnels et assurer son habillage autonome (veste, chaussures)",
-                        "Faire des choix conscients et assumer une responsabilité lors des ateliers libres",
-                        "Exprimer de manière adaptée ses besoins physiques, ses sentiments et opinions"
-                    ]
-                }
-            },
-            "⛪ Éveil Religieux (Catholique)": {
-                "Éveil à la intériorité & Récits Bibliques": {
-                    "Découverte de la foi et des valeurs chrétiennes": [
-                        "Écouter, comprendre et s'approprier des récits imagés de la vie de Jésus",
-                        "Repérer et fêter les grands repères de l'année liturgique chrétienne (Noël, Pâques...)",
-                        "Mettre en pratique des valeurs évangéliques au quotidien (partage, pardon, accueil de l'autre)",
-                        "Vivre et apprécier des moments de silence collectif, d'intériorité ou de prière adaptée"
-                    ]
+            "Formation Humaine et Sociale": {
+                "color": "var(--color-human)",
+                "champs": {
+                    "Explorer l'espace": {
+                        "1.1 Se repérer": [
+                            "Utiliser des repères spatiaux pour s'orienter ou décrire un trajet proche"
+                        ],
+                        "1.2 Fonctions des espaces": [
+                            "Identifier les espaces de vie de la classe selon leur fonction (Jouer, lire, ranger)"
+                        ]
+                    },
+                    "Explorer le temps": {
+                        "2.1 Repères de temps": [
+                            "Utiliser adéquatement le vocabulaire temporel (Avant, après, maintenant, hier, demain)"
+                        ],
+                        "2.2 Représentations du temps": [
+                            "Situer une activité sur la ligne du temps de la journée ou de la semaine"
+                        ]
+                    }
                 }
             }
         };
 
-        // =========================================================================
-        // LOGIQUE INTERACTIVE DES MENUS DÉROULANTS LIÉS (CASCADE)
-        // =========================================================================
-        function populateDropdown(id, items) {
-            const select = document.getElementById(id);
-            select.innerHTML = '';
-            items.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item;
-                opt.textContent = item;
-                select.appendChild(opt);
+        let currentDay = 'Lundi';
+        let activities = JSON.parse(localStorage.getItem('maternelle_journal_data')) || {};
+
+        // INITIALISATION DES MENUS DÉROULANTS EN CASCADE
+        function initForm() {
+            const matSelect = document.getElementById('matiere');
+            matSelect.innerHTML = '';
+            for (let mat in segecProgram) {
+                let opt = document.createElement('option');
+                opt.value = mat;
+                opt.innerText = mat;
+                matSelect.appendChild(opt);
+            }
+            updateDomaines();
+        }
+
+        function updateDomaines() {
+            const mat = document.getElementById('matiere').value;
+            const domSelect = document.getElementById('domaine');
+            domSelect.innerHTML = '';
+            
+            for (let dom in segecProgram[mat].champs) {
+                let opt = document.createElement('option');
+                opt.value = dom;
+                opt.innerText = dom;
+                domSelect.appendChild(opt);
+            }
+            updateCompetences();
+        }
+
+        function updateCompetences() {
+            const mat = document.getElementById('matiere').value;
+            const dom = document.getElementById('domaine').value;
+            const compSelect = document.getElementById('competence');
+            compSelect.innerHTML = '';
+
+            for (let comp in segecProgram[mat].champs[dom]) {
+                let opt = document.createElement('option');
+                opt.value = comp;
+                opt.innerText = comp;
+                compSelect.appendChild(opt);
+            }
+            updateObjectifs();
+        }
+
+        function updateObjectifs() {
+            const mat = document.getElementById('matiere').value;
+            const dom = document.getElementById('domaine').value;
+            const comp = document.getElementById('competence').value;
+            const objSelect = document.getElementById('objectif');
+            objSelect.innerHTML = '';
+
+            const list = segecProgram[mat].champs[dom][comp];
+            list.forEach(obj => {
+                let opt = document.createElement('option');
+                opt.value = obj;
+                opt.innerText = obj;
+                objSelect.appendChild(opt);
             });
         }
 
-        function updateDomains() {
-            const subject = document.getElementById('subject').value;
-            populateDropdown('domain', Object.keys(segecData[subject]));
-            updateCompetencies();
+        // NAVIGATION ENTRE LES JOURS
+        function switchDay(day) {
+            currentDay = day;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.toLowerCase() === day.toLowerCase()) btn.classList.add('active');
+            });
+            document.getElementById('currentDayTitle').innerText = `🗓️ Agenda : ${day}`;
+            renderActivities();
         }
 
-        function updateCompetencies() {
-            const subject = document.getElementById('subject').value;
-            const domain = document.getElementById('domain').value;
-            populateDropdown('competency', Object.keys(segecData[subject][domain]));
-            updateObjectives();
+        // RENDU DES ACTIVITÉS LOGUÉES
+        function renderActivities() {
+            const container = document.getElementById('activitiesContainer');
+            container.innerHTML = '';
+
+            let dayActs = activities[currentDay] || [];
+            
+            // Tri par heure de début
+            dayActs.sort((a,b) => a.timeStart.localeCompare(b.timeStart));
+
+            if(dayActs.length === 0) {
+                container.innerHTML = `<p style="color: #888; text-align:center; padding: 40px 0;">Aucune activité planifiée pour ce jour.</p>`;
+                return;
+            }
+
+            dayActs.forEach((act, index) => {
+                const borderClr = segecProgram[act.matiere]?.color || '#ccc';
+                
+                let levelsBadge = act.levels.map(l => `<span class="badge badge-level">${l}</span>`).join(' ');
+
+                let card = document.createElement('div');
+                card.className = 'activity-card';
+                card.style.borderLeftColor = borderClr;
+                card.innerHTML = `
+                    <div class="card-time">🕒 ${act.timeStart} - ${act.timeEnd}</div>
+                    <div class="card-content">
+                        <h3>${act.title}</h3>
+                        <div>${levelsBadge} <span class="badge badge-mat" style="background:${borderClr}">${act.matiere}</span></div>
+                        <div class="segec-path">
+                            <strong>Socle SeGEC :</strong> ${act.domaine} ➔ ${act.competence} <br>
+                            <strong>Repère ciblé :</strong> ${act.objectif}
+                        </div>
+                        <div class="card-details">
+                            <strong>Déroulement :</strong>\n${act.deroulement}
+                            ${act.materiel ? `<br><strong>📦 Matériel :</strong> ${act.materiel}` : ''}
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn-delete" onclick="deleteActivity(${index})">×</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        function updateObjectives() {
-            const subject = document.getElementById('subject').value;
-            const domain = document.getElementById('domain').value;
-            const competency = document.getElementById('competency').value;
-            populateDropdown('objective', segecData[subject][domain][competency]);
-        }
-
-        // =========================================================================
-        // LOGIQUE DE SAUVEGARDE ET DE RENDU DU JOURNAL DE CLASSE
-        // =========================================================================
-        let journalData = JSON.parse(localStorage.getItem('journalSegecFull')) || [];
-
+        // SOUMISSION DU FORMULAIRE (AJOUT)
         document.getElementById('activityForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const act = {
-                id: Date.now(),
-                day: document.getElementById('day').value,
-                moment: document.getElementById('moment').value,
-                duration: document.getElementById('duration').value,
-                mode: document.getElementById('mode').value,
-                subject: document.getElementById('subject').value,
-                domain: document.getElementById('domain').value,
-                competency: document.getElementById('competency').value,
-                objective: document.getElementById('objective').value,
+
+            // Récupérer les niveaux cochés
+            let checkedLevels = [];
+            document.querySelectorAll('input[name="level"]:checked').forEach(cb => {
+                checkedLevels.push(cb.value);
+            });
+
+            if(checkedLevels.length === 0) {
+                alert("Veuillez cocher au moins un niveau (Acc, M1, M2, M3).");
+                return;
+            }
+
+            const newAct = {
+                timeStart: document.getElementById('timeStart').value,
+                timeEnd: document.getElementById('timeEnd').value,
+                levels: checkedLevels,
                 title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                setup: document.getElementById('setup').value,
-                evaluation: document.getElementById('evaluation').value
+                matiere: document.getElementById('matiere').value,
+                domaine: document.getElementById('domaine').value,
+                competence: document.getElementById('competence').value,
+                objectif: document.getElementById('objectif').value,
+                deroulement: document.getElementById('deroulement').value,
+                materiel: document.getElementById('materiel').value
             };
+
+            if(!activities[currentDay]) activities[currentDay] = [];
+            activities[currentDay].push(newAct);
+
+            localStorage.setItem('maternelle_journal_data', JSON.stringify(activities));
             
-            journalData.push(act);
-            saveAndRender();
-            this.reset();
-            updateDomains(); // Réinitialise la cascade de menus
+            // Reset champs textes temporaires
+            document.getElementById('title').value = '';
+            document.getElementById('deroulement').value = '';
+            document.getElementById('materiel').value = '';
+            
+            renderActivities();
         });
 
-        function saveAndRender() {
-            localStorage.setItem('journalSegecFull', JSON.stringify(journalData));
-            renderJournal();
-        }
-
-        function deleteActivity(id) {
-            journalData = journalData.filter(a => a.id !== id);
-            saveAndRender();
-        }
-
-        function clearAll() {
-            if (confirm("Voulez-vous vider tout votre journal pour cette semaine ?")) {
-                journalData = [];
-                saveAndRender();
+        // SUPPRESSION D'UNE ACTIVITÉ
+        function deleteActivity(index) {
+            if(confirm("Supprimer cette période d'activité ?")) {
+                activities[currentDay].splice(index, 1);
+                localStorage.setItem('maternelle_journal_data', JSON.stringify(activities));
+                renderActivities();
             }
         }
 
-        function renderJournal() {
-            const grid = document.getElementById('journalGrid');
-            grid.innerHTML = '';
-            const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-
-            days.forEach(d => {
-                const col = document.createElement('div');
-                col.className = "day-column bg-white rounded-[2rem] p-4 shadow-md border-2 border-teal-50 flex flex-col";
-                col.innerHTML = `<h3 class="text-xl font-extrabold text-teal-500 mb-4 text-center border-b-2 border-teal-50 pb-2">${d}</h3>`;
-                
-                const acts = journalData.filter(a => a.day === d);
-                
-                if (acts.length === 0) {
-                    col.innerHTML += `<p class="text-xs text-slate-300 italic text-center my-6 no-print">Aucun moment encodé</p>`;
-                }
-
-                acts.forEach(a => {
-                    const card = document.createElement('div');
-                    card.className = "relative p-4 mb-4 rounded-3xl border-2 border-slate-50 bg-teal-50/20 hover:bg-teal-50/50 transition flex flex-col justify-between";
-                    card.innerHTML = `
-                        <button onclick="deleteActivity(${a.id})" class="no-print absolute top-3 right-3 text-slate-300 hover:text-rose-500 font-bold transition">✕</button>
-                        <div>
-                            <div class="flex flex-wrap gap-1 items-center mb-2">
-                                <span class="text-[10px] font-bold bg-white px-2 py-0.5 rounded-full shadow-xs text-teal-600 border border-teal-50">${a.moment}</span>
-                                <span class="text-[10px] font-bold bg-teal-100 px-2 py-0.5 rounded-full text-teal-800">${a.duration}</span>
-                            </div>
-                            
-                            <h4 class="font-extrabold text-slate-800 leading-tight mb-1 text-sm">${a.title}</h4>
-                            <p class="text-[11px] text-teal-600 font-semibold mb-2">${a.mode}</p>
-                            
-                            <div class="text-[10px] bg-white p-2 rounded-xl border border-slate-100 mb-3 text-slate-600 space-y-0.5">
-                                <div><span class="font-bold text-teal-500">Matière :</span> ${a.subject}</div>
-                                <div><span class="font-bold text-teal-500">Domaine :</span> ${a.domain}</div>
-                                <div><span class="font-bold text-teal-500">Compétence :</span> ${a.competency}</div>
-                                <div><span class="font-bold text-teal-500">Objectif :</span> ${a.objective}</div>
-                            </div>
-
-                            <p class="text-[12px] text-slate-600 font-normal bg-white/50 p-2 rounded-xl whitespace-pre-line border border-dotted border-slate-200">${a.description}</p>
-                        </div>
-                        
-                        ${a.setup || a.evaluation ? `
-                        <div class="mt-3 pt-2 border-t border-dashed border-slate-200 text-[11px] space-y-1">
-                            ${a.setup ? `<div><span class="font-bold text-amber-600">🛠️ Matériel :</span> ${a.setup}</div>` : ''}
-                            ${a.evaluation ? `<div class="text-emerald-600 bg-emerald-50/50 p-1.5 rounded-lg"><span class="font-bold">⭐ Obs/Éval :</span> ${a.evaluation}</div>` : ''}
-                        </div>
-                        ` : ''}
-                    `;
-                    col.appendChild(card);
-                });
-                grid.appendChild(col);
-            });
+        // NETTOYAGE COMPLET
+        function clearLocalStorage() {
+            if(confirm("Voulez-vous réinitialiser complètement votre journal de classe ?")) {
+                localStorage.removeItem('maternelle_journal_data');
+                activities = {};
+                renderActivities();
+            }
         }
 
-        // =========================================================================
-        // INITIALISATION AU CHARGEMENT DE LA PAGE
-        // =========================================================================
-        populateDropdown('subject', Object.keys(segecData));
-        updateDomains();
-        renderJournal();
+        // LANCEMENT
+        window.onload = function() {
+            initForm();
+            renderActivities();
+        };
     </script>
 </body>
 </html>
