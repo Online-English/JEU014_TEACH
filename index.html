@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal & Gestion Maternelle — FWB</title>
+    <title>Mon Journal & Gestion Maternelle — FWB Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -29,7 +29,6 @@
             <div class="flex items-center gap-3 no-print bg-white p-2 rounded-xl border shadow-sm">
                 <label class="text-xs font-bold uppercase text-gray-400">Classe active :</label>
                 <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="rounded-lg border-gray-300 p-2 text-sm bg-indigo-50 font-bold text-indigo-700">
-                    <!-- Rempli dynamiquement -->
                 </select>
             </div>
 
@@ -50,10 +49,8 @@
             <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">📊 Bilans & Suivi</button>
         </div>
 
-
         <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
         <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
-            <!-- Formulaire encodage -->
             <div class="space-y-4 no-print">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                     <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">➕ Nouvel Atelier</h2>
@@ -83,7 +80,13 @@
                             <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm bg-gray-50"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 mb-1">NOTATION RAPIDE DES ÉLÈVES PRESENT(S)</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-semibold text-gray-500 uppercase">Suivi des présents</label>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="noterTousLesEleves('🟢 Acquis')" class="text-[10px] text-indigo-600 font-semibold hover:underline">Tout Acquis</button>
+                                    <button type="button" onclick="noterTousLesEleves('')" class="text-[10px] text-gray-400 hover:underline">Vider</button>
+                                </div>
+                            </div>
                             <div id="grilleSuiviFormulaire" class="border rounded-md p-2 bg-gray-50 space-y-1 max-h-40 overflow-y-auto text-xs"></div>
                         </div>
                         <div>
@@ -99,18 +102,19 @@
                     </form>
                 </div>
             </div>
-            <!-- Flux chronologique -->
             <div class="lg:col-span-2 print-full-width">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="no-print bg-gray-50 p-3 rounded-lg mb-4 border flex gap-2">
-                        <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="Rechercher un atelier..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
+                    <div class="no-print bg-gray-50 p-3 rounded-lg mb-4 border flex flex-wrap gap-2">
+                        <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="Rechercher un atelier..." class="rounded-md border-gray-300 p-2 border text-sm flex-1 min-w-[200px]">
+                        <select id="filtreEleveJournal" onchange="afficherJournal()" class="rounded-md border-gray-300 p-2 border text-sm bg-white">
+                            <option value="Tous">Tous les élèves</option>
+                        </select>
                     </div>
                     <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">📋 Chronologie des Ateliers</h2>
                     <div id="journalEntries" class="space-y-4"></div>
                 </div>
             </div>
         </div>
-
 
         <!-- ================= ONGLET 2 : PRÉSENCES DU JOUR ================= -->
         <div id="ongletPresences" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200 print-full-width">
@@ -124,16 +128,11 @@
                     <input type="date" id="datePresencesInput" onchange="chargerRegistrePresences()" class="rounded-md border-gray-300 p-1.5 border text-sm">
                 </div>
             </div>
-            
-            <div id="listePresencesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <!-- Généré en JS -->
-            </div>
+            <div id="listePresencesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
-
 
         <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
         <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
-            <!-- Formulaire d'ajout d'élève -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 h-fit no-print">
                 <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">👤 Inscrire un Élève</h2>
                 <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-sm">
@@ -169,8 +168,6 @@
                         <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-300 px-3 rounded-lg text-gray-700">Annuler</button>
                     </div>
                 </form>
-
-                <!-- PETIT RECOIN POUR CODER UNE NOUVELLE CLASSE -->
                 <div class="mt-6 pt-4 border-t border-gray-200">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Créer une nouvelle classe</h3>
                     <div class="flex gap-1">
@@ -179,19 +176,14 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Grille des fiches d'élèves de la classe -->
             <div class="lg:col-span-2 print-full-width space-y-4">
                 <h2 class="text-xl font-bold text-gray-800 pb-2 border-b flex justify-between items-center">
                     <span>🗂️ Dossiers Élèves Actifs</span>
                     <span id="compteurEleves" class="text-sm font-normal text-gray-500"></span>
                 </h2>
-                <div id="grilleFichesEleves" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Généré en JS -->
-                </div>
+                <div id="grilleFichesEleves" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
         </div>
-
 
         <!-- ================= ONGLET 4 : BILANS & STATS ================= -->
         <div id="ongletBilan" class="hidden space-y-6 print-full-width">
@@ -205,6 +197,8 @@
                         <h2 class="text-lg font-bold text-gray-800">🎯 Livret de Compétences Personnel</h2>
                         <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-md border-gray-300 p-1.5 border text-sm bg-indigo-50 font-bold text-indigo-700 no-print"></select>
                     </div>
+                    <!-- Zone dynamique d'assiduité -->
+                    <div id="statsPresencesEleve" class="mb-4 p-3 bg-blue-50 text-blue-900 border border-blue-200 rounded-lg text-xs hidden flex justify-between items-center"></div>
                     <div id="contenuProfilEleve" class="space-y-2"></div>
                 </div>
             </div>
@@ -212,9 +206,7 @@
 
     </div>
 
-    <!-- LOGIQUE LOGICIELLE IMMERSIVE JAVASCRIPT -->
     <script>
-        // RÉFÉRENTIEL FWB COMPLET MAPPED
         const objectifsParDomaine = {
             transversal: ["Construire son identité, la confiance en soi et l'autonomie", "Coopérer, respecter les règles collectives et vivre ensemble", "S'exprimer, communiquer ses émotions et écouter l'autre", "Développer sa curiosité, sa créativité et l'esprit d'initiative"],
             art: ["Arts plastiques & visuels : Explorer outils et matières", "Arts plastiques & visuels : Production personnelle", "Éducation musicale : Explorer et produire des sons", "Arts du spectacle : S'exprimer par le corps"],
@@ -229,7 +221,6 @@
             math: "3. Mathématiques", sciences: "4. Sciences & Philo", sante: "5. Psychomotricité"
         };
 
-        // BASE DE DONNÉES UNIQUE CENTRALISÉE LOCALSTORAGE
         let classesData = JSON.parse(localStorage.getItem('m_classes')) || ["M1 (Petits)", "M2 (Moyens)"];
         let elevesData = JSON.parse(localStorage.getItem('m_eleves')) || [
             { id: "1", prenom: "Lucas", nom: "Dubois", classe: "M1 (Petits)", naissance: "2022-04-12", contact: "Maman: 0475/11.22.33", sante: "Allergie aux arachides (PAI en classe)", notes: "Très autonome en rituels." },
@@ -237,16 +228,14 @@
             { id: "3", prenom: "Nathan", nom: "Jansen", classe: "M2 (Moyens)", naissance: "2021-02-10", contact: "Parents: 0488/77.88.99", sante: "Asthme (Inhalateur dans le sac)", notes: "Excellentes bases en logique." }
         ];
         let journalData = JSON.parse(localStorage.getItem('m_journal')) || [];
-        let presencesData = JSON.parse(localStorage.getItem('m_presences')) || {}; // Structuré par: {"YYYY-MM-DD": {"id_eleve": "P"|"A"|"R"}}
+        let presencesData = JSON.parse(localStorage.getItem('m_presences')) || {};
 
         let currentClasse = classesData[0];
         let tempPhotoBase64 = "";
 
-        // DÉMARRAGE INITIAL
         document.getElementById('dateInput').valueAsDate = new Date();
         document.getElementById('datePresencesInput').valueAsDate = new Date();
         
-        // Injecter les domaines FWB dans le formulaire
         const domSelect = document.getElementById('domaineInput');
         domSelect.innerHTML = Object.entries(labelsDomaines).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
 
@@ -267,6 +256,7 @@
             afficherGestionEleves();
             mettreAJourObjectifs();
             chargerRegistrePresences();
+            configurerFiltresEleves();
             afficherJournal();
             genererStatistiquesGlobales();
             configurerSelectProfilsEleves();
@@ -285,7 +275,6 @@
             }
         }
 
-        // ONGLETS SWITCH
         function changerOnglet(onglet) {
             const boutons = { journal: 'tabJournalBtn', presences: 'tabPresencesBtn', eleves: 'tabElevesBtn', bilan: 'tabBilanBtn' };
             const blocs = { journal: 'ongletJournal', presences: 'ongletPresences', eleves: 'ongletEleves', bilan: 'ongletBilan' };
@@ -302,24 +291,31 @@
             if (onglet === 'presences') { chargerRegistrePresences(); }
         }
 
-        // --- GESTION ET COMPILATION DES ÉLÈVES (ONGLET 3) ---
+        function configurerFiltresEleves() {
+            const select = document.getElementById('filtreEleveJournal');
+            const filtrés = elevesData.filter(e => e.classe === currentClasse);
+            select.innerHTML = '<option value="Tous">Tous les élèves</option>' + filtrés.map(e => `<option value="${e.id}">${e.prenom}</option>`).join('');
+        }
+
+        function noterTousLesEleves(valeur) {
+            document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur);
+        }
+
         function afficherGestionEleves() {
             const grille = document.getElementById('grilleFichesEleves');
             const grilleForm = document.getElementById('grilleSuiviFormulaire');
             const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
 
             document.getElementById('compteurEleves').textContent = `(${listeFiltrée.length} inscrit(s) en ${currentClasse})`;
-            grille.innerHTML = "";
-            grilleForm.innerHTML = "";
+            grille.innerHTML = ""; grilleForm.innerHTML = "";
 
             if(listeFiltrée.length === 0) {
-                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border rounded-xl italic">Aucun élève inscrit dans cette classe pour le moment. utilisez le formulaire de gauche.</div>`;
+                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border rounded-xl italic">Aucun élève inscrit dans cette classe pour le moment.</div>`;
                 grilleForm.innerHTML = `<p class="text-gray-400 italic text-center p-2">Inscrivez d'abord des élèves.</p>`;
                 return;
             }
 
             listeFiltrée.forEach(e => {
-                // Formulaire de notation rapide
                 grilleForm.innerHTML += `
                     <div class="flex items-center justify-between bg-white p-1 rounded border border-gray-200">
                         <span class="font-medium text-gray-700">${e.prenom}</span>
@@ -328,7 +324,6 @@
                         </select>
                     </div>`;
 
-                // Carte signalétique pédagogique/médicale
                 const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge non défini";
                 grille.innerHTML += `
                     <div class="bg-white p-5 rounded-xl shadow-sm border ${e.sante ? 'border-l-4 border-l-red-500' : 'border-gray-200'} space-y-2 relative page-break-inside-avoid">
@@ -367,7 +362,6 @@
             else elevesData.push(nouvelEleve);
 
             localStorage.setItem('m_eleves', JSON.stringify(elevesData));
-            document.getElementById('eleveForm').reset();
             annulerEditionEleve();
             changerClasseGlobale();
         }
@@ -401,7 +395,6 @@
             }
         }
 
-        // --- REGISTRE DES PRÉSENCES (ONGLET 2) ---
         function chargerRegistrePresences() {
             const container = document.getElementById('listePresencesContainer');
             const dateCible = document.getElementById('datePresencesInput').value;
@@ -411,15 +404,14 @@
             if(!dateCible) return;
 
             if(listeFiltrée.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-gray-400 italic py-6">Aucun élève inscrit dans cette classe pour enregistrer des présences.</p>`;
+                container.innerHTML = `<p class="col-span-full text-center text-gray-400 italic py-6">Aucun élève inscrit dans cette classe.</p>`;
                 return;
             }
 
-            // Charger l'état ou initialiser vide
             if(!presencesData[dateCible]) presencesData[dateCible] = {};
 
             listeFiltrée.forEach(e => {
-                const etatActuel = presencesData[dateCible][e.id] || "P"; // Par défaut "Présent" pour aller vite
+                const etatActuel = presencesData[dateCible][e.id] || "P";
                 
                 const card = document.createElement('div');
                 card.className = "p-3 bg-gray-50 border rounded-xl flex items-center justify-between shadow-sm";
@@ -446,7 +438,6 @@
             chargerRegistrePresences();
         }
 
-        // --- ENCODAGE & RENDU DU JOURNAL DE CLASSE (ONGLET 1) ---
         function mettreAJourObjectifs() {
             const dom = document.getElementById('domaineInput').value;
             const select = document.getElementById('objectifInput');
@@ -490,12 +481,17 @@
         function afficherJournal() {
             const container = document.getElementById('journalEntries');
             const search = document.getElementById('rechercheTexte').value.toLowerCase();
+            const fEleve = document.getElementById('filtreEleveJournal').value;
             container.innerHTML = "";
 
-            const fichesFiltrées = journalData.filter(f => f.classe === currentClasse && (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search)));
+            const fichesFiltrées = journalData.filter(f => 
+                f.classe === currentClasse && 
+                (fEleve === "Tous" || (f.suivi && f.suivi[fEleve])) &&
+                (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search))
+            );
 
             if(fichesFiltrées.length === 0) {
-                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche d'activité dans cette classe.</p>`;
+                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche d'activité correspondante.</p>`;
                 return;
             }
 
@@ -540,7 +536,6 @@
             });
         }
 
-        // --- STATS & PROFILS D'ÉLÈVES INDIVIDUELS (ONGLET 4) ---
         function genererStatistiquesGlobales() {
             const container = document.getElementById('statistiquesDomaines');
             container.innerHTML = "";
@@ -568,12 +563,35 @@
         function chargerProfilEleve() {
             const id = document.getElementById('selectProfilEleve').value;
             const container = document.getElementById('contenuProfilEleve');
-            container.innerHTML = "";
+            const statsPresences = document.getElementById('statsPresencesEleve');
+            
+            container.innerHTML = ""; statsPresences.innerHTML = "";
+            statsPresences.classList.add('hidden');
             if(!id) return;
 
-            const kid = elevesData.find(x => x.id === id);
-            const fichesNotees = journalData.filter(f => f.suivi && f.suivi[id]);
+            // ANALYSE INTÉGRALE DE L'ASSIDUITÉ
+            let totalJours = 0, presents = 0, absents = 0, retards = 0;
+            for (const date in presencesData) {
+                if (presencesData[date][id]) {
+                    totalJours++;
+                    if (presencesData[date][id] === 'P') presents++;
+                    if (presencesData[date][id] === 'A') absents++;
+                    if (presencesData[date][id] === 'R') retards++;
+                }
+            }
+            if (totalJours > 0) {
+                const taux = Math.round((presents / totalJours) * 100);
+                statsPresences.innerHTML = `
+                    <div>📊 <strong>Bilan de présence :</strong> Taux de présence de <strong>${taux}%</strong></div>
+                    <div class="flex gap-2">
+                        <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded font-medium">🟢 Présent(e) : ${presents} j.</span>
+                        <span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-medium">🔴 Absent(e) : ${absents} j.</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded font-medium">🟡 Retard : ${retards} j.</span>
+                    </div>`;
+                statsPresences.classList.remove('hidden');
+            }
 
+            const fichesNotees = journalData.filter(f => f.suivi && f.suivi[id]);
             if(fichesNotees.length === 0) {
                 container.innerHTML = `<p class="text-center text-gray-400 italic py-4">Aucune évaluation enregistrée pour cet enfant.</p>`;
                 return;
@@ -597,7 +615,25 @@
             });
         }
 
-        // FONCTIONNALITÉS COMPLÉMENTAIRES (DICTÉE, EXPORT, FILE)
+        window.clonerActivite = function(id) {
+            const c = journalData.find(e => e.id === id);
+            if(c) {
+                document.getElementById('titreInput').value = c.titre; 
+                document.getElementById('domaineInput').value = c.domaineCle; 
+                mettreAJourObjectifs();
+                document.getElementById('objectifInput').value = c.objectif; 
+                document.getElementById('momentInput').value = c.moment;
+                document.getElementById('descInput').value = c.description; 
+                document.getElementById('obsInput').value = c.observations; 
+                tempPhotoBase64 = c.photo;
+                document.querySelectorAll('.eleve-statut-select').forEach(s => { 
+                    const n = s.getAttribute('data-eleveid'); 
+                    s.value = (c.suivi && c.suivi[n]) ? c.suivi[n] : ""; 
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
         function activerDictee(id) {
             const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
             if(!Speech) return alert("Dictée non compatible.");
@@ -637,7 +673,8 @@
             }
         }
 
-        // LANCEMENT
+        document.getElementById('clearBtn').addEventListener('click', () => { if(confirm("Tout effacer ?")) { journalData = []; localStorage.removeItem('m_journal'); afficherJournal(); } });
+
         initApp();
     </script>
 </body>
