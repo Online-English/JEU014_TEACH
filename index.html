@@ -1,490 +1,288 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle Intégral</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Mon Journal de Classe Numérique (Style Teetsh)</title>
     <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; }
-            .print-full-width { width: 100% !important; max-width: 100% !important; }
-            .page-break-inside-avoid { page-break-inside: avoid; }
+        :root {
+            --primary: #4a90e2;
+            --primary-hover: #357abd;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #dddddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 24px; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="date"], select, button {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        button.btn-danger { background-color: #e74c3c; }
+        button.btn-danger:hover { background-color: #c0392b; }
+
+        /* Grille de la journée */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .period-card {
+            background: var(--card-bg);
+            border-left: 5px solid var(--primary);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 150px 1fr 2fr 40px;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .period-time {
+            font-weight: bold;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .period-time input {
+            padding: 5px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            width: 90px;
+        }
+
+        .period-program select {
+            width: 100%;
+            background: #fafafa;
+        }
+
+        .period-content textarea {
+            width: 100%;
+            height: 60px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .delete-btn {
+            background: none;
+            color: #ccc;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+        .delete-btn:hover { color: #e74c3c; background: none; }
+
+        @media (max-width: 768px) {
+            .period-card {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-900">
+<body>
 
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
-        <header class="mb-8 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
-            <div>
-                <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
-                <p class="text-gray-600">Version Intégrale — Maternelle FWB</p>
-            </div>
-            <div class="flex gap-2 no-print">
-                <button onclick="exporterJournal()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">
-                    💾 Sauvegarder (Export)
-                </button>
-                <label class="bg-amber-600 text-white px-3 py-2 rounded-lg hover:bg-amber-700 font-medium text-sm shadow transition cursor-pointer">
-                    📂 Charger (Import)
-                    <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerJournal(this)">
-                </label>
-                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm shadow transition flex items-center gap-2">
-                    🖨️ PDF
-                </button>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
-            
-            <div class="bg-white p-6 rounded-xl shadow-md h-fit no-print border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">➕ Nouvelle Activité</h2>
-                
-                <form id="journalForm" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Date</label>
-                            <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Moment</label>
-                            <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm">
-                                <option>Accueil / Rituels</option>
-                                <option>Matinée (Activité)</option>
-                                <option>Récréation</option>
-                                <option>Après-midi</option>
-                                <option>Fin de journée</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Nom de l'activité</label>
-                        <input type="text" id="titreInput" placeholder="Ex: Graphisme dans le sable..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Domaine de développement</label>
-                        <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm">
-                            <option>Visées transversales (Autonomie, Socialisation)</option>
-                            <option>1. Éducation culturelle et artistique</option>
-                            <option>2. Éveils aux langues / Français</option>
-                            <option>3. Mathématiques (Logique, Nombres)</option>
-                            <option>4. Sciences, Sciences humaines, Philo</option>
-                            <option>5. Éducation physique, psychomotricité</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Groupes concernés</label>
-                        <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-md border text-sm">
-                            <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Classe entière" checked> Classe entière</label>
-                            <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Petits (M1)"> Petits (M1)</label>
-                            <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Moyens (M2)"> Moyens (M2)</label>
-                            <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Grands (M3)"> Grands (M3)</label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Déroulement</label>
-                        <textarea id="descInput" rows="3" placeholder="Description de l'atelier..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Observations</label>
-                        <textarea id="obsInput" rows="2" placeholder="Difficultés, réussites..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Photo (Optionnelle)</label>
-                        <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 font-medium transition shadow">
-                        Enregistrer dans le journal
-                    </button>
-                </form>
-            </div>
-
-            <div class="lg:col-span-2 print-full-width">
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    
-                    <div class="no-print bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200 space-y-3">
-                        <span class="text-xs font-bold uppercase text-gray-400 block">🔍 Recherche & Filtres</span>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <input type="text" id="rechercheTexte" placeholder="Mot-clé (ex: peinture)..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                            <select id="filtreDomaine" class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                                <option value="Tous">Tous les domaines</option>
-                                <option value="Visées transversales">Visées transversales</option>
-                                <option value="1. Éducation">1. Éducation artistique</option>
-                                <option value="2. Éveils">2. Français / Langues</option>
-                                <option value="3. Mathématiques">3. Mathématiques</option>
-                                <option value="4. Sciences">4. Sciences / Philo</option>
-                                <option value="5. Éducation physique">5. Psychomotricité</option>
-                            </select>
-                            <select id="filtreGroupe" class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                                <option value="Tous">Tous les groupes</option>
-                                <option value="Classe entière">Classe entière</option>
-                                <option value="Petits">Petits (M1)</option>
-                                <option value="Moyens">Moyens (M2)</option>
-                                <option value="Grands">Grands (M3)</option>
-                            </select>
-                        </div>
-                        <div class="text-right">
-                            <button id="clearBtn" class="text-xs text-red-500 hover:underline">Supprimer tout l'historique</button>
-                        </div>
-                    </div>
-
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">📋 Déroulement de la classe</h2>
-                    
-                    <div id="journalEntries" class="space-y-6">
-                        </div>
-                </div>
-            </div>
+    <header>
+        <div>
+            <h1>📓 Mon Journal de Classe Maternelle</h1>
+            <small>Programmes de référence : SeGEC</small>
         </div>
-    </div>
+        <div class="controls">
+            <label for="journal-date">Date :</label>
+            <input type="date" id="journal-date">
+            <button id="add-period-btn">+ Ajouter une période</button>
+        </div>
+    </header>
+
+    <main id="journal-timeline" class="timeline">
+        <!-- Les périodes s'afficheront ici via JavaScript -->
+    </main>
 
     <script>
-        const form = document.getElementById('journalForm');
-        const entriesContainer = document.getElementById('journalEntries');
-        const clearBtn = document.getElementById('clearBtn');
-        const filtreDomaine = document.getElementById('filtreDomaine');
-        const filtreGroupe = document.getElementById('filtreGroupe');
-        const rechercheTexte = document.getElementById('rechercheTexte');
-        let tempPhotoBase64 = "";
+        // --- DONNÉES DU PROGRAMME SEGEC ---
+        const segecProgram = {
+            "Vol 1 : Autonomie & Psychomotricité": [
+                "Autonomie et Socialisation",
+                "Psychomotricité : Schéma corporel & Latéralité",
+                "Psychomotricité : Motricité globale",
+                "Psychomotricité : Motricité fine",
+                "Psychomotricité : Bien-être & Santé",
+                "Philo et Citoyenneté (EPC)",
+                "Religion Catholique"
+            ],
+            "Vol 2 : Langues, Culture & Arts": [
+                "Français : Parler / Communiquer",
+                "Français : Écouter / Comprendre",
+                "Français : Entrer dans l'écrit (Lecture)",
+                "Français : Graphisme / Écriture",
+                "Éveil aux Langues",
+                "Arts : Plastiques, visuels et de l'espace",
+                "Arts : Éducation musicale",
+                "Arts : Spectacle (Mime, danse...)"
+            ],
+            "Vol 3 : STEM & Sciences Humaines": [
+                "Math : Nombres et Opérations",
+                "Math : Solides et Figures",
+                "Math : Grandeurs",
+                "Éveil : Le vivant (Sciences)",
+                "Éveil : La matière et l'énergie",
+                "Histoire/Géo : Le Temps",
+                "Histoire/Géo : L'Espace",
+                "FMTTN (Technologie & Numérique)"
+            ],
+            "Autre": [
+                "Accueil / Rituels",
+                "Récréation",
+                "Sieste / Repos",
+                "Collation"
+            ]
+        };
 
-        document.getElementById('dateInput').valueAsDate = new Date();
-        let journalData = JSON.parse(localStorage.getItem('monJournalMaternellePro')) || [];
+        // --- GESTION DE L'APPLICATION ---
+        const dateInput = document.getElementById('journal-date');
+        const timeline = document.getElementById('journal-timeline');
+        const addPeriodBtn = document.getElementById('add-period-btn');
 
-        // Encodage photo
-        document.getElementById('photoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) { tempPhotoBase64 = event.target.result; };
-                reader.readAsDataURL(file);
-            } else { tempPhotoBase64 = ""; }
-        });
+        // Définir la date du jour par défaut (YYYY-MM-DD)
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
 
-        function afficherJournal() {
-            entriesContainer.innerHTML = '';
-            const fDomaine = filtreDomaine.value;
-            const fGroupe = filtreGroupe.value;
-            const tRecherche = rechercheTexte.value.toLowerCase();
+        // Base de données locale (simulée dans le localStorage)
+        let journalData = JSON.parse(localStorage.getItem('segec_journal_db')) || {};
 
-            let donneesFiltrees = journalData.filter(entree => {
-                const matchDomaine = (fDomaine === "Tous" || entree.domaine.includes(fDomaine));
-                const matchGroupe = (fGroupe === "Tous" || entree.groupes.some(g => g.includes(fGroupe)));
-                const matchTexte = !tRecherche || entree.titre.toLowerCase().includes(tRecherche) || entree.description.toLowerCase().includes(tRecherche);
-                return matchDomaine && matchGroupe && matchTexte;
-            });
+        // Charger la journée sélectionnée
+        function loadJournalDay() {
+            const selectedDate = dateInput.value;
+            timeline.innerHTML = '';
 
-            if (donneesFiltrees.length === 0) {
-                entriesContainer.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune activité trouvée.</p>`;
-                return;
+            // Si aucune donnée pour ce jour, on peut charger une structure par défaut
+            if (!journalData[selectedDate] || journalData[selectedDate].length === 0) {
+                journalData[selectedDate] = [
+                    { start: "08:30", end: "09:00", domaine: "Accueil / Rituels", description: "Accueil des enfants, calendrier et météo." },
+                    { start: "09:00", end: "10:00", domaine: "Français : Parler / Communiquer", description: "" }
+                ];
             }
 
-            [...donneesFiltrees].reverse().forEach((entree) => {
-                const div = document.createElement('div');
-                div.className = "p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-3 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
-                
-                const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                const badgesGroupes = entree.groupes.map(g => `<span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded font-medium">${g}</span>`).join(' ');
-
-                div.innerHTML = `
-                    <div class="flex justify-between items-start flex-wrap gap-2 border-b pb-2 border-gray-200 pr-16">
-                        <div>
-                            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider mr-2">${entree.moment}</span>
-                            <h3 class="text-xl font-bold text-gray-800 inline-block mt-1 md:mt-0">${entree.titre}</h3>
-                        </div>
-                        <span class="text-sm text-gray-500 font-medium capitalize">${dateFormatee}</span>
-                    </div>
-                    
-                    <button onclick="clonerActivite(${entree.id})" class="no-print absolute top-4 right-4 bg-gray-200 hover:bg-indigo-100 text-gray-600 hover:text-indigo-700 text-xs px-2 py-1 rounded transition">
-                        👯 Copier
-                    </button>
-
-                    <div class="flex flex-wrap gap-2 items-center text-xs">
-                        <span class="text-emerald-800 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200">🎯 ${entree.domaine}</span>
-                        ${badgesGroupes}
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-                        <div class="${entree.photo ? 'md:col-span-2' : 'md:col-span-3'} space-y-2">
-                            <p class="text-sm text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entree.description || 'Non renseigné.'}</p>
-                            ${entree.observations ? `<div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded text-sm text-amber-900"><strong>Observations :</strong><br>${entree.observations}</div>` : ''}
-                        </div>
-                        ${entree.photo ? `<div class="flex justify-center items-center"><img src="${entree.photo}" class="max-h-40 rounded-lg shadow-sm border border-gray-200 object-cover w-full"></div>` : ''}
-                    </div>
-                `;
-                entriesContainer.appendChild(div);
+            journalData[selectedDate].forEach((period, index) => {
+                createPeriodDOM(period, index);
             });
         }
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const groupesCoches = [];
-            document.querySelectorAll('.groupe-chk:checked').forEach(chk => { groupesCoches.push(chk.value); });
+        // Créer l'affichage HTML d'une période
+        function createPeriodDOM(period, index) {
+            const card = document.createElement('div');
+            card.className = 'period-card';
 
-            if (groupesCoches.length === 0) { alert("Sélectionnez au moins un groupe."); return; }
-
-            const nouvelleActivite = {
-                id: Date.now(),
-                date: document.getElementById('dateInput').value,
-                moment: document.getElementById('momentInput').value,
-                titre: document.getElementById('titreInput').value,
-                domaine: document.getElementById('domaineInput').value,
-                groupes: groupesCoches,
-                description: document.getElementById('descInput').value,
-                observations: document.getElementById('obsInput').value,
-                photo: tempPhotoBase64
-            };
-
-            try {
-                journalData.push(nouvelleActivite);
-                localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                form.reset();
-                document.getElementById('dateInput').valueAsDate = new Date();
-                tempPhotoBase64 = "";
-                afficherJournal();
-            } catch (error) {
-                alert("⚠️ Mémoire pleine ! Réduisez la taille de vos photos.");
-                journalData.pop();
-            }
-        });
-
-        // Fonctionnalité Cloner
-        window.clonerActivite = function(id) {
-            const cible = journalData.find(e => e.id === id);
-            if (cible) {
-                document.getElementById('titreInput').value = cible.titre;
-                document.getElementById('domaineInput').value = cible.domaine;
-                document.getElementById('momentInput').value = cible.moment;
-                document.getElementById('descInput').value = cible.description;
-                document.getElementById('obsInput').value = cible.observations;
-                tempPhotoBase64 = cible.photo;
-                
-                document.querySelectorAll('.groupe-chk').forEach(chk => {
-                    chk.checked = cible.groupes.includes(chk.value);
+            // HTML des sélections du programme SeGEC
+            let selectHTML = `<select onchange="updatePeriod(${index}, 'domaine', this.value)">`;
+            for (const [group, items] of Object.entries(segecProgram)) {
+                selectHTML += `<optgroup label="${group}">`;
+                items.forEach(item => {
+                    const selected = period.domaine === item ? 'selected' : '';
+                    selectHTML += `<option value="${item}" ${selected}>${item}</option>`;
                 });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                selectHTML += `</optgroup>`;
             }
-        };
+            selectHTML += `</select>`;
 
-        // Sauvegarde externe (Export JSON)
-        window.exporterJournal = function() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(journalData));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `journal_maternelle_sauvegarde.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        };
-
-        // Restauration externe (Import JSON)
-        window.importerJournal = function(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const importedData = JSON.parse(e.target.result);
-                        if (Array.isArray(importedData)) {
-                            if(confirm("Cela va remplacer votre journal actuel. Continuer ?")) {
-                                journalData = importedData;
-                                localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                                afficherJournal();
-                            }
-                        } else { alert("Fichier invalide."); }
-                    } catch (err) { alert("Erreur lors de la lecture du fichier."); }
-                };
-                reader.readAsText(file);
-            }
-        };
-
-        filtreDomaine.addEventListener('change', afficherJournal);
-        filtreGroupe.addEventListener('change', afficherJournal);
-        rechercheTexte.addEventListener('input', afficherJournal);
-        clearBtn.addEventListener('click', function() {
-            if (confirm("Voulez-vous vraiment TOUT effacer ?")) {
-                journalData = []; localStorage.removeItem('monJournalMaternellePro'); afficherJournal();
-            }
-        });
-
-        afficherJournal();
-    </script>
-</body>
-</html> html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans antialiased">
-
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
-        <header class="mb-8 text-center md:text-left">
-            <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
-            <p class="text-gray-600">Enseignement Maternel — Fédération Wallonie-Bruxelles</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">➕ Ajouter une Activité</h2>
-                
-                <form id="journalForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Date</label>
-                        <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Moment de la journée</label>
-                        <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option>Accueil / Rituels</option>
-                            <option>Matinée (Activité)</option>
-                            <option>Récréation</option>
-                            <option>Après-midi (Activité)</option>
-                            <option>Fin de journée</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nom de l'activité</label>
-                        <input type="text" id="titreInput" placeholder="Ex: Peinture aux doigts, Tri de formes..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Domaine de développement (Pacte)</label>
-                        <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-                            <option>Visées transversales (Autonomie, Socialisation)</option>
-                            <option>1. Éducation culturelle et artistique (Arts, Musique)</option>
-                            <option>2. Éveils aux langues / Français</option>
-                            <option>3. Mathématiques (Logique, Nombres, Formes)</option>
-                            <option>4. Sciences, Sciences humaines, Philosophie</option>
-                            <option>5. Éducation physique, psychomotricité et santé</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Description / Déroulement</label>
-                        <textarea id="descInput" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Observations</label>
-                        <textarea id="obsInput" rows="2" placeholder="Ce qui a fonctionné, les difficultés..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 font-medium transition">
-                        Enregistrer dans le journal
-                    </button>
-                </form>
-            </div>
-
-            <div class="lg:col-span-2">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h2 class="text-xl font-semibold text-gray-800">📋 Déroulement des journées</h2>
-                        <button id="clearBtn" class="text-xs text-red-500 hover:underline">Effacer tout le journal</button>
-                    </div>
-                    
-                    <div id="journalEntries" class="space-y-4">
-                        </div>
+            card.innerHTML = `
+                <div class="period-time">
+                    <input type="time" value="${period.start}" onchange="updatePeriod(${index}, 'start', this.value)">
+                    <input type="time" value="${period.end}" onchange="updatePeriod(${index}, 'end', this.value)">
                 </div>
-            </div>
-        </div>
-    </div>
+                <div class="period-program">
+                    <label style="font-size:12px; color:#777; font-weight:bold;">Domaine SeGEC :</label>
+                    ${selectHTML}
+                </div>
+                <div class="period-content">
+                    <textarea placeholder="Objectifs, déroulement de l'activité, matériel..." oninput="updatePeriod(${index}, 'description', this.value)">${period.description}</textarea>
+                </div>
+                <button class="delete-btn" onclick="deletePeriod(${index})" title="Supprimer">🗑️</button>
+            `;
 
-    <script>
-        // Sélection des éléments
-        const form = document.getElementById('journalForm');
-        const entriesContainer = document.getElementById('journalEntries');
-        const clearBtn = document.getElementById('clearBtn');
-
-        // Mettre la date du jour par défaut
-        document.getElementById('dateInput').valueAsDate = new Date();
-
-        // Charger les données existantes ou créer un tableau vide
-        let journalData = JSON.parse(localStorage.getItem('monJournalMaternelle')) || [];
-
-        // Fonction pour afficher les entrées à l'écran
-        function afficherJournal() {
-            entriesContainer.innerHTML = '';
-
-            if (journalData.length === 0) {
-                entriesContainer.innerHTML = `<p class="text-gray-500 italic text-center py-4">Le journal est vide. Ajoutez votre première activité !</p>`;
-                return;
-            }
-
-            // Trier du plus récent au plus ancien
-            const dataTrie = [...journalData].reverse();
-
-            dataTrie.forEach((entree) => {
-                const div = document.createElement('div');
-                div.className = "p-4 border rounded-lg bg-gray-50 shadow-sm space-y-2 border-l-4 border-l-indigo-500";
-                
-                // Formater la date en français
-                const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE');
-
-                div.innerHTML = `
-                    <div class="flex justify-between items-start flex-wrap gap-2">
-                        <div>
-                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${entree.moment}</span>
-                            <h3 class="text-lg font-bold text-gray-800 mt-1">${entree.titre}</h3>
-                        </div>
-                        <span class="text-sm text-gray-500 font-medium">${dateFormatee}</span>
-                    </div>
-                    <p class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded inline-block">🎯 ${entree.domaine}</p>
-                    <p class="text-sm text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong> ${entree.description || '/'}</p>
-                    ${entree.observations ? `<div class="mt-2 text-sm bg-amber-50 p-2 rounded text-amber-900 border-l-2 border-amber-400"><strong>Obs :</strong> ${entree.observations}</div>` : ''}
-                `;
-                entriesContainer.appendChild(div);
-            });
+            timeline.appendChild(card);
         }
 
-        // Écouter la soumission du formulaire
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Empêche la page de se recharger
+        // Mettre à jour une donnée et sauvegarder
+        window.updatePeriod = function(index, field, value) {
+            const selectedDate = dateInput.value;
+            journalData[selectedDate][index][field] = value;
+            saveData();
+        };
 
-            // Créer le nouvel objet activité
-            const nouvelleActivite = {
-                id: Date.now(),
-                date: document.getElementById('dateInput').value,
-                moment: document.getElementById('momentInput').value,
-                titre: document.getElementById('titreInput').value,
-                domaine: document.getElementById('domaineInput').value,
-                description: document.getElementById('descInput').value,
-                observations: document.getElementById('obsInput').value
-            };
-
-            // Ajouter au tableau, sauvegarder et rafraîchir l'affichage
-            journalData.push(nouvelleActivite);
-            localStorage.setItem('monJournalMaternelle', JSON.stringify(journalData));
-            
-            afficherJournal();
-
-            // Réinitialiser les champs de texte
-            document.getElementById('titreInput').value = '';
-            document.getElementById('descInput').value = '';
-            document.getElementById('obsInput').value = '';
+        // Ajouter une nouvelle période
+        addPeriodBtn.addEventListener('click', () => {
+            const selectedDate = dateInput.value;
+            const newPeriod = { start: "10:00", end: "11:00", domaine: "Autonomie et Socialisation", description: "" };
+            journalData[selectedDate].push(newPeriod);
+            saveData();
+            loadJournalDay();
         });
 
-        // Bouton pour tout effacer
-        clearBtn.addEventListener('click', function() {
-            if (confirm("Voulez-vous vraiment effacer tout votre journal ? Cette action est irréversible.")) {
-                journalData = [];
-                localStorage.removeItem('monJournalMaternelle');
-                afficherJournal();
+        // Supprimer une période
+        window.deletePeriod = function(index) {
+            if(confirm("Supprimer cette période de votre journée ?")) {
+                const selectedDate = dateInput.value;
+                journalData[selectedDate].splice(index, 1);
+                saveData();
+                loadJournalDay();
             }
-        });
+        };
 
-        // Affichage initial au chargement de la page
-        afficherJournal();
+        function saveData() {
+            localStorage.setItem('segec_journal_db', JSON.stringify(journalData));
+        }
+
+        // Événement changement de date
+        dateInput.addEventListener('change', loadJournalDay);
+
+        // Initialisation au démarrage
+        loadJournalDay();
     </script>
 </body>
 </html>
