@@ -3,49 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Espace Maternelle — Édition Professionnelle Intégrale</title>
+    <title>Mon Journal & Gestion Maternelle — FWB Édition Intégrale Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        // Configuration initiale de Tailwind pour le Dark Mode (Avant le rendu de la page)
+        tailwind.config = {
+            darkMode: 'class'
+        }
+        // Détection immédiate de la préférence utilisateur pour éviter le flash blanc
+        if (localStorage.getItem('m_dark_mode') === 'enabled') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <style>
         body { font-family: 'Quicksand', sans-serif; }
         h1, h2, h3 { font-family: 'Nunito', sans-serif; font-weight: 800; }
         @media print {
             .no-print { display: none !important; }
-            body { background: white; }
+            body { background: white !important; color: black !important; }
             .print-full-width { width: 100% !important; max-width: 100% !important; }
             .page-break-inside-avoid { page-break-inside: avoid; }
             #zoneImpressionCartes, #zoneImpressionCahier, #zoneImpressionKit { position: absolute; top: 0; left: 0; width: 100%; z-index: 9999; display: block !important; }
         }
     </style>
 </head>
-<body class="bg-amber-50/40 min-h-screen text-gray-800 antialiased">
+<body class="bg-amber-50/40 dark:bg-slate-900 min-h-screen text-gray-800 dark:text-slate-100 antialiased transition-colors duration-200">
 
-    <!-- ÉCRAN DE VERROUILLAGE PIN (RGPD SÉCURITÉ) -->
     <div id="lockScreen" class="fixed inset-0 bg-indigo-900/95 z-[9999] flex flex-col items-center justify-center hidden text-white p-4 no-print">
-        <div class="bg-white text-gray-800 p-6 rounded-3xl shadow-xl border-4 border-orange-200 text-center max-w-sm w-full">
+        <div class="bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 p-6 rounded-3xl shadow-xl border-4 border-orange-200 dark:border-slate-700 text-center max-w-sm w-full">
             <span class="text-4xl block mb-2">🔒</span>
-            <h2 class="text-xl font-bold mb-1 text-indigo-700">Espace Sécurisé</h2>
-            <p class="text-xs text-gray-400 mb-4 font-semibold">Veuillez entrer votre code PIN pour accéder aux données scolaires confidentielles.</p>
-            <input type="password" id="inputPinVerify" maxlength="4" placeholder="••••" class="w-28 text-center tracking-widest text-2xl rounded-xl border-2 border-gray-100 p-2 font-bold mb-4 outline-none focus:border-indigo-400 bg-gray-50">
+            <h2 class="text-xl font-bold mb-1 text-indigo-700 dark:text-indigo-400">Espace Sécurisé</h2>
+            <p class="text-xs text-gray-400 dark:text-slate-400 mb-4 font-semibold">Veuillez entrer votre code PIN pour accéder aux données scolaires confidentielles.</p>
+            <input type="password" id="inputPinVerify" maxlength="4" placeholder="••••" class="w-28 text-center tracking-widest text-2xl rounded-xl border-2 border-gray-100 dark:border-slate-600 p-2 font-bold mb-4 outline-none focus:border-indigo-400 dark:focus:border-indigo-500 bg-gray-50 dark:bg-slate-700 dark:text-white">
             <button onclick="verifierCodePIN()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition text-sm shadow">Déverrouiller l'Espace</button>
         </div>
     </div>
 
-    <!-- CONTENEUR PRINCIPAL DE L'APPLICATION -->
     <div id="appWrapper" class="max-w-7xl mx-auto p-4 md:p-6">
         
-        <!-- EN-TÊTE GLOBAL -->
-        <header class="mb-6 bg-gradient-to-r from-yellow-100 via-pink-100 to-teal-100 p-6 rounded-3xl shadow-sm border-2 border-dashed border-orange-200 flex justify-between items-center flex-wrap gap-4">
+        <header class="mb-6 bg-gradient-to-r from-yellow-100 via-pink-100 to-teal-100 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800 p-6 rounded-3xl shadow-sm border-2 border-dashed border-orange-200 dark:border-slate-700 flex justify-between items-center flex-wrap gap-4">
             <div class="text-center md:text-left">
-                <h1 class="text-3xl text-orange-600 tracking-wide flex items-center justify-center md:justify-start gap-2">
+                <h1 class="text-3xl text-orange-600 dark:text-orange-400 tracking-wide flex items-center justify-center md:justify-start gap-2">
                     🎒 Mon Espace Maternelle
                 </h1>
-                <p class="text-gray-600 text-sm font-semibold mt-1">Modèle Planificateur Complet — Référentiel FWB ✨</p>
+                <p class="text-gray-600 dark:text-slate-300 text-sm font-semibold mt-1">Mon Journal de classe magique, coloré et organisé ✨</p>
             </div>
             
-            <div class="flex items-center gap-2 no-print bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border-2 border-teal-200 shadow-sm">
+            <div class="flex items-center gap-2 no-print bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border-2 border-teal-200 dark:border-slate-600 shadow-sm">
+                <button onclick="toggleDarkMode()" class="p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition mr-1" type="button">
+                    <span id="darkModeIcon" class="text-lg">🌙</span>
+                </button>
                 <span class="text-xl">🏫</span>
-                <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="bg-transparent font-bold text-teal-700 outline-none cursor-pointer text-sm">
+                <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="bg-transparent font-bold text-teal-700 dark:text-teal-400 outline-none cursor-pointer text-sm">
                 </select>
             </div>
 
@@ -59,15 +69,13 @@
             </div>
         </header>
 
-        <!-- BARRE DE NAVIGATION -->
-        <div class="flex gap-2 no-print overflow-x-auto pb-2 border-b-2 border-orange-100 mb-6">
+        <div class="flex gap-2 no-print overflow-x-auto pb-2 border-b-2 border-orange-100 dark:border-slate-700 mb-6">
             <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-orange-400 text-white shadow-sm whitespace-nowrap transition">📋 Journal & Préparations</button>
             <button id="tabPresencesBtn" onclick="changerOnglet('presences')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-yellow-50">🗓️ Appel & Coins Jeux</button>
             <button id="tabElevesBtn" onclick="changerOnglet('eleves')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-pink-50">🧸 Dossiers Enfants</button>
             <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-teal-50">📊 Bilans & Brevets</button>
         </div>
 
-        <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
         <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="space-y-4 no-print">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-orange-100">
@@ -79,7 +87,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-gray-400 block mb-1">DATE</label>
-                                <input type="date" id="dateInput" onchange="chargerLiaisonATSEM()" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm focus:border-orange-300 outline-none" required>
+                                <input type="date" id="dateInput" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm focus:border-orange-300 outline-none" required>
                             </div>
                             <div>
                                 <label class="text-gray-400 block mb-1">MOMENT</label>
@@ -134,7 +142,6 @@
             </div>
             
             <div class="lg:col-span-2 print-full-width space-y-4">
-                <!-- ACCORDÉON / POST-IT LIAISON ATSEM & BINOME -->
                 <div class="bg-gradient-to-r from-amber-100/70 to-yellow-100/70 border-2 border-dashed border-amber-300 p-4 rounded-3xl flex flex-col md:flex-row gap-3 items-end justify-between page-break-inside-avoid">
                     <div class="w-full text-xs font-bold space-y-1">
                         <div class="flex justify-between items-center"><h3 class="text-amber-800 text-sm">📝 Note de Liaison & Mission ATSEM / Puéricultrice :</h3><button type="button" onclick="activerDictee('noteAtsemTexte')" class="no-print text-indigo-600 text-[11px]">🎙️ Parler</button></div>
@@ -162,14 +169,12 @@
             </div>
         </div>
 
-        <!-- ================= ONGLET 2 : APPEL & COINS JEUX ================= -->
         <div id="ongletPresences" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-yellow-100 h-fit no-print">
                 <div class="flex justify-between items-center border-b pb-2 mb-3">
                     <h2 class="text-md text-yellow-600">🧩 Inscription aux Coins Jeux</h2>
                     <button type="button" onclick="sauverCoinsJeuxDuJour()" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg transition">Enregistrer les Coins</button>
                 </div>
-                <!-- Grille d'inscription aux ateliers libres/coins jeux autonomes -->
                 <div id="grilleCoinsJeuxFormulaire" class="space-y-1.5 max-h-96 overflow-y-auto p-1 text-xs font-bold"></div>
             </div>
 
@@ -202,7 +207,6 @@
             </div>
         </div>
 
-        <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
         <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="space-y-4 no-print">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-pink-100 h-fit">
@@ -253,7 +257,7 @@
                     <h2 class="text-md text-indigo-600 mb-2 flex items-center gap-1">🎙️ Note Flash (À la volée)</h2>
                     <div class="space-y-2 text-xs font-bold">
                         <div><label class="text-gray-400 block mb-0.5">CHOISIR L'ENFANT</label><select id="flashSelectEleve" class="w-full rounded-xl border-2 border-gray-100 p-1.5 bg-white text-gray-700 outline-none"></select></div>
-                        <div><div class="flex justify-between items-center"><label class="text-gray-400">NOTE ANECDOTIQUE</label><button type="button" onclick="activerDictee('flashTexte')" class="text-xs text-indigo-500">🎙️ Parler</button></div><textarea id="flashTexte" rows="2" placeholder="Ex: Autonomie totale pour enfiler son manteau..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none mt-1"></textarea></div>
+                        <div><div class="flex justify-between items-center"><label class="text-gray-400">NOTE DE SUIVI COGNITIF</label><button type="button" onclick="activerDictee('flashTexte')" class="text-xs text-indigo-500">🎙️ Parler</button></div><textarea id="flashTexte" rows="2" placeholder="Ex: Raconte une histoire structurée..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none mt-1"></textarea></div>
                         <button type="button" onclick="sauverNoteFlash()" class="w-full bg-indigo-500 text-white p-2 rounded-xl font-bold shadow-sm hover:bg-indigo-600 transition">Fixer la note ✨</button>
                     </div>
                 </div>
@@ -261,6 +265,13 @@
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-yellow-100 h-fit">
                     <h2 class="text-md text-amber-500 mb-2 flex items-center gap-1">🎂 L'Arbre des Anniversaires</h2>
                     <div id="arbreAnniversairesContainer" class="space-y-2 text-xs"></div>
+                </div>
+
+                <div class="pt-2">
+                    <div class="flex gap-1">
+                        <input type="text" id="nomNouvelleClasse" placeholder="Ex: M3 (Classe Verte)" class="text-xs rounded-xl border-2 border-gray-100 p-2 w-full outline-none">
+                        <button onclick="creerClasse()" class="bg-gray-700 text-white text-xs px-3 rounded-xl font-bold hover:bg-black">Créer</button>
+                    </div>
                 </div>
             </div>
 
@@ -277,14 +288,12 @@
             </div>
         </div>
 
-        <!-- ================= ONGLET 4 : BILANS & BREVETS ================= -->
         <div id="ongletBilan" class="hidden space-y-6 print-full-width">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- PANNEAU CONFIG DES DEFIS / BREVETS -->
                 <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-teal-100 h-fit space-y-4 no-print">
                     <h2 class="text-md text-teal-600 border-b-2 border-dashed pb-2 flex items-center gap-1">🏆 Créer un Brevet / Défi</h2>
                     <div class="text-xs font-bold space-y-2">
-                        <input type="text" id="inputNomBrevet" placeholder="Ex: Découper des franges, Puzzle 12p..." class="w-full border-2 p-2 rounded-xl outline-none font-normal">
+                        <input type="text" id="inputNomBrevet" placeholder="Ex: Découper des franges..." class="w-full border-2 p-2 rounded-xl outline-none font-normal">
                         <button onclick="creerNouveauBrevetPedagogique()" class="w-full bg-teal-500 text-white p-2 rounded-xl">Ajouter le Brevet</button>
                     </div>
                     <div id="listeBrevetsExistants" class="space-y-1 max-h-48 overflow-y-auto text-xs"></div>
@@ -309,7 +318,6 @@
 
     </div>
 
-    <!-- ZONE IMPRESSIONS ET MODAL (INCHANGÉS MAIS SÉCURISÉS) -->
     <div id="zoneImpressionCartes" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
         <div class="no-print mb-4 bg-pink-50 border-2 border-dashed p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <button onclick="window.print()" class="bg-emerald-400 text-white font-bold text-xs px-4 py-2 rounded-xl mr-2">🖨️ Imprimer</button><button onclick="fermerPlancheCartesRituel()" class="bg-gray-700 text-white font-bold text-xs px-4 py-2 rounded-xl">⬅️ Revenir</button>
@@ -321,14 +329,14 @@
         <div class="no-print mb-4 bg-teal-50 border-2 border-dashed p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <button onclick="window.print()" class="bg-emerald-400 text-white font-bold text-xs px-4 py-2 rounded-xl mr-2">🖨️ Imprimer le Livret</button><button onclick="fermerPlancheCahier()" class="bg-gray-700 text-white font-bold text-xs px-4 py-2 rounded-xl">⬅️ Revenir</button>
         </div>
-        <div id="contenuImpressionCahier" class="max-w-3xl mx-auto space-y-6 text-sm"></div>
+        <div id="contenuImpressionCahier" class="max-w-3xl mx-auto space-y-6 text-sm text-gray-900"></div>
     </div>
 
     <div id="zoneImpressionKit" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
         <div class="no-print mb-4 bg-indigo-50 border-2 border-dashed p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <button onclick="window.print()" class="bg-emerald-400 text-white font-bold text-xs px-4 py-2 rounded-xl mr-2">🖨️ Imprimer le Kit</button><button onclick="document.getElementById('zoneImpressionKit').classList.add('hidden'); document.getElementById('appWrapper').classList.remove('hidden');" class="bg-gray-700 text-white font-bold text-xs px-4 py-2 rounded-xl">⬅️ Revenir</button>
         </div>
-        <div id="contenuImpressionKit" class="max-w-4xl mx-auto space-y-6 text-xs"></div>
+        <div id="contenuImpressionKit" class="max-w-4xl mx-auto space-y-6 text-xs text-gray-900"></div>
     </div>
 
     <div id="modalGazette" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden no-print">
@@ -339,7 +347,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE LOGIQUE DES 5 AMÉLIORATIONS PRO MATHILDE -->
     <script>
         const objectifsParDomaine = {
             transversal: ["🤝 Coopérer, respecter les règles collectives et vivre ensemble", "🌱 Construire son identité, la confiance en soi et l'autonomie", "💬 S'exprimer, communiquer ses émotions et écouter l'autre"],
@@ -355,21 +362,20 @@
             math: "🧮 3. Mathématiques", sciences: "🧪 4. Sciences & Philo", sante: "🤸‍♀️ 5. Psychomotricité"
         };
 
-        // STYLE PASTEL HARMONISÉ PAR FAMILLE DE COMPÉTENCE (AMÉLIORATION 5)
+        // CODE COULEUR HARMONISÉ LIGHT & DARK COMPATIBLE
         const dStyles = {
-            transversal: "border-l-indigo-400 bg-indigo-50/20 text-indigo-800",
-            art: "border-l-pink-400 bg-pink-50/20 text-pink-800",
-            langues: "border-l-sky-400 bg-sky-50/20 text-sky-800",
-            math: "border-l-purple-400 bg-purple-50/20 text-purple-800",
-            sciences: "border-l-amber-400 bg-amber-50/20 text-amber-800",
-            sante: "border-l-emerald-400 bg-emerald-50/20 text-emerald-800"
+            transversal: "border-l-indigo-400 bg-indigo-50/20 text-indigo-800 dark:border-l-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-200",
+            art: "border-l-pink-400 bg-pink-50/20 text-pink-800 dark:border-l-pink-500 dark:bg-pink-950/40 dark:text-pink-200",
+            langues: "border-l-sky-400 bg-sky-50/20 text-sky-800 dark:border-l-sky-500 dark:bg-sky-950/40 dark:text-sky-200",
+            math: "border-l-purple-400 bg-purple-50/20 text-purple-800 dark:border-l-purple-500 dark:bg-purple-950/40 dark:text-purple-200",
+            sciences: "border-l-amber-400 bg-amber-50/20 text-amber-800 dark:border-l-amber-500 dark:bg-amber-950/40 dark:text-amber-200",
+            sante: "border-l-emerald-400 bg-emerald-50/20 text-emerald-800 dark:border-l-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-200"
         };
 
         let classesData = []; let elevesData = []; let journalData = []; let presencesData = {}; let flashData = [];
         let brevetsData = []; let coinsData = {}; let liaisonData = {}; 
         let currentClasse = ""; let tempPhotosArray = []; let tempElevePhotoBase64 = ""; let db; let globalCodePIN = "";
 
-        // INDEXEDDB SCHEMA V3 SÉCURISÉ POUR COMPILER LES EXTENSIONS MATHILDE
         const request = indexedDB.open("MaternelleEspaceDB", 3);
         request.onupgradeneeded = function(e) {
             let database = e.target.result;
@@ -397,9 +403,27 @@
                 document.getElementById('datePresencesInput').valueAsDate = new Date();
                 document.getElementById('domaineInput').innerHTML = Object.entries(labelsDomaines).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
                 if (globalCodePIN && globalCodePIN.trim().length === 4) document.getElementById('lockScreen').classList.remove('hidden');
+                
+                updateDarkModeUI(document.documentElement.classList.contains('dark'));
                 initApp();
             });
         };
+
+        function getAllFromStore(storeName, callback) {
+            let tx = db.transaction(storeName, "readonly");
+            let store = tx.objectStore(storeName);
+            let req = store.getAll(); req.onsuccess = () => callback(req.result);
+        }
+        function putInStore(storeName, data, callback) {
+            let tx = db.transaction(storeName, "readwrite");
+            let store = tx.objectStore(storeName);
+            let req = store.put(data); req.onsuccess = () => { if(callback) callback(); };
+        }
+        function deleteFromStore(storeName, id, callback) {
+            let tx = db.transaction(storeName, "readwrite");
+            let store = tx.objectStore(storeName);
+            let req = store.delete(id); req.onsuccess = () => { if(callback) callback(); };
+        }
 
         function chargerToutesLesDonneesDB() {
             return new Promise((resolve) => {
@@ -419,6 +443,15 @@
         function initApp() { remplirSelectClasses(); changerClasseGlobale(currentClasse); }
         function remplirSelectClasses() { document.getElementById('globalClasseSelect').innerHTML = classesData.map(c => `<option value="${c}" ${c===currentClasse?'selected':''}>${c}</option>`).join(''); }
 
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('m_dark_mode', isDark ? 'enabled' : 'disabled');
+            updateDarkModeUI(isDark);
+        }
+        function updateDarkModeUI(isDark) {
+            document.getElementById('darkModeIcon').textContent = isDark ? '☀️' : '🌙';
+        }
+
         function changerClasseGlobale(classeForcee = null) {
             if(classeForcee) currentClasse = classeForcee;
             else currentClasse = document.getElementById('globalClasseSelect').value;
@@ -426,135 +459,82 @@
             configurerFiltresEleves(); afficherJournal(); genererStatistiquesGlobales(); configurerSelectProfilsEleves(); populateFlashSelectEleve(); renderArbreAnniversaires(); chargerLiaisonATSEM(); chargerCoinsJeuxDuJour(); listBrevetsDashboard();
         }
 
-        // --- AMÉLIORATION 1 : EMPLOI DU TEMPS TYPE (LA TRAME DU JOUR) ---
         function appliquerEmploiDuTempsType() {
-            const dateInput = document.getElementById('dateInput').value;
-            if(!dateInput) return;
-            let dayIndex = new Date(dateInput).getDay(); // 0=Dimanche, 3=Mercredi, etc.
-
-            if(dayIndex === 0 || dayIndex === 6) { alert("C'est le week-end ! Pas de trame type."); return; }
-
+            const dateInput = document.getElementById('dateInput').value; if(!dateInput) return;
+            let dayIndex = new Date(dateInput).getDay(); if(dayIndex === 0 || dayIndex === 6) { alert("C'est le week-end !"); return; }
             document.getElementById('momentInput').value = "☀️ Accueil / Rituels";
-            if(dayIndex === 3) {
-                document.getElementById('titreInput').value = "Rituels & Éveil musical du Mercredi";
-                document.getElementById('domaineInput').value = "art";
-            } else {
-                document.getElementById('titreInput').value = "Rituels du matin & Psychomotricité FWB";
-                document.getElementById('domaineInput').value = "sante";
-            }
-            mettreAJourObjectifs();
-            alert("🕒 Trame de la journée type FWB pré-chargée dans le formulaire !");
+            if(dayIndex === 3) { document.getElementById('titreInput').value = "Rituels & Éveil musical du Mercredi"; document.getElementById('domaineInput').value = "art"; }
+            else { document.getElementById('titreInput').value = "Rituels du matin & Psychomotricité FWB"; document.getElementById('domaineInput').value = "sante"; }
+            mettreAJourObjectifs(); alert("🕒 Trame de la journée type FWB pré-chargée !");
         }
 
-        // --- AMÉLIORATION 3 : NOTE LIAISON / POST-IT ATSEM ---
         function chargerLiaisonATSEM() {
-            const date = document.getElementById('dateInput').value;
-            const area = document.getElementById('noteAtsemTexte');
+            const date = document.getElementById('dateInput').value; const area = document.getElementById('noteAtsemTexte');
             if(!date) { area.value = ""; return; }
-            let id = `${currentClasse}_${date}`;
-            area.value = liaisonData[id] || "";
+            let id = `${currentClasse}_${date}`; area.value = liaisonData[id] || "";
         }
 
         function sauverLiaisonATSEM() {
-            const date = document.getElementById('dateInput').value;
-            const text = document.getElementById('noteAtsemTexte').value.trim();
-            if(!date) return;
-            let id = `${currentClasse}_${date}`;
-            liaisonData[id] = text;
-            putInStore("liaison", { id: id, texte: text }, () => alert("📌 Post-it de liaison enregistré pour la journée !"));
+            const date = document.getElementById('dateInput').value; const text = document.getElementById('noteAtsemTexte').value.trim();
+            if(!date) return; let id = `${currentClasse}_${date}`; liaisonData[id] = text;
+            putInStore("liaison", { id: id, texte: text }, () => alert("📌 Post-it de liaison enregistré !"));
         }
 
-        // --- AMÉLIORATION 4 : INSCRIPTION AUX COINS JEUX ---
         function chargerCoinsJeuxDuJour() {
-            const date = document.getElementById('datePresencesInput').value;
-            const container = document.getElementById('grilleCoinsJeuxFormulaire');
-            const filtrés = elevesData.filter(e => e.classe === currentClasse);
-            container.innerHTML = "";
-
+            const date = document.getElementById('datePresencesInput').value; const container = document.getElementById('grilleCoinsJeuxFormulaire');
+            const filtrés = elevesData.filter(e => e.classe === currentClasse); container.innerHTML = "";
             if(!date || filtrés.length === 0) { container.innerHTML = "<p class='font-normal italic text-gray-400 text-center py-2'>Aucun enfant inscrit.</p>"; return; }
             if(!coinsData[date]) coinsData[date] = {};
 
             filtrés.forEach(e => {
                 let coinActuel = coinsData[date][e.id] || "";
                 container.innerHTML += `
-                    <div class="flex justify-between items-center bg-white p-1 rounded-xl border">
-                        <span class="text-gray-700">🧩 ${e.prenom}</span>
-                        <select data-coinid="${e.id}" class="coin-jeuxe-select rounded-lg p-0.5 border text-[11px] font-medium outline-none bg-gray-50">
-                            <option value="">- Non inscrit -</option>
-                            <option value="🪆 Coin Poupées" ${coinActuel==='🪆 Coin Poupées'?'selected':''}>🪆 Coin Poupées</option>
-                            <option value="📚 Bibliothèque" ${coinActuel==='📚 Bibliothèque'?'selected':''}>📚 Bibliothèque</option>
-                            <option value="🧱 Constructions" ${coinActuel==='🧱 Constructions'?'selected':''}>🧱 Constructions</option>
-                            <option value="🚗 Coin Garage" ${coinActuel==='🚗 Coin Garage'?'selected':''}>🚗 Coin Garage</option>
-                            <option value="✏️ Table Autonomie" ${coinActuel==='✏️ Table Autonomie'?'selected':''}>✏️ Table Autonomie</option>
+                    <div class="flex justify-between items-center bg-white dark:bg-slate-700 p-1 rounded-xl border dark:border-slate-600 text-gray-800 dark:text-slate-100">
+                        <span>🧩 ${e.prenom}</span>
+                        <select data-coinid="${e.id}" class="coin-jeuxe-select rounded-lg p-0.5 border text-[11px] font-medium outline-none bg-gray-50 dark:bg-slate-600 dark:text-white dark:border-slate-500">
+                            <option value="">- Non inscrit -</option><option value="🪆 Coin Poupées" ${coinActuel==='🪆 Coin Poupées'?'selected':''}>🪆 Coin Poupées</option><option value="📚 Bibliothèque" ${coinActuel==='📚 Bibliothèque'?'selected':''}>📚 Bibliothèque</option><option value="🧱 Constructions" ${coinActuel==='🧱 Constructions'?'selected':''}>🧱 Constructions</option><option value="🚗 Coin Garage" ${coinActuel==='🚗 Coin Garage'?'selected':''}>🚗 Coin Garage</option><option value="✏️ Table Autonomie" ${coinActuel==='✏️ Table Autonomie'?'selected':''}>✏️ Table Autonomie</option>
                         </select>
                     </div>`;
             });
         }
 
         function sauverCoinsJeuxDuJour() {
-            const date = document.getElementById('datePresencesInput').value;
-            if(!date) return;
+            const date = document.getElementById('datePresencesInput').value; if(!date) return;
             if(!coinsData[date]) coinsData[date] = {};
-
-            document.querySelectorAll('.coin-jeuxe-select').forEach(s => {
-                let idEl = s.getAttribute('data-coinid');
-                coinsData[date][idEl] = s.value;
-            });
-
-            putInStore("coins", { date: date, data: coinsData[date] }, () => alert("🧩 Inscriptions aux Coins Jeux mémorisées !"));
+            document.querySelectorAll('.coin-jeuxe-select').forEach(s => { let idEl = s.getAttribute('data-coinid'); coinsData[date][idEl] = s.value; });
+            putInStore("coins", { date: date, data: coinsData[date] }, () => alert("🧩 Inscriptions aux Coins Jeux enregistrées !"));
         }
 
-        // --- AMÉLIORATION 2 : SYSTEME DES BREVETS DE REUSSITE (DEFIS) ---
         function listBrevetsDashboard() {
-            const container = document.getElementById('listeBrevetsExistants');
-            container.innerHTML = "";
+            const container = document.getElementById('listeBrevetsExistants'); container.innerHTML = "";
             let filtrés = brevetsData.filter(b => b.classe === currentClasse);
             if(filtrés.length === 0) { container.innerHTML = "<p class='italic text-gray-400 text-center py-1'>Aucun brevet créé.</p>"; return; }
-
-            filtrés.forEach(b => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border mt-1 font-bold">
-                        <span class="truncate">🏆 ${b.name}</span>
-                        <button onclick="ouvrirGrilleValidationBrevet('${b.id}')" class="text-teal-600 hover:underline shrink-0">Noter</button>
-                    </div>`;
-            });
+            filtrés.forEach(b => { container.innerHTML += `<div class="flex justify-between items-center bg-gray-50 dark:bg-slate-700 p-2 rounded-xl border dark:border-slate-600 mt-1 font-bold text-gray-800 dark:text-slate-100"><span class="truncate">🏆 ${b.name}</span><button onclick="ouvrirGrilleValidationBrevet('${b.id}')" class="text-teal-600 dark:text-teal-400 hover:underline shrink-0">Noter</button></div>`; });
         }
 
         function creerNouveauBrevetPedagogique() {
-            const input = document.getElementById('inputNomBrevet');
-            let name = input.value.trim();
-            if(!name) return;
-
+            const input = document.getElementById('inputNomBrevet'); let name = input.value.trim(); if(!name) return;
             let bObj = { id: Date.now().toString(), name: name, classe: currentClasse, acquisList: [] };
-            brevetsData.push(bObj);
-            putInStore("brevets", bObj, () => { input.value = ""; listBrevetsDashboard(); });
+            brevetsData.push(bObj); putInStore("brevets", bObj, () => { input.value = ""; listBrevetsDashboard(); });
         }
 
         function ouvrirGrilleValidationBrevet(id) {
-            let br = brevetsData.find(x => x.id === id);
-            let kids = elevesData.filter(e => e.classe === currentClasse);
-            if(!br || kids.length === 0) return;
-
-            let txt = `🏆 ACQUISITION DU BREVET : ${br.name.toUpperCase()}\n\nCochez le prénom des enfants qui ont validé ce défi :\n`;
+            let br = brevetsData.find(x => x.id === id); let kids = elevesData.filter(e => e.classe === currentClasse); if(!br || kids.length === 0) return;
+            let txt = `🏆 BREVET : ${br.name.toUpperCase()}\n\nCochez l'enfant pour valider :\n`;
             let promptText = kids.map((k, idx) => `${idx + 1}. [${br.acquisList.includes(k.id) ? '🟢 OK' : '❌ Non'}] ${k.prenom}`).join('\n');
-            
-            let res = prompt(`${txt}${promptText}\n\nEntrez le numéro de l'enfant pour inverser son statut (ou cliquez sur Annuler) :`);
+            let res = prompt(`${txt}${promptText}\n\nEntrez le numéro pour inverser :`);
             if(res) {
                 let idxSelected = parseInt(res) - 1;
                 if(idxSelected >= 0 && idxSelected < kids.length) {
                     let kId = kids[idxSelected].id;
-                    if(br.acquisList.includes(kId)) br.acquisList = br.acquisList.filter(x => x !== kId);
-                    else br.acquisList.push(kId);
-                    
+                    if(br.acquisList.includes(kId)) br.acquisList = br.acquisList.filter(x => x !== kId); else br.acquisList.push(kId);
                     putInStore("brevets", br, () => { ouvrirGrilleValidationBrevet(id); chargerProfilEleve(); });
                 }
             }
         }
 
-        // CONFIG SECURITY PIN
         function configurerCodePIN() {
-            let code = prompt("PIN à 4 chiffres (Vide pour désactiver) :", globalCodePIN || "");
-            if (code === null) return;
+            let code = prompt("PIN à 4 chiffres (Vide pour désactiver) :", globalCodePIN || ""); if (code === null) return;
             if (code.trim() !== "" && !/^\d{4}$/.test(code.trim())) { alert("Le code PIN doit être composé de 4 chiffres."); return; }
             globalCodePIN = code.trim();
             putInStore("config", { id: "security_pin", value: globalCodePIN }, () => alert(globalCodePIN ? "🔒 Protection par Code PIN active !" : "🔓 Désactivée."));
@@ -580,12 +560,12 @@
         function toggleAdresse2Field() { document.getElementById('containerAdresse2').classList.toggle('hidden'); }
         function ajouterChampTelSupp(valeur = "") {
             const div = document.createElement('div'); div.className = "flex gap-1 items-center mt-1";
-            div.innerHTML = `<input type="tel" placeholder="Autre n°" value="${valeur}" class="el-tel-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
+            div.innerHTML = `<input type="tel" placeholder="Autre n°" value="${valeur}" class="el-tel-supp w-full rounded-xl border border-gray-200 dark:border-slate-600 p-1.5 text-xs outline-none bg-white dark:bg-slate-700 dark:text-white"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
             document.getElementById('containerTelsSupp').appendChild(div);
         }
         function ajouterChampEmailSupp(valeur = "") {
             const div = document.createElement('div'); div.className = "flex gap-1 items-center mt-1";
-            div.innerHTML = `<input type="email" placeholder="Autre e-mail" value="${valeur}" class="el-email-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
+            div.innerHTML = `<input type="email" placeholder="Autre e-mail" value="${valeur}" class="el-email-supp w-full rounded-xl border border-gray-200 dark:border-slate-600 p-1.5 text-xs outline-none bg-white dark:bg-slate-700 dark:text-white"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
             document.getElementById('containerEmailsSupp').appendChild(div);
         }
 
@@ -621,7 +601,7 @@
             if(listeFiltrée.length === 0) { grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border-2 border-dashed rounded-3xl italic">Cette classe est encore vide.</div>`; return; }
 
             listeFiltrée.forEach(e => {
-                grilleForm.innerHTML += `<div class="flex items-center justify-between bg-white p-1 rounded-xl border border-gray-100"><span>🧸 ${e.prenom}</span><select data-eleveid="${e.id}" class="eleve-statut-select rounded-lg p-0.5 border text-xs bg-gray-50 outline-none"><option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 À renforcer</option></select></div>`;
+                grilleForm.innerHTML += `<div class="flex items-center justify-between bg-white p-1 rounded-xl border text-xs bg-gray-50 outline-none"><span>🧸 ${e.prenom}</span><select data-eleveid="${e.id}" class="eleve-statut-select rounded-lg p-0.5 border text-xs bg-gray-50 outline-none"><option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 À renforcer</option></select></div>`;
                 const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge inconnu";
                 const avatar = e.photo ? `<img src="${e.photo}" class="w-14 h-14 rounded-full object-cover border-2 border-pink-200 shadow-sm">` : `<div class="w-14 h-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg border-2 border-pink-200">${e.prenom[0]}</div>`;
                 let extraContactsHtml = ""; if(e.telsSupp && e.telsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">📞 <strong>Tél. sup :</strong> ${e.telsSupp.join(' | ')}</p>`;
@@ -782,7 +762,6 @@
             presencesData[date][idEleve] = n; putInStore("presences", { date: date, data: presencesData[date] }, () => genererMatriceMensuellePresences());
         }
 
-        // RENDU AUTOMATIQUE AVEC PASTEL DE SÉCURITÉ ET CODE COULEUR FWB (AMÉLIORATION 5)
         function afficherJournal() {
             const zBrouillons = document.getElementById('zoneBrouillons'); const zOfficiel = document.getElementById('zoneJournalOfficiel');
             const search = document.getElementById('rechercheTexte').value.toLowerCase(); const fEleve = document.getElementById('filtreEleveJournal').value;
@@ -797,7 +776,6 @@
 
         function creerCarteAtelierElement(entry, isDraftMode) {
             const div = document.createElement('div');
-            // Injection dynamique du style pastel dStyles (Amélioration 5)
             let borderPastelClass = dStyles[entry.domaineCle] || "border-l-orange-400 bg-white";
             div.className = `p-5 border-2 border-gray-100 rounded-2xl shadow-sm space-y-2 page-break-inside-avoid relative hover:shadow-md transition border-l-4 ${borderPastelClass}`;
             
@@ -808,30 +786,31 @@
                 for(const [id, stat] of Object.entries(entry.suivi)) {
                     const kid = elevesData.find(x => x.id === id);
                     if(kid) {
-                        let c = stat.includes("Acquis") ? "bg-emerald-50 text-emerald-700" : stat.includes("cours") ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-700";
-                        bSuivi += `<span class="px-2 py-0.5 rounded-lg border border-transparent ${c}">${kid.prenom} ${stat.split(' ').pop()}</span>`;
+                        let c = stat.includes("Acquis") ? "bg-emerald-50 text-emerald-700 border-emerald-100" : stat.includes("cours") ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-rose-50 text-rose-700 border-rose-100";
+                        bSuivi += `<span class="px-2 py-0.5 rounded-lg border ${c}">${kid.prenom} ${stat}</span>`;
                     }
                 }
                 bSuivi += `</div>`;
             }
 
-            let galerieHtml = ""; if(entry.photos && entry.photos.length > 0) { galerieHtml = `<div class="grid grid-cols-4 gap-2 mt-2">`; entry.photos.forEach(p => { galerieHtml += `<img src="${p}" class="max-h-20 w-full object-cover rounded-xl border">`; }); galerieHtml += `</div>`; }
-            let btnAction = isDraftMode ? `<button onclick="validerBrouillon(${entry.id})" class="bg-emerald-400 text-white text-xs px-2.5 py-1 rounded-xl font-bold shadow-sm">🚀 Valider</button>` : `<button onclick="clonerActivite(${entry.id})" class="bg-gray-50 text-gray-400 text-xs px-2 py-1 rounded-xl font-bold border">👯 Copier</button>`;
+            let galerieHtml = ""; if(entry.photos && entry.photos.length > 0) { galerieHtml = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">`; entry.photos.forEach(p => { galerieHtml += `<img src="${p}" class="max-h-20 w-full object-cover rounded-xl border shadow-sm">`; }); galerieHtml += `</div>`; }
+            let btnAction = isDraftMode ? `<button onclick="validerBrouillon(${entry.id})" class="bg-emerald-400 text-white text-xs px-2.5 py-1 rounded-xl font-bold shadow-sm">🚀 Valider</button>` : `<button onclick="clonerActivite(${entry.id})" class="bg-gray-50 hover:bg-orange-50 text-gray-400 hover:text-orange-600 text-xs px-2 py-1 rounded-xl transition font-bold border">👯 Copier</button>`;
 
             div.innerHTML = `
-                <div class="flex justify-between items-start border-b-2 border-dashed border-gray-100/50 pb-1.5 flex-wrap gap-2 pr-24">
-                    <div><span class="text-[10px] font-bold bg-white/80 px-2 py-0.5 rounded-xl border shadow-sm">${entry.moment}</span><h3 class="text-md font-bold inline-block ml-1">${entry.titre}</h3></div>
-                    <span class="text-xs opacity-60 font-bold capitalize">${dateFr}</span>
+                <div class="flex justify-between items-start border-b-2 border-dashed border-gray-50 pb-1.5 flex-wrap gap-2 pr-24">
+                    <div><span class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-xl uppercase">${entry.moment}</span><h3 class="text-md font-bold inline-block ml-1">${entry.titre}</h3></div>
+                    <span class="text-xs text-gray-400 font-bold capitalize">${dateFr}</span>
                 </div>
                 <div class="absolute top-4 right-4 flex gap-1 no-print">${btnAction}<button onclick="supprimerActivite(${entry.id})" class="text-red-400 font-bold text-sm px-1">×</button></div>
-                <p class="text-xs leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
-                ${entry.observations ? `<div class="text-xs bg-white/60 p-2 rounded-xl font-medium border"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
+                <div class="flex flex-wrap gap-1.5 text-[10px] font-bold">
+                    <span class="text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-lg border border-emerald-100">🎯 ${entry.domaineTexte}</span>
+                    <span class="text-sky-700 bg-sky-50/60 px-2 py-0.5 rounded-lg border border-sky-100">🔑 ${entry.objective || entry.objectif}</span>
+                </div>
+                <p class="text-xs text-gray-600 leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
+                ${entry.observations ? `<div class="text-xs bg-amber-50/60 p-2.5 rounded-xl text-amber-900 border-l-4 border-amber-300 font-medium"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
                 ${galerieHtml}${bSuivi}`;
             return div;
         }
-
-        window.validerBrouillon = function(id) { let item = journalData.find(x => x.id === id); if(item) { item.isDraft = false; putInStore("journal", item, () => changerClasseGlobale()); } };
-        window.supprimerActivite = function(id) { if(confirm("Supprimer l'activité ?")) { journalData = journalData.filter(x => x.id !== id); deleteFromStore("journal", id, () => changerClasseGlobale()); } };
 
         function ouvrirGenerateurGazette() {
             const officials = journalData.filter(f => f.classe === currentClasse && !f.isDraft); if(officials.length === 0) { alert("Aucune fiche officielle."); return; }
@@ -840,7 +819,7 @@
             selection.forEach(at => { t += `✨ ${at.titre.toUpperCase()}\n🎯 [Domaine : ${at.domaineTexte}]\n👉 ${at.description || 'Découverte par le jeu.'}\n\n`; });
             document.getElementById('texteGazette').value = t + "Bonne fin de semaine ! ✨"; document.getElementById('modalGazette').classList.remove('hidden');
         }
-        function copierTexteGazette() { const a = document.getElementById('texteGazette'); a.select(); document.execCommand('copy'); alert("📋 Texte copié pour Konecto/E-mail !"); }
+        function copierTexteGazette() { const a = document.getElementById('texteGazette'); a.select(); document.execCommand('copy'); alert("📋 Texte copié !"); }
 
         function genererStatistiquesGlobales() {
             const container = document.getElementById('statistiquesDomaines'); container.innerHTML = "";
@@ -860,7 +839,6 @@
             document.getElementById('selectProfilEleve').innerHTML = filtrés.map(e => `<option value="${e.id}">👶 ${e.prenom} ${e.nom}</option>`).join('');
         }
 
-        // --- FIL DE VIE VISUEL INTEGRÉ (AMÉLIORATION 4) ---
         function chargerProfilEleve() {
             const id = document.getElementById('selectProfilEleve').value; const container = document.getElementById('contenuProfilEleve');
             const statsPresences = document.getElementById('statsPresencesEleve'); const avatar = document.getElementById('avatarProfilEleve');
@@ -872,7 +850,6 @@
             for (const d in presencesData) { if (presencesData[d][id]) { totalJours++; if (presencesData[d][id] === 'P') presents++; } }
             if (totalJours > 0) { statsPresences.innerHTML = `<div>📊 Présence cumulée : <strong>${Math.round((presents / totalJours) * 100)}% d'assiduité</strong></div>`; statsPresences.classList.remove('hidden'); }
 
-            // Intégration des étoiles/brevets acquis par cet élève précisément
             let brevetsAcquis = brevetsData.filter(b => b.classe === currentClasse && b.acquisList.includes(id));
             if(brevetsAcquis.length > 0) {
                 container.innerHTML += `<div class="p-2.5 bg-yellow-50/60 rounded-xl border border-yellow-200 text-xs font-bold text-amber-800 space-y-1"><span>🏆 Défis & Brevets Validés :</span><div class="flex flex-wrap gap-1">${brevetsAcquis.map(b => `<span class="bg-white border px-2 py-0.5 rounded-lg text-[10px]">⭐ ${b.name}</span>`).join('')}</div></div>`;
@@ -884,14 +861,13 @@
             fiches.reverse().forEach(f => {
                 const stat = f.suivi[id]; let c = stat.includes("Acquis") ? "bg-emerald-100 text-emerald-800" : stat.includes("cours") ? "bg-amber-100 text-amber-800" : "bg-rose-100 text-rose-800";
                 container.innerHTML += `
-                    <div class="p-2.5 bg-gray-50 border rounded-xl text-xs flex justify-between items-center shadow-sm">
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs flex justify-between items-center shadow-sm">
                         <div><span class="text-gray-400 font-bold mr-2">${new Date(f.date).toLocaleDateString('fr-BE',{day:'numeric',month:'short'})}</span><strong>${f.titre}</strong></div>
-                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${c}">${stat}</span>
+                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] shadow-sm ${c}">${stat}</span>
                     </div>`;
             });
         }
 
-        // --- EXTENSION PRO : LE KIT REMPLAÇANT INTERACTIF AVEC POST-IT ---
         window.genererKitRemplacant = function() {
             const pr = document.getElementById('contenuImpressionKit'); const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
             pr.innerHTML = ""; if(listeFiltrée.length === 0) { alert("Aucun enfant."); return; }
@@ -905,14 +881,14 @@
             else ateliersPrevus.forEach(at => { htmlAteliers += `<div class="p-2 border rounded-xl bg-gray-50 text-[11px]"><strong>${at.moment} - ${at.titre}</strong><p class="text-gray-500 mt-0.5">${at.description || '/'}</p></div>`; });
             htmlAteliers += "</div>";
 
-            let htmlTableauEleves = `<table class="w-full border mt-2 text-[10px]"><thead><tr class="bg-indigo-900 text-white font-bold"><th class="p-1 border text-left">Enfant</th><th class="p-1 border text-left bg-red-700">🚑 Urgences Médicales / PAI / Allergies graves</th><th class="p-1 border text-left">📞 Téléphones Parents</th></tr></thead><tbody>`;
+            let htmlTableauEleves = `<table class="w-full border mt-2 text-[10px]"><thead><tr class="bg-indigo-900 text-white font-bold"><th class="p-1 border text-left">Enfant</th><th class="p-1 border text-left bg-red-700">🚑 Urgences Médicales / PAI</th><th class="p-1 border text-left">📞 Téléphones Parents</th></tr></thead><tbody>`;
             listeFiltrée.forEach(e => {
                 htmlTableauEleves += `<tr><td class="p-1 border font-bold">${e.prenom} ${e.nom.toUpperCase()}</td><td class="p-1 border text-red-700 font-bold bg-red-50/20">${e.sante || 'Aucune.'}</td><td class="p-1 border text-gray-600">${e.mamanTel || ''} | ${e.papaTel || ''} | Urg: ${e.contactUrgence || ''}</td></tr>`;
             });
             htmlTableauEleves += `</tbody></table>`;
 
             pr.innerHTML = `
-                <div class="border-4 border-dashed p-6 bg-white space-y-4">
+                <div class="border-4 border-dashed p-6 bg-white space-y-4 text-gray-900">
                     <h2 class="text-xl text-indigo-800 font-bold border-b pb-2">🚑 DOSSIER D'ACCUEIL & DE REMPLACEMENT — MATERNELLE</h2>
                     <div class="p-3 bg-amber-50 rounded-2xl border border-amber-300 text-xs text-amber-900">📌 <strong>POST-IT MISSION ATSEM & LIAISON DU JOUR :</strong><br><p class="italic font-medium mt-1">${notePostItLiaison}</p></div>
                     <div><h3 class="font-bold text-indigo-700 text-xs uppercase mb-1">🗓️ Semainier (Ateliers d'aujourd'hui) :</h3>${htmlAteliers}</div>
@@ -939,7 +915,7 @@
 
             let htmlAlbum = ""; if(photosAlbum.length > 0) { htmlAlbum = `<div class="mt-4 pt-3 border-t-2 border-dashed"><h4 class="font-bold text-emerald-600 mb-2">📸 LE FIL DE VIE DE MES ATELIERS :</h4><div class="grid grid-cols-4 gap-2">`; photosAlbum.forEach(img => { htmlAlbum += `<img src="${img}" class="h-20 w-full object-cover rounded-xl border">`; }); htmlAlbum += `</div></div>`; }
 
-            pr.innerHTML = `<div class="border-4 border-double border-teal-200 rounded-3xl p-6 bg-white space-y-4 shadow-sm"><div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 gap-4"><div class="flex items-center gap-4 text-center md:text-left">${avatar}<div><h2 class="text-2xl text-teal-600 font-bold">${kid.prenom} ${kid.nom.toUpperCase()}</h2><p class="text-xs text-gray-400 font-bold">Classe de : ${currentClasse} | Assiduité : ${assStr}</p></div></div></div><div><h4 class="font-bold text-teal-600 mb-1">🎯 RÉUSSITES OFFICIELLES (Pacte d'excellence) :</h4>${htmlComp}</div>${htmlBrevets}${htmlAlbum}</div>`;
+            pr.innerHTML = `<div class="border-4 border-double border-teal-200 rounded-3xl p-6 bg-white text-gray-900 space-y-4 shadow-sm"><div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 gap-4"><div class="flex items-center gap-4 text-center md:text-left">${avatar}<div><h2 class="text-2xl text-teal-600 font-bold">${kid.prenom} ${kid.nom.toUpperCase()}</h2><p class="text-xs text-gray-400 font-bold">Classe de : ${currentClasse} | Assiduité : ${assStr}</p></div></div></div><div><h4 class="font-bold text-teal-600 mb-1">🎯 RÉUSSITES OFFICIELLES (Pacte d'excellence) :</h4>${htmlComp}</div>${htmlBrevets}${htmlAlbum}</div>`;
             document.getElementById('appWrapper').classList.add('hidden'); document.getElementById('zoneImpressionCahier').classList.remove('hidden');
         };
 
@@ -947,7 +923,7 @@
 
         window.genererPlancheCartesRituel = function() {
             const container = document.getElementById('grilleCartesImpression'); container.innerHTML = ""; const filtrés = elevesData.filter(e => e.classe === currentClasse); if(filtrés.length === 0) return;
-            filtrés.forEach(e => { const vignette = e.photo ? `<img src="${e.photo}" class="w-28 h-28 object-cover rounded-2xl border-2 border-gray-100 shadow-sm mx-auto mb-2">` : `<div class="w-28 h-28 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-4xl border border-pink-200 mx-auto mb-2">${e.prenom[0]}</div>`; container.innerHTML += `<div class="border-4 border-dashed border-gray-400 rounded-[2rem] p-4 text-center bg-white flex flex-col justify-between h-48 w-44 mx-auto page-break-inside-avoid shadow-inner">${vignette}<div class="text-xl font-bold text-gray-800 tracking-wide truncate">${e.prenom}</div></div>`; });
+            filtrés.forEach(e => { const vignette = e.photo ? `<img src="${e.photo}" class="w-28 h-28 object-cover rounded-2xl border-2 border-gray-100 shadow-sm mx-auto mb-2">` : `<div class="w-28 h-28 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-4xl border border-pink-200 mx-auto mb-2">${e.prenom[0]}</div>`; container.innerHTML += `<div class="border-4 border-dashed border-gray-400 rounded-[2rem] p-4 text-center bg-white text-gray-900 flex flex-col justify-between h-48 w-44 mx-auto page-break-inside-avoid shadow-inner">${vignette}<div class="text-xl font-bold tracking-wide truncate">${e.prenom}</div></div>`; });
             document.getElementById('appWrapper').classList.add('hidden'); document.getElementById('zoneImpressionCartes').classList.remove('hidden');
         };
         window.fermerPlancheCartesRituel = function() { document.getElementById('zoneImpressionCartes').classList.add('hidden'); document.getElementById('appWrapper').classList.remove('hidden'); };
