@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle — Édition Ultime FWB</title>
+    <title>Mon Journal & Gestion Maternelle — FWB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -17,450 +17,628 @@
 <body class="bg-gray-100 font-sans antialiased text-gray-900">
 
     <div class="max-w-7xl mx-auto p-4 md:p-8">
-        <!-- En-tête -->
+        
+        <!-- EN-TÊTE GLOBAL -->
         <header class="mb-6 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
             <div>
-                <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
-                <p class="text-gray-600">Référentiel FWB, Dictée Vocale, Suivi Élèves & Bilans Évolutifs</p>
+                <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Espace Maternelle</h1>
+                <p class="text-gray-600">Journal, Présences & Fiches Signalétiques — FWB</p>
             </div>
+            
+            <!-- CONFIGURATION DE LA CLASSE ACTIVE (NO-PRINT) -->
+            <div class="flex items-center gap-3 no-print bg-white p-2 rounded-xl border shadow-sm">
+                <label class="text-xs font-bold uppercase text-gray-400">Classe active :</label>
+                <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="rounded-lg border-gray-300 p-2 text-sm bg-indigo-50 font-bold text-indigo-700">
+                    <!-- Rempli dynamiquement -->
+                </select>
+            </div>
+
             <div class="flex gap-2 no-print">
-                <button onclick="exporterJournal()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">
-                    💾 Sauvegarder (Export)
-                </button>
+                <button onclick="exporterTout()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">💾 Sauver</button>
                 <label class="bg-amber-600 text-white px-3 py-2 rounded-lg hover:bg-amber-700 font-medium text-sm shadow transition cursor-pointer">
-                    📂 Charger (Import)
-                    <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerJournal(this)">
+                    📂 Charger <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerTout(this)">
                 </label>
-                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm shadow transition flex items-center gap-2">
-                    🖨️ Imprimer / PDF
-                </button>
+                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm shadow transition">🖨️ Imprimer</button>
             </div>
         </header>
 
-        <!-- Système de Navigation par Onglets (Masqué à l'impression) -->
-        <div class="flex border-b border-gray-300 mb-6 no-print">
-            <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition">
-                📋 Journal de classe & Encodage
-            </button>
-            <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">
-                📊 Tableaux de Bord & Profils Élèves
-            </button>
+        <!-- BARRE DE NAVIGATION (NO-PRINT) -->
+        <div class="flex border-b border-gray-300 mb-6 no-print overflow-x-auto">
+            <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap">📋 Journal de classe</button>
+            <button id="tabPresencesBtn" onclick="changerOnglet('presences')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">🗓️ Présences du jour</button>
+            <button id="tabElevesBtn" onclick="changerOnglet('eleves')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">🗂️ Fiches Signalétiques</button>
+            <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">📊 Bilans & Suivi</button>
         </div>
+
 
         <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
         <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
-            
-            <!-- FORMULAIRE DE SAISIE (GAUCHE) -->
-            <div class="space-y-6 no-print">
-                <!-- GESTION DES ÉLÈVES -->
+            <!-- Formulaire encodage -->
+            <div class="space-y-4 no-print">
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-md font-bold mb-3 text-gray-800 border-b pb-1">👥 Gestion de la Classe</h2>
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="nouvelEleveInput" placeholder="Prénom de l'élève..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                        <button type="button" onclick="ajouterEleve()" class="bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 text-sm font-medium">Ajouter</button>
-                    </div>
-                    <div id="listeElevesGestion" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-1 bg-gray-50 rounded border"></div>
-                </div>
-
-                <!-- ATELIER -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-lg font-bold mb-4 text-gray-800 border-b pb-2">➕ Nouvelle Activité</h2>
-                    <form id="journalForm" class="space-y-4">
+                    <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">➕ Nouvel Atelier</h2>
+                    <form id="journalForm" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-500">Date</label>
-                                <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
+                                <label class="block text-xs font-semibold text-gray-500">DATE</label>
+                                <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold uppercase text-gray-500">Moment</label>
-                                <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm">
-                                    <option>Accueil / Rituels</option>
-                                    <option>Matinée (Activité)</option>
-                                    <option>Récréation</option>
-                                    <option>Après-midi</option>
-                                    <option>Fin de journée</option>
+                                <label class="block text-xs font-semibold text-gray-500">MOMENT</label>
+                                <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm">
+                                    <option>Accueil / Rituels</option><option>Matinée (Activité)</option><option>Récréation</option><option>Après-midi</option><option>Fin de journée</option>
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Nom de l'activité</label>
-                            <input type="text" id="titreInput" placeholder="Ex: Tracés de ponts..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
+                            <label class="block text-xs font-semibold text-gray-500">TITRE</label>
+                            <input type="text" id="titreInput" placeholder="Nom de l'activité..." class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Domaine</label>
-                            <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" onchange="mettreAJourObjectifs()">
-                                <option value="transversal">Visées transversales</option>
-                                <option value="art">1. Éducation culturelle et artistique</option>
-                                <option value="langues">2. Français & Arts de la parole</option>
-                                <option value="math">3. Mathématiques</option>
-                                <option value="sciences">4. Sciences & Citoyenneté</option>
-                                <option value="sante">5. Psychomotricité et santé</option>
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-500">DOMAINE FWB</label>
+                            <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" onchange="mettreAJourObjectifs()"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Attendu / Compétence</label>
-                            <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm bg-gray-50"></select>
+                            <label class="block text-xs font-semibold text-gray-500">COMPÉTENCE VISEE</label>
+                            <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm bg-gray-50"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Groupes</label>
-                            <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-md border text-sm">
-                                <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Classe entière" checked> Classe entière</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Petits (M1)"> Petits (M1)</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Moyens (M2)"> Moyens (M2)</label>
-                                <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Grands (M3)"> Grands (M3)</label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">🎯 Suivi des Élèves à cet atelier</label>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">NOTATION RAPIDE DES ÉLÈVES PRESENT(S)</label>
                             <div id="grilleSuiviFormulaire" class="border rounded-md p-2 bg-gray-50 space-y-1 max-h-40 overflow-y-auto text-xs"></div>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center"><label class="block text-xs font-semibold uppercase text-gray-500">Déroulement</label><button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
-                            <textarea id="descInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="text-xs font-semibold text-gray-500">DÉROULEMENT</label><button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
+                            <textarea id="descInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm"></textarea>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center"><label class="block text-xs font-semibold uppercase text-gray-500">Observations</label><button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
-                            <textarea id="obsInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="text-xs font-semibold text-gray-500">OBSERVATIONS</label><button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
+                            <textarea id="obsInput" rows="1" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm"></textarea>
                         </div>
-                        <div>
-                            <input type="file" id="photoInput" accept="image/*" class="block w-full text-xs text-gray-500">
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg font-medium shadow hover:bg-indigo-700 transition">Enregistrer la fiche</button>
+                        <div><input type="file" id="photoInput" accept="image/*" class="text-xs text-gray-500 w-full"></div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-lg font-medium shadow hover:bg-indigo-700 transition text-sm">Enregistrer l'activité</button>
                     </form>
                 </div>
             </div>
-
-            <!-- VUE FLUX CHRONOLOGIQUE (DROITE) -->
+            <!-- Flux chronologique -->
             <div class="lg:col-span-2 print-full-width">
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="no-print bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200 flex flex-wrap gap-3 items-center justify-between">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full md:w-auto">
-                            <input type="text" id="rechercheTexte" placeholder="Mot-clé..." class="rounded-md border-gray-300 p-1.5 border text-sm">
-                            <select id="filtreDomaine" class="rounded-md border-gray-300 p-1.5 border text-sm">
-                                <option value="Tous">Tous les domaines</option>
-                                <option value="Visées transversales">Visées transversales</option>
-                                <option value="Éducation culturelle">1. Arts / Culture</option>
-                                <option value="Français">2. Français</option>
-                                <option value="Mathématiques">3. Mathématiques</option>
-                                <option value="Sciences">4. Sciences / Philo</option>
-                                <option value="Éducation physique">5. Psychomotricité</option>
-                            </select>
-                        </div>
-                        <button id="clearBtn" class="text-xs text-red-500 hover:underline">Supprimer tout l'historique</button>
+                    <div class="no-print bg-gray-50 p-3 rounded-lg mb-4 border flex gap-2">
+                        <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="Rechercher un atelier..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
                     </div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">📋 Déroulement de la classe</h2>
-                    <div id="journalEntries" class="space-y-6"></div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">📋 Chronologie des Ateliers</h2>
+                    <div id="journalEntries" class="space-y-4"></div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= ONGLET 2 : TABLEAUX DE BORD & PROFILS ================= -->
-        <div id="ongletBilan" class="hidden space-y-6 print-full-width">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- COUVERTURE DU RÉFÉRENTIEL FWB -->
-                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
-                    <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">📊 Couverture des Domaines</h2>
-                    <div id="statistiquesDomaines" class="space-y-3.5 text-xs">
-                        <!-- Rempli en JS -->
+
+        <!-- ================= ONGLET 2 : PRÉSENCES DU JOUR ================= -->
+        <div id="ongletPresences" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200 print-full-width">
+            <div class="flex justify-between items-center border-b pb-3 mb-4 flex-wrap gap-2">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">🗓️ Registre d'Appel Numérique</h2>
+                    <p class="text-xs text-gray-500">Cochez le statut de chaque enfant pour la date sélectionnée.</p>
+                </div>
+                <div class="no-print flex items-center gap-2">
+                    <label class="text-sm font-medium text-gray-600">Date d'appel :</label>
+                    <input type="date" id="datePresencesInput" onchange="chargerRegistrePresences()" class="rounded-md border-gray-300 p-1.5 border text-sm">
+                </div>
+            </div>
+            
+            <div id="listePresencesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <!-- Généré en JS -->
+            </div>
+        </div>
+
+
+        <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
+        <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
+            <!-- Formulaire d'ajout d'élève -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 h-fit no-print">
+                <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">👤 Inscrire un Élève</h2>
+                <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-sm">
+                    <input type="hidden" id="editEleveId">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500">PRÉNOM</label>
+                            <input type="text" id="elPrenom" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500">NOM</label>
+                            <input type="text" id="elNom" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">DATE DE NAISSANCE</label>
+                        <input type="date" id="elNaissance" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">CONTACT PARENTS (Noms, Tél, Urgences)</label>
+                        <textarea id="elContact" rows="2" placeholder="Maman: 0470/... \nPapa: 0485/..." class="mt-1 block w-full rounded-md border border-gray-300 p-1.5 text-xs"></textarea>
+                    </div>
+                    <div class="bg-red-50 p-2 rounded border border-red-200">
+                        <label class="block text-xs font-bold text-red-700">⚠️ FIP / SANTÉ / ALLERGIES</label>
+                        <textarea id="elSante" rows="2" placeholder="Allergie gluten, asthme, protocole PAI..." class="mt-1 block w-full rounded-md border-red-300 p-1.5 text-xs bg-white"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500">REMARQUES PÉDAGOGIQUES</label>
+                        <textarea id="elNotes" rows="1" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5 text-xs"></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-lg font-medium hover:bg-indigo-700 transition">Enregistrer l'élève</button>
+                        <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-300 px-3 rounded-lg text-gray-700">Annuler</button>
+                    </div>
+                </form>
+
+                <!-- PETIT RECOIN POUR CODER UNE NOUVELLE CLASSE -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Créer une nouvelle classe</h3>
+                    <div class="flex gap-1">
+                        <input type="text" id="nomNouvelleClasse" placeholder="Ex: M1 (Classe Bleue)" class="text-xs rounded border border-gray-300 p-1.5 w-full">
+                        <button onclick="creerClasse()" class="bg-gray-800 text-white text-xs px-2 rounded hover:bg-black">Créer</button>
                     </div>
                 </div>
+            </div>
 
-                <!-- PROFIL INDIVIDUEL DE L'ÉLÈVE -->
+            <!-- Grille des fiches d'élèves de la classe -->
+            <div class="lg:col-span-2 print-full-width space-y-4">
+                <h2 class="text-xl font-bold text-gray-800 pb-2 border-b flex justify-between items-center">
+                    <span>🗂️ Dossiers Élèves Actifs</span>
+                    <span id="compteurEleves" class="text-sm font-normal text-gray-500"></span>
+                </h2>
+                <div id="grilleFichesEleves" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Généré en JS -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= ONGLET 4 : BILANS & STATS ================= -->
+        <div id="ongletBilan" class="hidden space-y-6 print-full-width">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 h-fit">
+                    <h2 class="text-md font-bold text-gray-800 border-b pb-2 mb-3">📊 Équilibre des Domaines FWB</h2>
+                    <div id="statistiquesDomaines" class="space-y-3 text-xs"></div>
+                </div>
                 <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <div class="flex justify-between items-center border-b pb-2 mb-4 flex-wrap gap-2">
-                        <h2 class="text-lg font-bold text-gray-800">🎯 Livret de Compétences Individuel</h2>
-                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-md border-gray-300 p-2 border text-sm no-print bg-indigo-50 font-semibold text-indigo-700">
-                            <!-- Rempli en JS -->
-                        </select>
+                        <h2 class="text-lg font-bold text-gray-800">🎯 Livret de Compétences Personnel</h2>
+                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-md border-gray-300 p-1.5 border text-sm bg-indigo-50 font-bold text-indigo-700 no-print"></select>
                     </div>
-                    <div id="contenuProfilEleve" class="space-y-4">
-                        <!-- Rempli en JS lors de la sélection d'un élève -->
-                    </div>
+                    <div id="contenuProfilEleve" class="space-y-2"></div>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- LOGIQUE LOGICIELLE IMMERSIVE JAVASCRIPT -->
     <script>
+        // RÉFÉRENTIEL FWB COMPLET MAPPED
         const objectifsParDomaine = {
             transversal: ["Construire son identité, la confiance en soi et l'autonomie", "Coopérer, respecter les règles collectives et vivre ensemble", "S'exprimer, communiquer ses émotions et écouter l'autre", "Développer sa curiosité, sa créativité et l'esprit d'initiative"],
-            art: ["Arts plastiques & visuels : Explorer outils et matières", "Arts plastiques & visuels : Production personnelle", "Éducation musicale : Explorer et produire des sons", "Éducation musicale : Mémoriser des chants", "Arts du spectacle : S'exprimer par le corps"],
-            langues: ["Langage oral : Oser prendre la parole distinctement", "Langage oral : Comprendre un récit ou une consigne", "Langage oral : Prendre part à un dialogue", "Éveil à l'écrit : Manipuler le livre et le sens de lecture", "Éveil à l'écrit : Reconnaître son prénom et des lettres", "Éveil aux langues : Percevoir des sonorités différentes"],
-            math: ["Nombres : Dénombrer une collection d'objets", "Nombres : Comparer des collections", "Nombres : Quantité et symbole numérique", "Formes : Reconnaître les formes géométriques planes", "Grandeurs : Classer, trier et sérier des objets", "Espace : Utiliser des repères spatiaux", "Temps : Se repérer dans la journée, la semaine"],
+            art: ["Arts plastiques & visuels : Explorer outils et matières", "Arts plastiques & visuels : Production personnelle", "Éducation musicale : Explorer et produire des sons", "Arts du spectacle : S'exprimer par le corps"],
+            langues: ["Langage oral : Oser prendre la parole distinctement", "Langage oral : Comprendre un récit ou une consigne", "Langage oral : Prendre part à un dialogue", "Éveil à l'écrit : Manipuler le livre et le sens de lecture", "Éveil à l'écrit : Reconnaître son prénom et des lettres"],
+            math: ["Nombres : Dénombrer une collection d'objets", "Nombres : Comparer des collections", "Nombres : Quantité et symbole numérique", "Formes : Reconnaître les formes géométriques", "Grandeurs : Classer, trier et sérier", "Espace & Temps : Se repérer dans la journée/l'espace"],
             sciences: ["Sciences du vivant : Caractéristiques d'animaux/végétaux", "Matière & Technique : Explorer l'eau, l'air, les objets", "Sciences humaines : Se repérer dans l'environnement social", "Philosophie & Citoyenneté : Discussion philosophique"],
-            sante: ["Psychomotricité globale : Équilibre et mouvements", "Psychomotricité globale : Ajuster ses déplacements", "Psychomotricité fine : Pince, découpage, enfilage", "Psychomotricité fine : Graphisme et coordination", "Santé & Bien-être : Gestes d'hygiène et alimentation"]
+            sante: ["Psychomotricité globale : Équilibre, sauts, grimper", "Psychomotricité fine : Pince, découpage, graphisme", "Santé & Bien-être : Gestes d'hygiène et alimentation"]
         };
 
-        let journalData = JSON.parse(localStorage.getItem('monJournalMaternellePro')) || [];
-        let elevesData = JSON.parse(localStorage.getItem('mesElevesMaternelle')) || ["Lucas", "Emma", "Nathan", "Chloé", "Arthur", "Léa"];
+        const labelsDomaines = {
+            transversal: "Visées transversales", art: "1. Éducation artistique", langues: "2. Français & Langues",
+            math: "3. Mathématiques", sciences: "4. Sciences & Philo", sante: "5. Psychomotricité"
+        };
+
+        // BASE DE DONNÉES UNIQUE CENTRALISÉE LOCALSTORAGE
+        let classesData = JSON.parse(localStorage.getItem('m_classes')) || ["M1 (Petits)", "M2 (Moyens)"];
+        let elevesData = JSON.parse(localStorage.getItem('m_eleves')) || [
+            { id: "1", prenom: "Lucas", nom: "Dubois", classe: "M1 (Petits)", naissance: "2022-04-12", contact: "Maman: 0475/11.22.33", sante: "Allergie aux arachides (PAI en classe)", notes: "Très autonome en rituels." },
+            { id: "2", prenom: "Emma", nom: "Lambert", classe: "M1 (Petits)", naissance: "2022-08-25", contact: "Papa: 0495/44.55.66", sante: "", notes: "Langage en pleine explosion." },
+            { id: "3", prenom: "Nathan", nom: "Jansen", classe: "M2 (Moyens)", naissance: "2021-02-10", contact: "Parents: 0488/77.88.99", sante: "Asthme (Inhalateur dans le sac)", notes: "Excellentes bases en logique." }
+        ];
+        let journalData = JSON.parse(localStorage.getItem('m_journal')) || [];
+        let presencesData = JSON.parse(localStorage.getItem('m_presences')) || {}; // Structuré par: {"YYYY-MM-DD": {"id_eleve": "P"|"A"|"R"}}
+
+        let currentClasse = classesData[0];
         let tempPhotoBase64 = "";
 
-        // CHANGER D'ONGLET
+        // DÉMARRAGE INITIAL
+        document.getElementById('dateInput').valueAsDate = new Date();
+        document.getElementById('datePresencesInput').valueAsDate = new Date();
+        
+        // Injecter les domaines FWB dans le formulaire
+        const domSelect = document.getElementById('domaineInput');
+        domSelect.innerHTML = Object.entries(labelsDomaines).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+
+        function initApp() {
+            remplirSelectClasses();
+            changerClasseGlobale(currentClasse);
+        }
+
+        function remplirSelectClasses() {
+            const select = document.getElementById('globalClasseSelect');
+            select.innerHTML = classesData.map(c => `<option value="${c}" ${c===currentClasse?'selected':''}>${c}</option>`).join('');
+        }
+
+        function changerClasseGlobale(classeForcee = null) {
+            if(classeForcee) currentClasse = classForcee;
+            else currentClasse = document.getElementById('globalClasseSelect').value;
+
+            afficherGestionEleves();
+            mettreAJourObjectifs();
+            chargerRegistrePresences();
+            afficherJournal();
+            genererStatistiquesGlobales();
+            configurerSelectProfilsEleves();
+        }
+
+        function creerClasse() {
+            const input = document.getElementById('nomNouvelleClasse');
+            const nom = input.value.trim();
+            if(nom && !classesData.includes(nom)) {
+                classesData.push(nom);
+                localStorage.setItem('m_classes', JSON.stringify(classesData));
+                currentClasse = nom;
+                input.value = "";
+                remplirSelectClasses();
+                changerClasseGlobale();
+            }
+        }
+
+        // ONGLETS SWITCH
         function changerOnglet(onglet) {
-            const tabJournalBtn = document.getElementById('tabJournalBtn');
-            const tabBilanBtn = document.getElementById('tabBilanBtn');
-            const divJournal = document.getElementById('ongletJournal');
-            const divBilan = document.getElementById('ongletBilan');
-
-            if (onglet === 'journal') {
-                divJournal.classList.remove('hidden'); divBilan.classList.add('hidden');
-                tabJournalBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition";
-                tabBilanBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition";
-            } else {
-                divJournal.classList.add('hidden'); divBilan.classList.remove('hidden');
-                tabBilanBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition";
-                tabJournalBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition";
-                genererStatistiquesGlobales();
-                chargerProfilEleve();
-            }
-        }
-
-        // CLASSE & ÉLÈVES
-        function afficherGestionEleves() {
-            const listeElevesGestion = document.getElementById('listeElevesGestion');
-            const grilleSuiviFormulaire = document.getElementById('grilleSuiviFormulaire');
-            const selectProfilEleve = document.getElementById('selectProfilEleve');
+            const boutons = { journal: 'tabJournalBtn', presences: 'tabPresencesBtn', eleves: 'tabElevesBtn', bilan: 'tabBilanBtn' };
+            const blocs = { journal: 'ongletJournal', presences: 'ongletPresences', eleves: 'ongletEleves', bilan: 'ongletBilan' };
             
-            listeElevesGestion.innerHTML = ""; grilleSuiviFormulaire.innerHTML = "";
-            const profilSelectionnePrecedent = selectProfilEleve.value;
-            selectProfilEleve.innerHTML = "";
-
-            elevesData.sort().forEach(prenom => {
-                // Gestion
-                const span = document.createElement('span');
-                span.className = "inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 rounded border border-indigo-200 font-medium";
-                span.innerHTML = `${prenom} <button type="button" onclick="supprimerEleve('${prenom}')" class="text-red-500 ml-1">×</button>`;
-                listeElevesGestion.appendChild(span);
-
-                // Note d'évaluation
-                const divRow = document.createElement('div');
-                divRow.className = "flex items-center justify-between bg-white p-1 rounded border border-gray-200";
-                divRow.innerHTML = `<span>${prenom}</span><select data-eleve="${prenom}" class="eleve-statut-select rounded border p-0.5 bg-gray-50"><option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 A renf.</option></select>`;
-                grilleSuiviFormulaire.appendChild(divRow);
-
-                // Menu déroulant bilan
-                const opt = document.createElement('option');
-                opt.value = prenom; opt.textContent = `Profil de ${prenom}`;
-                selectProfilEleve.appendChild(opt);
+            Object.keys(blocs).forEach(k => {
+                document.getElementById(blocs[k]).classList.add('hidden');
+                document.getElementById(boutons[k]).className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap";
             });
-            if(profilSelectionnePrecedent && elevesData.includes(profilSelectionnePrecedent)) selectProfilEleve.value = profilSelectionnePrecedent;
+
+            document.getElementById(blocs[onglet]).classList.remove('hidden');
+            document.getElementById(boutons[onglet]).className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap";
+            
+            if (onglet === 'bilan') { genererStatistiquesGlobales(); chargerProfilEleve(); }
+            if (onglet === 'presences') { chargerRegistrePresences(); }
         }
 
-        function ajouterEleve() {
-            const input = document.getElementById('nouvelEleveInput'); const p = input.value.trim();
-            if(p && !elevesData.includes(p)) {
-                elevesData.push(p); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
-                input.value = ""; afficherGestionEleves();
+        // --- GESTION ET COMPILATION DES ÉLÈVES (ONGLET 3) ---
+        function afficherGestionEleves() {
+            const grille = document.getElementById('grilleFichesEleves');
+            const grilleForm = document.getElementById('grilleSuiviFormulaire');
+            const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
+
+            document.getElementById('compteurEleves').textContent = `(${listeFiltrée.length} inscrit(s) en ${currentClasse})`;
+            grille.innerHTML = "";
+            grilleForm.innerHTML = "";
+
+            if(listeFiltrée.length === 0) {
+                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border rounded-xl italic">Aucun élève inscrit dans cette classe pour le moment. utilisez le formulaire de gauche.</div>`;
+                grilleForm.innerHTML = `<p class="text-gray-400 italic text-center p-2">Inscrivez d'abord des élèves.</p>`;
+                return;
+            }
+
+            listeFiltrée.forEach(e => {
+                // Formulaire de notation rapide
+                grilleForm.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-1 rounded border border-gray-200">
+                        <span class="font-medium text-gray-700">${e.prenom}</span>
+                        <select data-eleveid="${e.id}" class="eleve-statut-select rounded p-0.5 border text-xs bg-gray-50">
+                            <option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 À renforcer</option>
+                        </select>
+                    </div>`;
+
+                // Carte signalétique pédagogique/médicale
+                const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge non défini";
+                grille.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl shadow-sm border ${e.sante ? 'border-l-4 border-l-red-500' : 'border-gray-200'} space-y-2 relative page-break-inside-avoid">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3>
+                                <p class="text-xs text-gray-400">Né(e) le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p>
+                            </div>
+                            <div class="no-print flex gap-2">
+                                <button onclick="editerEleve('${e.id}')" class="text-indigo-600 text-xs font-semibold hover:underline">Modifier</button>
+                                <button onclick="supprimerEleve('${e.id}')" class="text-red-500 text-xs hover:underline">× Supprimer</button>
+                            </div>
+                        </div>
+                        ${e.sante ? `<div class="bg-red-50 p-2 rounded text-xs text-red-900 border border-red-200"><strong>⚠️ Fiche Santé :</strong><br>${e.sante}</div>` : ''}
+                        <p class="text-xs text-gray-600 whitespace-pre-line"><strong>Contacts :</strong><br>${e.contact || '/'}</p>
+                        ${e.notes ? `<p class="text-xs text-gray-600 bg-gray-50 p-2 rounded italic"><strong>Notes :</strong> ${e.notes}</p>` : ''}
+                    </div>`;
+            });
+        }
+
+        function sauverEleve(e) {
+            e.preventDefault();
+            const id = document.getElementById('editEleveId').value;
+            const nouvelEleve = {
+                id: id || Date.now().toString(),
+                prenom: document.getElementById('elPrenom').value.trim(),
+                nom: document.getElementById('elNom').value.trim(),
+                classe: currentClasse,
+                naissance: document.getElementById('elNaissance').value,
+                contact: document.getElementById('elContact').value.trim(),
+                sante: document.getElementById('elSante').value.trim(),
+                notes: document.getElementById('elNotes').value.trim()
+            };
+
+            if(id) elevesData = elevesData.map(x => x.id === id ? nouvelEleve : x);
+            else elevesData.push(nouvelEleve);
+
+            localStorage.setItem('m_eleves', JSON.stringify(elevesData));
+            document.getElementById('eleveForm').reset();
+            annulerEditionEleve();
+            changerClasseGlobale();
+        }
+
+        function editerEleve(id) {
+            const target = elevesData.find(x => x.id === id);
+            if(target) {
+                document.getElementById('editEleveId').value = target.id;
+                document.getElementById('elPrenom').value = target.prenom;
+                document.getElementById('elNom').value = target.nom;
+                document.getElementById('elNaissance').value = target.naissance;
+                document.getElementById('elContact').value = target.contact;
+                document.getElementById('elSante').value = target.sante;
+                document.getElementById('elNotes').value = target.notes;
+                document.getElementById('btnAnnulerEdit').classList.remove('hidden');
+                document.getElementById('elPrenom').focus();
             }
         }
 
-        window.supprimerEleve = function(p) {
-            if(confirm(`Supprimer ${p} ?`)) {
-                elevesData = elevesData.filter(e => e !== p); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData)); afficherGestionEleves();
+        function annulerEditionEleve() {
+            document.getElementById('editEleveId').value = "";
+            document.getElementById('eleveForm').reset();
+            document.getElementById('btnAnnulerEdit').classList.add('hidden');
+        }
+
+        function supprimerEleve(id) {
+            if(confirm("Supprimer définitivement cet élève de votre base de données ?")) {
+                elevesData = elevesData.filter(x => x.id !== id);
+                localStorage.setItem('m_eleves', JSON.stringify(elevesData));
+                changerClasseGlobale();
             }
         }
 
-        function mettreAJourObjectifs() {
-            const dom = document.getElementById('domaineInput').value; const objSelect = document.getElementById('objectifInput');
-            objSelect.innerHTML = ""; objectifsParDomaine[dom].forEach(obj => {
-                const opt = document.createElement('option'); opt.value = obj; opt.textContent = obj; objSelect.appendChild(opt);
-            });
-        }
+        // --- REGISTRE DES PRÉSENCES (ONGLET 2) ---
+        function chargerRegistrePresences() {
+            const container = document.getElementById('listePresencesContainer');
+            const dateCible = document.getElementById('datePresencesInput').value;
+            const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
+            
+            container.innerHTML = "";
+            if(!dateCible) return;
 
-        // RENDU JAVASCRIPT DU JOURNAL CHRONOLOGIQUE
-        function afficherJournal() {
-            const container = document.getElementById('journalEntries'); container.innerHTML = '';
-            const fDomaine = document.getElementById('filtreDomaine').value;
-            const tRecherche = document.getElementById('rechercheTexte').value.toLowerCase();
+            if(listeFiltrée.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-400 italic py-6">Aucun élève inscrit dans cette classe pour enregistrer des présences.</p>`;
+                return;
+            }
 
-            let filtre = journalData.filter(e => (fDomaine === "Tous" || e.domaineTexte.includes(fDomaine)) && (!tRecherche || e.titre.toLowerCase().includes(tRecherche) || e.description.toLowerCase().includes(tRecherche)));
+            // Charger l'état ou initialiser vide
+            if(!presencesData[dateCible]) presencesData[dateCible] = {};
 
-            if(filtre.length === 0) { container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche.</p>`; return; }
-
-            [...filtre].reverse().forEach(entree => {
-                const div = document.createElement('div');
-                div.className = "p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-3 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
-                const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            listeFiltrée.forEach(e => {
+                const etatActuel = presencesData[dateCible][e.id] || "P"; // Par défaut "Présent" pour aller vite
                 
-                let suiviHtml = "";
-                if(entree.suivi && Object.keys(entree.suivi).length > 0) {
-                    suiviHtml = `<div class="mt-2 pt-2 border-t border-gray-200 flex flex-wrap gap-1.5 text-xs">`;
-                    for(const [nom, stat] of Object.entries(entree.suivi)) {
-                        let c = "bg-gray-100 text-gray-600";
-                        if(stat.includes("Acquis")) c = "bg-green-50 text-green-700 border-green-200";
-                        if(stat.includes("cours")) c = "bg-yellow-50 text-yellow-700 border-yellow-200";
-                        if(stat.includes("renforcer")) c = "bg-red-50 text-red-700 border-red-200";
-                        suiviHtml += `<span class="px-2 py-0.5 rounded border ${c}"><strong>${nom} :</strong> ${stat.replace(/🟢|🟡|🔴/g, '')}</span>`;
+                const card = document.createElement('div');
+                card.className = "p-3 bg-gray-50 border rounded-xl flex items-center justify-between shadow-sm";
+                card.innerHTML = `
+                    <div class="truncate mr-2">
+                        <strong class="text-gray-800 text-sm block truncate">${e.prenom} ${e.nom[0]}.</strong>
+                        ${e.sante ? `<span class="inline-block text-[10px] bg-red-100 text-red-700 px-1 rounded font-bold uppercase">Santé</span>` : ''}
+                    </div>
+                    <div class="flex gap-1 no-print">
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'P')" class="px-2 py-1 text-xs font-bold rounded border transition ${etatActuel==='P'?'bg-green-600 text-white border-green-600':'bg-white text-gray-600'}">🟢 P</button>
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'A')" class="px-2 py-1 text-xs font-bold rounded border transition ${etatActuel==='A'?'bg-red-600 text-white border-red-600':'bg-white text-gray-600'}">🔴 A</button>
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'R')" class="px-2 py-1 text-xs font-bold rounded border transition ${etatActuel==='R'?'bg-yellow-500 text-white border-yellow-500':'bg-white text-gray-600'}">🟡 R</button>
+                    </div>
+                    <div class="hidden print:block text-xs font-bold text-gray-700">
+                        ${etatActuel==='P'?'Présent':etatActuel==='A'?'Absent':'Retard'}
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function marquerPresence(date, idEleve, status) {
+            presencesData[date][idEleve] = status;
+            localStorage.setItem('m_presences', JSON.stringify(presencesData));
+            chargerRegistrePresences();
+        }
+
+        // --- ENCODAGE & RENDU DU JOURNAL DE CLASSE (ONGLET 1) ---
+        function mettreAJourObjectifs() {
+            const dom = document.getElementById('domaineInput').value;
+            const select = document.getElementById('objectifInput');
+            select.innerHTML = objectifsParDomaine[dom].map(o => `<option value="${o}">${o}</option>`).join('');
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const suivi = {};
+            document.querySelectorAll('.eleve-statut-select').forEach(s => {
+                const idEl = s.getAttribute('data-eleveid');
+                if(s.value) suivi[idEl] = s.value;
+            });
+
+            const domSelect = document.getElementById('domaineInput');
+            const nouvelleActivite = {
+                id: Date.now(),
+                classe: currentClasse,
+                date: document.getElementById('dateInput').value,
+                moment: document.getElementById('momentInput').value,
+                titre: document.getElementById('titreInput').value,
+                domaineCle: domSelect.value,
+                domaineTexte: domSelect.options[domSelect.selectedIndex].text,
+                objectif: document.getElementById('objectifInput').value,
+                suivi,
+                description: document.getElementById('descInput').value,
+                observations: document.getElementById('obsInput').value,
+                photo: tempPhotoBase64
+            };
+
+            try {
+                journalData.push(nouvelleActivite);
+                localStorage.setItem('m_journal', JSON.stringify(journalData));
+                form.reset();
+                document.getElementById('dateInput').valueAsDate = new Date();
+                tempPhotoBase64 = "";
+                changerClasseGlobale();
+            } catch(x) { alert("Stockage saturé. Compressez la photo."); journalData.pop(); }
+        });
+
+        function afficherJournal() {
+            const container = document.getElementById('journalEntries');
+            const search = document.getElementById('rechercheTexte').value.toLowerCase();
+            container.innerHTML = "";
+
+            const fichesFiltrées = journalData.filter(f => f.classe === currentClasse && (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search)));
+
+            if(fichesFiltrées.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche d'activité dans cette classe.</p>`;
+                return;
+            }
+
+            [...fichesFiltrées].reverse().forEach(entry => {
+                const dateFr = new Date(entry.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
+                
+                let bSuivi = "";
+                if(entry.suivi && Object.keys(entry.suivi).length > 0) {
+                    bSuivi = `<div class="mt-2 pt-2 border-t flex flex-wrap gap-1 text-[11px]">`;
+                    for(const [idEl, stat] of Object.entries(entry.suivi)) {
+                        const kid = elevesData.find(x => x.id === idEl);
+                        if(kid) {
+                            let color = "bg-green-50 text-green-700 border-green-200";
+                            if(stat.includes("cours")) color = "bg-yellow-50 text-yellow-700 border-yellow-200";
+                            if(stat.includes("renforcer")) color = "bg-red-50 text-red-700 border-red-200";
+                            bSuivi += `<span class="px-1.5 py-0.5 rounded border ${color}"><strong>${kid.prenom} :</strong> ${stat.replace(/🟢|🟡|🔴/g,'')}</span>`;
+                        }
                     }
-                    suiviHtml += `</div>`;
+                    bSuivi += `</div>`;
                 }
 
+                const div = document.createElement('div');
+                div.className = "p-4 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-2 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
                 div.innerHTML = `
-                    <div class="flex justify-between items-start flex-wrap gap-2 border-b pb-2 border-gray-200 pr-16">
-                        <div><span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider mr-2">${entree.moment}</span><h3 class="text-xl font-bold text-gray-800 inline-block mt-1 md:mt-0">${entree.titre}</h3></div>
-                        <span class="text-sm text-gray-500 font-medium capitalize">${dateFormatee}</span>
+                    <div class="flex justify-between items-start border-b pb-1">
+                        <div><span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded uppercase">${entry.moment}</span><h3 class="text-md font-bold text-gray-800 inline-block ml-2">${entry.titre}</h3></div>
+                        <span class="text-xs text-gray-400 font-medium capitalize">${dateFr}</span>
                     </div>
-                    <button onclick="clonerActivite(${entree.id})" class="no-print absolute top-4 right-4 bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded">👯 Copier</button>
-                    <div class="flex flex-wrap gap-2 text-xs">
-                        <span class="text-emerald-800 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200">🎯 ${entree.domaineTexte}</span>
-                        <span class="text-blue-800 font-medium bg-blue-50 px-2 py-1 rounded border border-blue-200">🔑 ${entree.objectif}</span>
+                    <div class="flex flex-wrap gap-2 text-[11px] font-medium">
+                        <span class="text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">🎯 ${entry.domaineTexte}</span>
+                        <span class="text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">🔑 ${entry.objectif}</span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div class="${entree.photo ? 'md:col-span-2' : 'md:col-span-3'} space-y-1">
-                            <p class="text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entree.description || '/'}</p>
-                            ${entree.observations ? `<div class="bg-amber-50 border-l-4 border-amber-400 p-2 rounded text-amber-900"><strong>Obs :</strong> ${entree.observations}</div>` : ''}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                        <div class="${entry.photo ? 'md:col-span-2' : 'md:col-span-3'} space-y-1">
+                            <p class="text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
+                            ${entry.observations ? `<div class="bg-amber-50 p-2 rounded text-amber-900 border-l-2 border-amber-300"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
                         </div>
-                        ${entree.photo ? `<div class="flex justify-center items-center"><img src="${entree.photo}" class="max-h-36 rounded-lg object-cover w-full"></div>` : ''}
+                        ${entry.photo ? `<div class="flex justify-center items-center"><img src="${entry.photo}" class="max-h-28 rounded object-cover"></div>` : ''}
                     </div>
-                    ${suiviHtml}
-                `;
+                    ${bSuivi}`;
                 container.appendChild(div);
             });
         }
 
-        // MODULE ANALYTICS : COUVERTURE DU PROGRAMME FWB
+        // --- STATS & PROFILS D'ÉLÈVES INDIVIDUELS (ONGLET 4) ---
         function genererStatistiquesGlobales() {
-            const statsContainer = document.getElementById('statistiquesDomaines');
-            statsContainer.innerHTML = "";
-            const totalFiches = journalData.length;
+            const container = document.getElementById('statistiquesDomaines');
+            container.innerHTML = "";
+            const fichesClasse = journalData.filter(f => f.classe === currentClasse);
+            const total = fichesClasse.length;
 
-            const clesDomaines = {
-                "transversal": "Visées transversales",
-                "art": "1. Éducation artistique",
-                "langues": "2. Français & Langues",
-                "math": "3. Mathématiques",
-                "sciences": "4. Sciences & Philo",
-                "sante": "5. Psychomotricité"
-            };
-
-            Object.entries(clesDomaines).forEach(([cle, label]) => {
-                const count = journalData.filter(f => f.domaineCle === cle).length;
-                const pourcentage = totalFiches > 0 ? Math.round((count / totalFiches) * 100) : 0;
-
-                const divBar = document.createElement('div');
-                divBar.className = "space-y-1";
-                divBar.innerHTML = `
-                    <div class="flex justify-between font-medium text-gray-700"><span>${label}</span><span class="font-bold">${count} fiche(s) (${pourcentage}%)</span></div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${pourcentage}%"></div></div>
-                `;
-                statsContainer.appendChild(divBar);
+            Object.entries(labelsDomaines).forEach(([cle, label]) => {
+                const count = fichesClasse.filter(f => f.domaineCle === cle).length;
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                container.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between text-gray-600"><span>${label}</span><strong>${count} (${pct}%)</strong></div>
+                        <div class="w-full bg-gray-200 h-1.5 rounded-full"><div class="bg-indigo-600 h-1.5 rounded-full" style="width: ${pct}%"></div></div>
+                    </div>`;
             });
         }
 
-        // MODULE BILAN : CARNET DE COMPÉTENCES INDIVIDUEL DE L'ÉLÈVE
-        window.chargerProfilEleve = function() {
-            const prenom = document.getElementById('selectProfilEleve').value;
+        function configurerSelectProfilsEleves() {
+            const select = document.getElementById('selectProfilEleve');
+            const filtrés = elevesData.filter(e => e.classe === currentClasse);
+            select.innerHTML = filtrés.map(e => `<option value="${e.id}">${e.prenom} ${e.nom}</option>`).join('');
+            if(filtrés.length === 0) select.innerHTML = `<option value="">Aucun élève</option>`;
+        }
+
+        function chargerProfilEleve() {
+            const id = document.getElementById('selectProfilEleve').value;
             const container = document.getElementById('contenuProfilEleve');
             container.innerHTML = "";
+            if(!id) return;
 
-            if(!prenom) { container.innerHTML = `<p class="text-gray-400 italic">Aucun élève sélectionné.</p>`; return; }
+            const kid = elevesData.find(x => x.id === id);
+            const fichesNotees = journalData.filter(f => f.suivi && f.suivi[id]);
 
-            // Filtrer les activités où l'élève possède une évaluation enregistrée
-            const fichesEleve = journalData.filter(f => f.suivi && f.suivi[prenom]);
-
-            if(fichesEleve.length === 0) {
-                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune activité notée pour ${prenom} jusqu'à présent.</p>`;
+            if(fichesNotees.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 italic py-4">Aucune évaluation enregistrée pour cet enfant.</p>`;
                 return;
             }
 
-            fichesEleve.reverse().forEach(fiche => {
-                const statut = fiche.suivi[prenom];
-                let cssColor = "bg-gray-100 text-gray-700";
-                if(statut.includes("Acquis")) cssColor = "bg-green-100 text-green-800 font-bold border border-green-300";
-                if(statut.includes("cours")) cssColor = "bg-yellow-100 text-yellow-800 font-bold border border-yellow-300";
-                if(statut.includes("renforcer")) cssColor = "bg-red-100 text-red-800 font-bold border border-red-300";
+            fichesNotees.reverse().forEach(f => {
+                const stat = f.suivi[id];
+                let c = "bg-green-100 text-green-800";
+                if(stat.includes("cours")) c = "bg-yellow-100 text-yellow-800";
+                if(stat.includes("renforcer")) c = "bg-red-100 text-red-800";
 
-                const dateFormatee = new Date(fiche.date).toLocaleDateString('fr-BE', {day:'numeric', month:'short'});
-
-                const item = document.createElement('div');
-                item.className = "flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200 gap-4";
-                item.innerHTML = `
-                    <div class="text-sm">
-                        <span class="text-xs text-gray-400 mr-2 font-mono">${dateFormatee}</span>
-                        <strong class="text-gray-800">${fiche.titre}</strong>
-                        <div class="text-xs text-gray-500 mt-0.5">🎯 ${fiche.objectif}</div>
-                    </div>
-                    <span class="text-xs px-3 py-1 rounded-full ${cssColor}">${statut}</span>
-                `;
-                container.appendChild(item);
+                container.innerHTML += `
+                    <div class="p-2.5 bg-gray-50 rounded-lg border text-xs flex justify-between items-center">
+                        <div>
+                            <span class="text-gray-400 font-mono mr-2">${new Date(f.date).toLocaleDateString('fr-BE',{day:'numeric',month:'short'})}</span>
+                            <strong>${f.titre}</strong>
+                            <div class="text-[10px] text-gray-400">🎯 ${f.objectif}</div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${c}">${stat}</span>
+                    </div>`;
             });
         }
 
-        // ENREGISTREMENT ET SOUMISSION
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const groupes = []; document.querySelectorAll('.groupe-chk:checked').forEach(c => groupes.push(c.value));
-            const suivi = {}; document.querySelectorAll('.eleve-statut-select').forEach(s => { if(s.value) suivi[s.getAttribute('data-eleve')] = s.value; });
-
-            const domSelect = document.getElementById('domaineInput');
-            const nouvelleActivite = {
-                id: Date.now(), date: document.getElementById('dateInput').value, moment: document.getElementById('momentInput').value,
-                titre: document.getElementById('titreInput').value, domaineCle: domSelect.value, domaineTexte: domSelect.options[domSelect.selectedIndex].text,
-                objectif: document.getElementById('objectifInput').value, groupes, suivi, description: document.getElementById('descInput').value,
-                observations: document.getElementById('obsInput').value, photo: tempPhotoBase64
-            };
-
-            try {
-                journalData.push(nouvelleActivite); localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                form.reset(); document.getElementById('dateInput').valueAsDate = new Date(); tempPhotoBase64 = "";
-                afficherGestionEleves(); mettreAJourObjectifs(); afficherJournal();
-            } catch(err) { alert("Mémoire pleine ! Réduisez la taille de vos photos."); journalData.pop(); }
-        });
-
-        // ACTION CLONER, EXPORT & DICTÉE
-        window.clonerActivite = function(id) {
-            const c = journalData.find(e => e.id === id);
-            if(c) {
-                document.getElementById('titreInput').value = c.titre; document.getElementById('domaineInput').value = c.domaineCle; mettreAJourObjectifs();
-                document.getElementById('objectifInput').value = c.objectif; document.getElementById('momentInput').value = c.moment;
-                document.getElementById('descInput').value = c.description; document.getElementById('obsInput').value = c.observations; tempPhotoBase64 = c.photo;
-                document.querySelectorAll('.groupe-chk').forEach(chk => chk.checked = c.groupes.includes(chk.value));
-                document.querySelectorAll('.eleve-statut-select').forEach(s => { const n = s.getAttribute('data-eleve'); s.value = (c.suivi && c.suivi[n]) ? c.suivi[n] : ""; });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        };
-
+        // FONCTIONNALITÉS COMPLÉMENTAIRES (DICTÉE, EXPORT, FILE)
         function activerDictee(id) {
             const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!Speech) return; const rec = new Speech(); rec.lang = 'fr-BE'; const b = event.target; b.textContent = "🛑 Écoute...";
-            rec.onresult = (e) => { document.getElementById(id).value += " " + e.results[0][0].transcript; b.textContent = "🎙️ Dicter"; };
+            if(!Speech) return alert("Dictée non compatible.");
+            const rec = new Speech(); rec.lang = 'fr-BE'; const b = event.target; b.textContent = "🛑 Écoute...";
+            rec.onresult = (e) => { document.getElementById(id).value += " " + e.results[0][0].transcript; };
             rec.onend = () => b.textContent = "🎙️ Dicter"; rec.start();
         }
 
         document.getElementById('photoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0]; if(file) { const r = new FileReader(); r.onload = (ev) => tempPhotoBase64 = ev.target.result; r.readAsDataURL(file); }
+            const file = e.target.files[0];
+            if(file) { const r = new FileReader(); r.onload = (ev) => tempPhotoBase64 = ev.target.result; r.readAsDataURL(file); }
         });
 
-        window.exporterJournal = function() {
-            const pack = { journal: journalData, eleves: elevesData };
+        function exporterTout() {
+            const pack = { classes: classesData, eleves: elevesData, journal: journalData, presences: presencesData };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(pack));
-            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "sauvegarde_journal.json");
+            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "sauvegarde_maternelle.json");
             document.body.appendChild(a); a.click(); a.remove();
-        };
+        }
 
-        window.importerJournal = function(input) {
-            const file = input.files[0]; if(file) {
+        function importerTout(input) {
+            const file = input.files[0];
+            if(file) {
                 const r = new FileReader(); r.onload = (e) => {
                     try {
-                        const p = JSON.parse(e.target.result); if(p.journal && p.eleves) {
-                            journalData = p.journal; elevesData = p.eleves;
-                            localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData)); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
-                            afficherGestionEleves(); afficherJournal();
+                        const p = JSON.parse(e.target.result);
+                        if(p.classes && p.eleves && p.journal) {
+                            classesData = p.classes; elevesData = p.eleves; journalData = p.journal; presencesData = p.presences || {};
+                            localStorage.setItem('m_classes', JSON.stringify(classesData));
+                            localStorage.setItem('m_eleves', JSON.stringify(elevesData));
+                            localStorage.setItem('m_journal', JSON.stringify(journalData));
+                            localStorage.setItem('m_presences', JSON.stringify(presencesData));
+                            remplirSelectClasses(); changerClasseGlobale(classesData[0]);
                         }
-                    } catch(x) { alert("Erreur."); }
+                    } catch(x) { alert("Fichier invalide."); }
                 }; r.readAsText(file);
             }
-        };
+        }
 
-        document.getElementById('filtreDomaine').addEventListener('change', afficherJournal);
-        document.getElementById('rechercheTexte').addEventListener('input', afficherJournal);
-        document.getElementById('clearBtn').addEventListener('click', () => { if(confirm("Tout effacer ?")) { journalData = []; localStorage.removeItem('monJournalMaternellePro'); afficherJournal(); } });
-
-        // INITIALISATION
-        afficherGestionEleves();
-        mettreAJourObjectifs();
-        afficherJournal();
+        // LANCEMENT
+        initApp();
     </script>
 </body>
 </html>
