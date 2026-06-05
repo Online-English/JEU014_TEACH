@@ -3,687 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle - Style TEETSH (SeGEC)</title>
-    <style>
-        :root {
-            --primary: #4a6fa5;
-            --primary-light: #edf2f8;
-            --secondary: #ffb703;
-            --accent: #fb8500;
-            --dark: #2b2d42;
-            --light: #f8f9fa;
-            --border: #dcdcdc;
-            
-            /* Couleurs par matières SeGEC */
-            --color-fr: #e63946;
-            --color-math: #1d3557;
-            --color-sci: #2a9d8f;
-            --color-human: #9b5de5;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: var(--dark);
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Panneau de saisie / Formulaire */
-        .form-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
-
-        .form-panel h2 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary-light);
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        select, input, textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.9rem;
-            background-color: var(--light);
-        }
-
-        select:focus, input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: white;
-        }
-
-        .inline-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--primary-light);
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: normal;
-        }
-
-        button.btn-add {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        button.btn-add:hover {
-            background-color: #365582;
-        }
-
-        /* Partie Agenda Visuelle (Style Teetsh) */
-        .agenda-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .day-tabs {
-            display: flex;
-            gap: 5px;
-            background: #e0e4ec;
-            padding: 5px;
-            border-radius: 8px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: none;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 6px;
-            color: #555;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .journal-timeline {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            min-height: 500px;
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #f0f2f5;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .activity-card {
-            border-left: 6px solid #ccc;
-            background: #fff;
-            border-top: 1px solid #eaeaea;
-            border-right: 1px solid #eaeaea;
-            border-bottom: 1px solid #eaeaea;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            display: grid;
-            grid-template-columns: 120px 1fr auto;
-            gap: 15px;
-        }
-
-        .card-time {
-            font-weight: bold;
-            color: #666;
-            font-size: 0.95rem;
-            border-right: 1px solid #eee;
-            padding-right: 5px;
-        }
-
-        .card-content h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
-            color: var(--dark);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 6px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 4px;
-            margin-right: 5px;
-            text-transform: uppercase;
-        }
-
-        .badge-level { background: #e0f2fe; color: #0369a1; }
-        .badge-mat { color: white; }
-
-        .segec-path {
-            font-size: 0.8rem;
-            color: #666;
-            background: #f1f5f9;
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin: 8px 0;
-            font-style: italic;
-        }
-
-        .card-details {
-            font-size: 0.9rem;
-            margin-top: 8px;
-            white-space: pre-line;
-        }
-
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .btn-export {
-            background-color: #2a9d8f;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        @media print {
-            .form-panel, .day-tabs, .btn-delete, .btn-export, header button {
-                display: none !important;
-            }
-            .container {
-                grid-template-columns: 1fr;
-            }
-            .activity-card {
-                box-shadow: none;
-                page-break-inside: avoid;
-            }
-        }
-    </style>
+    <title>Mon Journal de Classe Maternelle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans antialiased">
 
-    <header>
-        <h1>📖 Mon Journal de Classe Numérique - Enseignement Maternelle</h1>
-        <div>
-            <button class="btn-export" onclick="window.print()">🖨️ Imprimer la journée</button>
-            <button class="btn-export" style="background: #e63946;" onclick="clearLocalStorage()">🗑️ Tout effacer</button>
-        </div>
-    </header>
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <header class="mb-8 text-center md:text-left">
+            <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
+            <p class="text-gray-600">Enseignement Maternel — Fédération Wallonie-Bruxelles</p>
+        </header>
 
-    <div class="container">
-        <div class="form-panel">
-            <h2>➕ Planifier une activité</h2>
-            <form id="activityForm">
-                <div class="inline-group">
-                    <div class="form-group">
-                        <label for="timeStart">Heure Début</label>
-                        <input type="time" id="timeStart" required value="08:30">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">➕ Ajouter une Activité</h2>
+                
+                <form id="journalForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Date</label>
+                        <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
                     </div>
-                    <div class="form-group">
-                        <label for="timeEnd">Heure Fin</label>
-                        <input type="time" id="timeEnd" required value="09:15">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Moment de la journée</label>
+                        <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option>Accueil / Rituels</option>
+                            <option>Matinée (Activité)</option>
+                            <option>Récréation</option>
+                            <option>Après-midi (Activité)</option>
+                            <option>Fin de journée</option>
+                        </select>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Niveau / Groupe ciblé</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="level" value="Accueil"> Acc</label>
-                        <label><input type="checkbox" name="level" value="M1"> M1</label>
-                        <label><input type="checkbox" name="level" value="M2"> M2</label>
-                        <label><input type="checkbox" name="level" value="M3"> M3</label>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nom de l'activité</label>
+                        <input type="text" id="titreInput" placeholder="Ex: Peinture aux doigts, Tri de formes..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="title">Intitulé / Titre de l'activité</label>
-                    <input type="text" id="title" placeholder="Ex: Atelier de dénombrement des collations" required>
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Domaine de développement (Pacte)</label>
+                        <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                            <option>Visées transversales (Autonomie, Socialisation)</option>
+                            <option>1. Éducation culturelle et artistique (Arts, Musique)</option>
+                            <option>2. Éveils aux langues / Français</option>
+                            <option>3. Mathématiques (Logique, Nombres, Formes)</option>
+                            <option>4. Sciences, Sciences humaines, Philosophie</option>
+                            <option>5. Éducation physique, psychomotricité et santé</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="matiere">Matière SeGEC (Volume)</label>
-                    <select id="matiere" onchange="updateDomaines()"></select>
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description / Déroulement</label>
+                        <textarea id="descInput" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="domaine">Domaine / Champ</label>
-                    <select id="domaine" onchange="updateCompetences()"></select>
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Observations</label>
+                        <textarea id="obsInput" rows="2" placeholder="Ce qui a fonctionné, les difficultés..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="competence">Compétence Spécifique</label>
-                    <select id="competence" onchange="updateObjectifs()"></select>
-                </div>
-
-                <div class="form-group">
-                    <label for="objectif">Objectif / Repère Attendu</label>
-                    <select id="objectif"></select>
-                </div>
-
-                <div class="form-group">
-                    <label for="deroulement">Consignes & Déroulement pédagogique</label>
-                    <textarea id="deroulement" rows="4" placeholder="Description des étapes, consignes de départ et rôles de l'institutrice..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="materiel">Matériel requis</label>
-                    <input type="text" id="materiel" placeholder="Ex: jetons, boîtes à œufs, pinces...">
-                </div>
-
-                <button type="submit" class="btn-add">Ajouter au Journal de Classe</button>
-            </form>
-        </div>
-
-        <div class="agenda-panel">
-            <div class="day-tabs">
-                <button class="tab-btn active" onclick="switchDay('Lundi')">LUNDI</button>
-                <button class="tab-btn" onclick="switchDay('Mardi')">MARDI</button>
-                <button class="tab-btn" onclick="switchDay('Mercredi')">MERCREDI</button>
-                <button class="tab-btn" onclick="switchDay('Jeudi')">JEUDI</button>
-                <button class="tab-btn" onclick="switchDay('Vendredi')">VENDREDI</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 font-medium transition">
+                        Enregistrer dans le journal
+                    </button>
+                </form>
             </div>
 
-            <div class="journal-timeline">
-                <div class="timeline-header">
-                    <h2 id="currentDayTitle">🗓️ Agenda : Lundi</h2>
-                </div>
-                <div id="activitiesContainer">
+            <div class="lg:col-span-2">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-xl font-semibold text-gray-800">📋 Déroulement des journées</h2>
+                        <button id="clearBtn" class="text-xs text-red-500 hover:underline">Effacer tout le journal</button>
                     </div>
+                    
+                    <div id="journalEntries" class="space-y-4">
+                        </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // DONNÉES DU PROGRAMME MATERNELLE SEGEC (FédEFOC Belgique)
-        const segecProgram = {
-            "Français": {
-                "color": "var(--color-fr)",
-                "champs": {
-                    "Parler (Langage Oral)": {
-                        "1.1 Orienter sa prise de parole": [
-                            "1.1.1 Analyser la situation de communication (Qui parle à qui, pourquoi, intention)",
-                            "Oser prendre la parole face aux autres pour s'exprimer",
-                            "Participer à une conversation / Engager la prise de parole"
-                        ],
-                        "1.2 Élaborer un message oral": [
-                            "1.2.1 Utiliser un vocabulaire précis et adapté à la situation de communication",
-                            "1.2.2 Élaborer des contenus (Exprimer un fait, une idée, un ressenti, une émotion)",
-                            "Émettre une ou plusieurs suites plausibles d'un message entendu"
-                        ],
-                        "1.3 Assurer l'organisation d'un message oral": [
-                            "1.3.1 Assurer la cohérence du message (Emploi des pronoms personnels)",
-                            "1.3.2 Appliquer les caractéristiques de la structure du message",
-                            "1.3.3 Élaborer la chronologie (Connecteurs temporels : d'abord, ensuite, enfin)"
-                        ]
-                    },
-                    "Écouter (Compréhension Orale)": {
-                        "2.1 Orienter son écoute": [
-                            "2.1.1 Analyser la situation de communication (Intention d'écoute)",
-                            "2.1.2 Se déterminer un but d'écoute"
-                        ],
-                        "2.2 Comprendre un message oral": [
-                            "2.2.1 Traiter le vocabulaire / Enrichir le bagage lexical",
-                            "2.2.2 Percevoir le sens global (Reformuler ou exécuter une consigne)",
-                            "2.2.4 Dégager des informations implicites (Inférer)"
-                        ]
-                    },
-                    "Lire (Entrée dans l'écrit)": {
-                        "3.1 Orienter sa lecture": [
-                            "3.1.1 Analyser la situation de communication (Dégager la fonction des écrits)",
-                            "Repérer un document dans la bibliothèque de la classe selon un besoin"
-                        ],
-                        "3.3 Percevoir l'organisation": [
-                            "3.3.2 Dégager les caractéristiques de la silhouette du texte (Recette, invitation...)"
-                        ]
-                    }
-                }
-            },
-            "Formation Mathématique": {
-                "color": "var(--color-math)",
-                "champs": {
-                    "Les nombres et opérations": {
-                        "1.1 Appréhender/Découvrir les nombres": [
-                            "1.1.1 Construire le sens du nombre (Dégager l'invariance du nombre, usage des doigts)",
-                            "1.1.2 Composer, décomposer et recomposer les nombres (Ex: 5 c'est 3 et 2)",
-                            "1.1.4 Dénombrer (Pointage, cardinalisation finale : répondre à 'Combien ?')",
-                            "1.1.5 Dire, lire, écrire (Réciter la litanie de la chaîne numérique stable)",
-                            "1.1.6 Situer, ordonner (Aspect ordinal : premier, deuxième, dernier)"
-                        ],
-                        "1.2 Opérer sur les nombres": [
-                            "1.2.1 Identifier et effectuer des opérations en situation (Ajouter, retirer, partager)"
-                        ]
-                    },
-                    "Les solides et figures": {
-                        "2.1 (Se) placer, (se) déplacer": [
-                            "2.1.1 Se situer, situer, se placer, placer des objets (Vocabulaire spatial de position)",
-                            "2.1.3 Représenter un déplacement sur un plan ou un quadrillage"
-                        ],
-                        "2.2 Découvrir les formes": [
-                            "2.2.1 Reconnaitre, comparer des solides, les différencier, les classer (Cube, cylindre...)",
-                            "2.2.3 Reconnaitre, comparer des figures géométriques planes (Carré, disque, triangle, rectangle)"
-                        ]
-                    },
-                    "Les grandeurs": {
-                        "3.1 Découvrir des grandeurs": [
-                            "3.1.1 Comparer des grandeurs de manière directe (Plus long/court, plus lourd/léger)",
-                            "3.1.2 Ordonner des grandeurs (Rangement croissant / décroissant)",
-                            "3.1.3 Mesurer des grandeurs en ayant recours à un étalon non conventionnel"
-                        ]
-                    },
-                    "Le traitement de données": {
-                        "4.1 Organiser selon un critère": [
-                            "Définir un critère d'organisation (Tri, classement par catégories)"
-                        ],
-                        "4.2 Lire un tableau": [
-                            "Prélever une donnée dans un tableau à simple ou à double entrée"
-                        ]
-                    }
-                }
-            },
-            "Formation Scientifique": {
-                "color": "var(--color-sci)",
-                "champs": {
-                    "Les vivants": {
-                        "1.1 Besoins physiologiques": [
-                            "Manifester et réagir à un besoin physiologique (Hygiène, hydratation, repos)",
-                            "Adapter sa tenue vestimentaire en fonction des observations de la météo"
-                        ],
-                        "1.2 Caractériser le vivant": [
-                            "Observer et caractériser les cycles de vie des animaux ou des végétaux"
-                        ]
-                    },
-                    "La matière": {
-                        "2.1 Propriétés sensorielles": [
-                            "Dégager des caractéristiques à l'aide des sens (Doux, rugueux, dur, mou, lisse)"
-                        ]
-                    }
-                }
-            },
-            "Formation Humaine et Sociale": {
-                "color": "var(--color-human)",
-                "champs": {
-                    "Explorer l'espace": {
-                        "1.1 Se repérer": [
-                            "Utiliser des repères spatiaux pour s'orienter ou décrire un trajet proche"
-                        ],
-                        "1.2 Fonctions des espaces": [
-                            "Identifier les espaces de vie de la classe selon leur fonction (Jouer, lire, ranger)"
-                        ]
-                    },
-                    "Explorer le temps": {
-                        "2.1 Repères de temps": [
-                            "Utiliser adéquatement le vocabulaire temporel (Avant, après, maintenant, hier, demain)"
-                        ],
-                        "2.2 Représentations du temps": [
-                            "Situer une activité sur la ligne du temps de la journée ou de la semaine"
-                        ]
-                    }
-                }
-            }
-        };
+        // Sélection des éléments
+        const form = document.getElementById('journalForm');
+        const entriesContainer = document.getElementById('journalEntries');
+        const clearBtn = document.getElementById('clearBtn');
 
-        let currentDay = 'Lundi';
-        let activities = JSON.parse(localStorage.getItem('maternelle_journal_data')) || {};
+        // Mettre la date du jour par défaut
+        document.getElementById('dateInput').valueAsDate = new Date();
 
-        // INITIALISATION DES MENUS DÉROULANTS EN CASCADE
-        function initForm() {
-            const matSelect = document.getElementById('matiere');
-            matSelect.innerHTML = '';
-            for (let mat in segecProgram) {
-                let opt = document.createElement('option');
-                opt.value = mat;
-                opt.innerText = mat;
-                matSelect.appendChild(opt);
-            }
-            updateDomaines();
-        }
+        // Charger les données existantes ou créer un tableau vide
+        let journalData = JSON.parse(localStorage.getItem('monJournalMaternelle')) || [];
 
-        function updateDomaines() {
-            const mat = document.getElementById('matiere').value;
-            const domSelect = document.getElementById('domaine');
-            domSelect.innerHTML = '';
-            
-            for (let dom in segecProgram[mat].champs) {
-                let opt = document.createElement('option');
-                opt.value = dom;
-                opt.innerText = dom;
-                domSelect.appendChild(opt);
-            }
-            updateCompetences();
-        }
+        // Fonction pour afficher les entrées à l'écran
+        function afficherJournal() {
+            entriesContainer.innerHTML = '';
 
-        function updateCompetences() {
-            const mat = document.getElementById('matiere').value;
-            const dom = document.getElementById('domaine').value;
-            const compSelect = document.getElementById('competence');
-            compSelect.innerHTML = '';
-
-            for (let comp in segecProgram[mat].champs[dom]) {
-                let opt = document.createElement('option');
-                opt.value = comp;
-                opt.innerText = comp;
-                compSelect.appendChild(opt);
-            }
-            updateObjectifs();
-        }
-
-        function updateObjectifs() {
-            const mat = document.getElementById('matiere').value;
-            const dom = document.getElementById('domaine').value;
-            const comp = document.getElementById('competence').value;
-            const objSelect = document.getElementById('objectif');
-            objSelect.innerHTML = '';
-
-            const list = segecProgram[mat].champs[dom][comp];
-            list.forEach(obj => {
-                let opt = document.createElement('option');
-                opt.value = obj;
-                opt.innerText = obj;
-                objSelect.appendChild(opt);
-            });
-        }
-
-        // NAVIGATION ENTRE LES JOURS
-        function switchDay(day) {
-            currentDay = day;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if(btn.innerText.toLowerCase() === day.toLowerCase()) btn.classList.add('active');
-            });
-            document.getElementById('currentDayTitle').innerText = `🗓️ Agenda : ${day}`;
-            renderActivities();
-        }
-
-        // RENDU DES ACTIVITÉS LOGUÉES
-        function renderActivities() {
-            const container = document.getElementById('activitiesContainer');
-            container.innerHTML = '';
-
-            let dayActs = activities[currentDay] || [];
-            
-            // Tri par heure de début
-            dayActs.sort((a,b) => a.timeStart.localeCompare(b.timeStart));
-
-            if(dayActs.length === 0) {
-                container.innerHTML = `<p style="color: #888; text-align:center; padding: 40px 0;">Aucune activité planifiée pour ce jour.</p>`;
+            if (journalData.length === 0) {
+                entriesContainer.innerHTML = `<p class="text-gray-500 italic text-center py-4">Le journal est vide. Ajoutez votre première activité !</p>`;
                 return;
             }
 
-            dayActs.forEach((act, index) => {
-                const borderClr = segecProgram[act.matiere]?.color || '#ccc';
+            // Trier du plus récent au plus ancien
+            const dataTrie = [...journalData].reverse();
+
+            dataTrie.forEach((entree) => {
+                const div = document.createElement('div');
+                div.className = "p-4 border rounded-lg bg-gray-50 shadow-sm space-y-2 border-l-4 border-l-indigo-500";
                 
-                let levelsBadge = act.levels.map(l => `<span class="badge badge-level">${l}</span>`).join(' ');
+                // Formater la date en français
+                const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE');
 
-                let card = document.createElement('div');
-                card.className = 'activity-card';
-                card.style.borderLeftColor = borderClr;
-                card.innerHTML = `
-                    <div class="card-time">🕒 ${act.timeStart} - ${act.timeEnd}</div>
-                    <div class="card-content">
-                        <h3>${act.title}</h3>
-                        <div>${levelsBadge} <span class="badge badge-mat" style="background:${borderClr}">${act.matiere}</span></div>
-                        <div class="segec-path">
-                            <strong>Socle SeGEC :</strong> ${act.domaine} ➔ ${act.competence} <br>
-                            <strong>Repère ciblé :</strong> ${act.objectif}
+                div.innerHTML = `
+                    <div class="flex justify-between items-start flex-wrap gap-2">
+                        <div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">${entree.moment}</span>
+                            <h3 class="text-lg font-bold text-gray-800 mt-1">${entree.titre}</h3>
                         </div>
-                        <div class="card-details">
-                            <strong>Déroulement :</strong>\n${act.deroulement}
-                            ${act.materiel ? `<br><strong>📦 Matériel :</strong> ${act.materiel}` : ''}
-                        </div>
+                        <span class="text-sm text-gray-500 font-medium">${dateFormatee}</span>
                     </div>
-                    <div>
-                        <button class="btn-delete" onclick="deleteActivity(${index})">×</button>
-                    </div>
+                    <p class="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded inline-block">🎯 ${entree.domaine}</p>
+                    <p class="text-sm text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong> ${entree.description || '/'}</p>
+                    ${entree.observations ? `<div class="mt-2 text-sm bg-amber-50 p-2 rounded text-amber-900 border-l-2 border-amber-400"><strong>Obs :</strong> ${entree.observations}</div>` : ''}
                 `;
-                container.appendChild(card);
+                entriesContainer.appendChild(div);
             });
         }
 
-        // SOUMISSION DU FORMULAIRE (AJOUT)
-        document.getElementById('activityForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Écouter la soumission du formulaire
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Empêche la page de se recharger
 
-            // Récupérer les niveaux cochés
-            let checkedLevels = [];
-            document.querySelectorAll('input[name="level"]:checked').forEach(cb => {
-                checkedLevels.push(cb.value);
-            });
-
-            if(checkedLevels.length === 0) {
-                alert("Veuillez cocher au moins un niveau (Acc, M1, M2, M3).");
-                return;
-            }
-
-            const newAct = {
-                timeStart: document.getElementById('timeStart').value,
-                timeEnd: document.getElementById('timeEnd').value,
-                levels: checkedLevels,
-                title: document.getElementById('title').value,
-                matiere: document.getElementById('matiere').value,
-                domaine: document.getElementById('domaine').value,
-                competence: document.getElementById('competence').value,
-                objectif: document.getElementById('objectif').value,
-                deroulement: document.getElementById('deroulement').value,
-                materiel: document.getElementById('materiel').value
+            // Créer le nouvel objet activité
+            const nouvelleActivite = {
+                id: Date.now(),
+                date: document.getElementById('dateInput').value,
+                moment: document.getElementById('momentInput').value,
+                titre: document.getElementById('titreInput').value,
+                domaine: document.getElementById('domaineInput').value,
+                description: document.getElementById('descInput').value,
+                observations: document.getElementById('obsInput').value
             };
 
-            if(!activities[currentDay]) activities[currentDay] = [];
-            activities[currentDay].push(newAct);
+            // Ajouter au tableau, sauvegarder et rafraîchir l'affichage
+            journalData.push(nouvelleActivite);
+            localStorage.setItem('monJournalMaternelle', JSON.stringify(journalData));
+            
+            afficherJournal();
 
-            localStorage.setItem('maternelle_journal_data', JSON.stringify(activities));
-            
-            // Reset champs textes temporaires
-            document.getElementById('title').value = '';
-            document.getElementById('deroulement').value = '';
-            document.getElementById('materiel').value = '';
-            
-            renderActivities();
+            // Réinitialiser les champs de texte
+            document.getElementById('titreInput').value = '';
+            document.getElementById('descInput').value = '';
+            document.getElementById('obsInput').value = '';
         });
 
-        // SUPPRESSION D'UNE ACTIVITÉ
-        function deleteActivity(index) {
-            if(confirm("Supprimer cette période d'activité ?")) {
-                activities[currentDay].splice(index, 1);
-                localStorage.setItem('maternelle_journal_data', JSON.stringify(activities));
-                renderActivities();
+        // Bouton pour tout effacer
+        clearBtn.addEventListener('click', function() {
+            if (confirm("Voulez-vous vraiment effacer tout votre journal ? Cette action est irréversible.")) {
+                journalData = [];
+                localStorage.removeItem('monJournalMaternelle');
+                afficherJournal();
             }
-        }
+        });
 
-        // NETTOYAGE COMPLET
-        function clearLocalStorage() {
-            if(confirm("Voulez-vous réinitialiser complètement votre journal de classe ?")) {
-                localStorage.removeItem('maternelle_journal_data');
-                activities = {};
-                renderActivities();
-            }
-        }
-
-        // LANCEMENT
-        window.onload = function() {
-            initForm();
-            renderActivities();
-        };
+        // Affichage initial au chargement de la page
+        afficherJournal();
     </script>
 </body>
 </html>
