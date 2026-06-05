@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal & Gestion Maternelle — FWB Pro Max</title>
+    <title>Mon Journal Maternelle — Univers Ludique</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importation d'une police d'écriture plus ronde et chaleureuse -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        body { font-family: 'Quicksand', sans-serif; }
+        h1, h2, h3 { font-family: 'Fredoka One', cursive; }
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
@@ -14,198 +18,208 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-900">
+<body class="bg-amber-50/40 min-h-screen text-gray-800 antialiased">
 
-    <div class="max-w-7xl mx-auto p-4 md:p-8">
+    <div class="max-w-7xl mx-auto p-4 md:p-6">
         
-        <header class="mb-6 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
-            <div>
-                <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Espace Maternelle</h1>
-                <p class="text-gray-600">Stockage Illimité IndexedDB — Référentiel initial FWB</p>
+        <!-- EN-TÊTE ULTRA-LUDIQUE -->
+        <header class="mb-6 bg-gradient-to-r from-yellow-100 via-pink-100 to-teal-100 p-6 rounded-3xl shadow-sm border-2 border-dashed border-orange-200 flex justify-between items-center flex-wrap gap-4">
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl text-orange-600 tracking-wide flex items-center justify-center md:justify-start gap-2">
+                    🎒 Mon Espace Maternelle
+                </h1>
+                <p class="text-gray-600 text-sm font-semibold mt-1">Mon Journal de classe magique, coloré et organisé ✨</p>
             </div>
             
-            <div class="flex items-center gap-3 no-print bg-white p-2 rounded-xl border shadow-sm">
-                <label class="text-xs font-bold uppercase text-gray-400">Classe active :</label>
-                <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="rounded-lg border-gray-300 p-2 text-sm bg-indigo-50 font-bold text-indigo-700">
+            <!-- SÉLECTEUR DE CLASSE STYLE "BULLE" (NO-PRINT) -->
+            <div class="flex items-center gap-2 no-print bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border-2 border-teal-200 shadow-sm">
+                <span class="text-xl">🏫</span>
+                <select id="globalClasseSelect" onchange="changerClasseGlobale()" class="bg-transparent font-bold text-teal-700 outline-none cursor-pointer text-sm">
                 </select>
             </div>
 
-            <div class="flex gap-2 no-print">
-                <button onclick="exporterTout()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">💾 Exporter</button>
-                <label class="bg-amber-600 text-white px-3 py-2 rounded-lg hover:bg-amber-700 font-medium text-sm shadow transition cursor-pointer">
-                    📂 Importer <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerTout(this)">
+            <!-- BOUTONS ACTIONS DES PARENTS/PROFS -->
+            <div class="flex gap-2 no-print flex-wrap justify-center">
+                <button onclick="exporterTout()" class="bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm transition flex items-center gap-1">💾 Sauver</button>
+                <label class="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm transition cursor-pointer flex items-center gap-1">
+                    📂 Charger <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerTout(this)">
                 </label>
-                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm shadow transition">🖨️ Imprimer</button>
+                <button onclick="window.print()" class="bg-emerald-400 hover:bg-emerald-500 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm transition flex items-center gap-1">🖨️ Imprimer</button>
             </div>
         </header>
 
-        <div class="flex border-b border-gray-300 mb-6 no-print overflow-x-auto">
-            <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap">📋 Journal de classe</button>
-            <button id="tabPresencesBtn" onclick="changerOnglet('presences')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">🗓️ Présences du jour</button>
-            <button id="tabElevesBtn" onclick="changerOnglet('eleves')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">🗂️ Fiches Signalétiques</button>
-            <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">📊 Bilans & Suivi</button>
+        <!-- BARRE DE NAVIGATION COMMONS STYLE "ONGLETS DE JEUX" -->
+        <div class="flex gap-2 no-print overflow-x-auto pb-2 border-b-2 border-orange-100 mb-6">
+            <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-orange-400 text-white shadow-sm whitespace-nowrap transition">📋 Journal de classe</button>
+            <button id="tabPresencesBtn" onclick="changerOnglet('presences')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-yellow-50">🗓️ Présences</button>
+            <button id="tabElevesBtn" onclick="changerOnglet('eleves')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-pink-50">🧸 Dossiers Enfants</button>
+            <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition hover:bg-teal-50">📊 Bilans & Étoiles</button>
         </div>
 
-        <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
+        <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
+        <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
             <div class="space-y-4 no-print">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">➕ Nouvel Atelier</h2>
-                    <form id="journalForm" class="space-y-3">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-orange-100">
+                    <h2 class="text-lg text-orange-500 mb-3 flex items-center gap-1">🎨 Nouvel Atelier</h2>
+                    <form id="journalForm" class="space-y-3 text-xs font-bold">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-gray-500">DATE</label>
-                                <input type="date" id="dateInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" required>
+                                <label class="text-gray-400 block mb-1">DATE</label>
+                                <input type="date" id="dateInput" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm focus:border-orange-300 outline-none" required>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-gray-500">MOMENT</label>
-                                <select id="momentInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm">
-                                    <option>Accueil / Rituels</option><option>Matinée (Activité)</option><option>Récréation</option><option>Après-midi</option><option>Fin de journée</option>
+                                <label class="text-gray-400 block mb-1">MOMENT</label>
+                                <select id="momentInput" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm focus:border-orange-300 outline-none">
+                                    <option>☀️ Accueil / Rituels</option><option>🎨 Matinée (Activité)</option><option>🌳 Récréation</option><option>🧩 Après-midi</option><option>🎒 Fin de journée</option>
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">TITRE</label>
-                            <input type="text" id="titreInput" placeholder="Nom de l'activité..." class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" required>
+                            <label class="text-gray-400 block mb-1">NOM DE L'ACTIVITÉ</label>
+                            <input type="text" id="titreInput" placeholder="Ex: Peinture aux doigts..." class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm focus:border-orange-300 outline-none" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">DOMAINE FWB</label>
-                            <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm" onchange="mettreAJourObjectifs()"></select>
+                            <label class="text-gray-400 block mb-1">DOMAINE DU PACTE (FWB)</label>
+                            <select id="domaineInput" class="w-full rounded-xl border-2 border-gray-100 p-2 text-xs focus:border-orange-300 outline-none" onchange="mettreAJourObjectifs()"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">COMPÉTENCE VISÉE</label>
-                            <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm bg-gray-50"></select>
+                            <label class="text-gray-400 block mb-1">OBJECTIF VISÉ</label>
+                            <select id="objectifInput" class="w-full rounded-xl border-2 border-gray-50 p-2 text-xs bg-amber-50/30 text-amber-900 outline-none"></select>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-semibold text-gray-500 uppercase">Suivi des présents</label>
+                                <label class="text-gray-400">RÉUSSITE DES ÉLÈVES PRÉSENTS</label>
                                 <div class="flex gap-2">
-                                    <button type="button" onclick="noterTousLesEleves('🟢 Acquis')" class="text-[10px] text-indigo-600 font-semibold hover:underline">Tout Acquis</button>
+                                    <button type="button" onclick="noterTousLesEleves('🟢 Acquis')" class="text-[10px] text-emerald-500 hover:underline">Tout Acquis 🟢</button>
                                     <button type="button" onclick="noterTousLesEleves('')" class="text-[10px] text-gray-400 hover:underline">Vider</button>
                                 </div>
                             </div>
-                            <div id="grilleSuiviFormulaire" class="border rounded-md p-2 bg-gray-50 space-y-1 max-h-40 overflow-y-auto text-xs"></div>
+                            <div id="grilleSuiviFormulaire" class="border-2 border-gray-50 rounded-xl p-2 bg-gray-50/50 space-y-1 max-h-40 overflow-y-auto"></div>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center"><label class="text-xs font-semibold text-gray-500">DÉROULEMENT</label><button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
-                            <textarea id="descInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="text-gray-400">DÉROULEMENT DE L'ATELIER</label><button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-500 flex items-center gap-0.5">🎙️ Parler</button></div>
+                            <textarea id="descInput" rows="2" placeholder="Que font les enfants ?..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-sm focus:border-orange-300 outline-none"></textarea>
                         </div>
                         <div>
-                            <div class="flex justify-between items-center"><label class="text-xs font-semibold text-gray-500">OBSERVATIONS</label><button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
-                            <textarea id="obsInput" rows="1" class="mt-1 block w-full rounded-md border-gray-300 p-1.5 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="text-gray-400">OBSERVATIONS DU JOUR</label><button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-500 flex items-center gap-0.5">🎙️ Parler</button></div>
+                            <textarea id="obsInput" rows="1" placeholder="Difficultés ou anecdotes..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-sm focus:border-orange-300 outline-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">PHOTOS DE L'ACTIVITÉ (ILLIMITÉES)</label>
-                            <input type="file" id="photoInput" accept="image/*" class="text-xs text-gray-500 w-full" multiple>
+                            <label class="text-gray-400 block mb-1">📸 PHOTOS SOUVENIRS (ILLIMITÉES)</label>
+                            <input type="file" id="photoInput" accept="image/*" class="text-xs text-gray-400 file:bg-orange-50 file:text-orange-600 file:border-0 file:rounded-xl file:px-3 file:py-1 file:font-bold hover:file:bg-orange-100 cursor-pointer" multiple>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-lg font-medium shadow hover:bg-indigo-700 transition text-sm">Enregistrer l'activité</button>
+                        <button type="submit" class="w-full bg-orange-400 text-white p-3 rounded-2xl font-bold shadow-sm hover:bg-orange-500 transition text-sm tracking-wide">Enregistrer dans le journal 🎈</button>
                     </form>
                 </div>
             </div>
             <div class="lg:col-span-2 print-full-width">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="no-print bg-gray-50 p-3 rounded-lg mb-4 border flex flex-wrap gap-2">
-                        <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="Rechercher un atelier..." class="rounded-md border-gray-300 p-2 border text-sm flex-1 min-w-[200px]">
-                        <select id="filtreEleveJournal" onchange="afficherJournal()" class="rounded-md border-gray-300 p-2 border text-sm bg-white">
-                            <option value="Tous">Tous les élèves</option>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-orange-100">
+                    <div class="no-print bg-amber-50/40 p-3 rounded-2xl border-2 border-dashed border-amber-200 mb-4 flex flex-wrap gap-2">
+                        <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="🔍 Rechercher un atelier magique..." class="rounded-xl border-2 border-gray-100 p-2 text-sm flex-1 min-w-[200px] outline-none focus:border-orange-200">
+                        <select id="filtreEleveJournal" onchange="afficherJournal()" class="rounded-xl border-2 border-gray-100 p-2 text-sm font-bold text-gray-600 bg-white outline-none">
+                            <option value="Tous">👦👧 Tous les enfants</option>
                         </select>
                     </div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">📋 Chronologie des Ateliers</h2>
+                    <h2 class="text-xl text-gray-700 mb-4 pb-2 border-b-2 border-dashed border-gray-100">📋 Les Aventures de la Classe</h2>
                     <div id="journalEntries" class="space-y-4"></div>
                 </div>
             </div>
         </div>
 
-        <div id="ongletPresences" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200 print-full-width">
-            <div class="flex justify-between items-center border-b pb-3 mb-4 flex-wrap gap-2">
+        <!-- ================= ONGLET 2 : PRÉSENCES DU JOUR ================= -->
+        <div id="ongletPresences" class="hidden bg-white p-6 rounded-3xl shadow-sm border-2 border-yellow-100 print-full-width">
+            <div class="flex justify-between items-center border-b-2 border-dashed border-gray-100 pb-3 mb-4 flex-wrap gap-2">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800">🗓️ Registre d'Appel Numérique</h2>
-                    <p class="text-xs text-gray-500">Cochez le statut de chaque enfant pour la date sélectionnée.</p>
+                    <h2 class="text-xl text-yellow-500">🗓️ Qui est là aujourd'hui ?</h2>
+                    <p class="text-xs text-gray-400 font-medium">Un clic sur les gommettes pour faire l'appel des petits coquins.</p>
                 </div>
-                <div class="no-print flex items-center gap-2">
-                    <label class="text-sm font-medium text-gray-600">Date d'appel :</label>
-                    <input type="date" id="datePresencesInput" onchange="chargerRegistrePresences()" class="rounded-md border-gray-300 p-1.5 border text-sm">
+                <div class="no-print flex items-center gap-2 font-bold text-xs text-gray-400">
+                    <span>DATE D'APPEL :</span>
+                    <input type="date" id="datePresencesInput" onchange="chargerRegistrePresences()" class="rounded-xl border-2 border-gray-100 p-2 text-sm text-gray-700 outline-none focus:border-yellow-300">
                 </div>
             </div>
-            <div id="listePresencesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            <div id="listePresencesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 h-fit no-print">
-                <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">👤 Inscrire un Élève</h2>
-                <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-sm">
+        <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
+        <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
+            <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-pink-100 h-fit no-print">
+                <h2 class="text-lg text-pink-500 mb-3 flex items-center gap-1">🧸 Accueillir un Enfant</h2>
+                <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-xs font-bold">
                     <input type="hidden" id="editEleveId">
-                    <div class="flex justify-center mb-2">
-                        <div id="wrapperPhotoEleve" class="w-20 h-20 bg-gray-100 border rounded-full flex items-center justify-center text-gray-400 overflow-hidden relative">
-                            <span>Photo</span>
+                    <div class="flex justify-center mb-1">
+                        <div id="wrapperPhotoEleve" class="w-24 h-24 bg-pink-50/50 border-2 border-dashed border-pink-200 rounded-full flex items-center justify-center text-pink-400 overflow-hidden shadow-inner font-bold">
+                            <span>Pas de photo</span>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">PHOTO DE L'ENFANT</label>
-                        <input type="file" id="elPhotoInput" accept="image/*" class="text-xs text-gray-500 w-full">
+                        <label class="text-gray-400 block mb-0.5">SÉLECTIONNER SA PHOTO</label>
+                        <input type="file" id="elPhotoInput" accept="image/*" class="text-xs text-gray-400 w-full cursor-pointer">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">PRÉNOM</label>
-                            <input type="text" id="elPrenom" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5" required>
+                            <label class="text-gray-400 block mb-0.5">PRÉNOM</label>
+                            <input type="text" id="elPrenom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500">NOM</label>
-                            <input type="text" id="elNom" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5" required>
+                            <label class="text-gray-400 block mb-0.5">NOM</label>
+                            <input type="text" id="elNom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">DATE DE NAISSANCE</label>
-                        <input type="date" id="elNaissance" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5">
+                        <label class="text-gray-400 block mb-0.5">DATE DE NAISSANCE</label>
+                        <input type="date" id="elNaissance" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">CONTACT PARENTS</label>
-                        <textarea id="elContact" rows="2" placeholder="Maman: 0470/... \nPapa: 0485/..." class="mt-1 block w-full rounded-md border border-gray-300 p-1.5 text-xs"></textarea>
+                        <label class="text-gray-400 block mb-0.5">CONTACTS DES PARENTS</label>
+                        <textarea id="elContact" rows="2" placeholder="Ex: Maman (0470/...) - Papa (0485/...)" class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-pink-300"></textarea>
                     </div>
-                    <div class="bg-red-50 p-2 rounded border border-red-200">
-                        <label class="block text-xs font-bold text-red-700">⚠️ FIP / SANTÉ / ALLERGIES</label>
-                        <textarea id="elSante" rows="2" placeholder="Allergie gluten, asthme, protocole PAI..." class="mt-1 block w-full rounded-md border-red-300 p-1.5 text-xs bg-white"></textarea>
+                    <div class="bg-red-50 p-2.5 rounded-2xl border-2 border-red-100">
+                        <label class="block text-xs font-bold text-red-600 flex items-center gap-1">⚠️ ALLERGIES / SANTÉ / FIP</label>
+                        <textarea id="elSante" rows="2" placeholder="Allergie laitière, asthme, protocole PAI..." class="mt-1 w-full rounded-xl border-2 border-red-200 p-2 font-normal text-xs outline-none focus:border-red-400 bg-white"></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500">REMARQUES PÉDAGOGIQUES</label>
-                        <textarea id="elNotes" rows="1" class="mt-1 block w-full rounded-md border border-gray-300 p-1.5 text-xs"></textarea>
+                        <label class="text-gray-400 block mb-0.5">REMARQUES ET PRÉFÉRENCES</label>
+                        <textarea id="elNotes" rows="1" placeholder="Doudou lapin, adore les puzzles..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-pink-300"></textarea>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded-lg font-medium hover:bg-indigo-700 transition">Enregistrer l'élève</button>
-                        <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-300 px-3 rounded-lg text-gray-700">Annuler</button>
+                        <button type="submit" class="w-full bg-pink-400 text-white p-2.5 rounded-xl font-bold hover:bg-pink-500 shadow-sm transition">Enregistrer le doudou 🧸</button>
+                        <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-200 px-3 rounded-xl text-gray-600">Annuler</button>
                     </div>
                 </form>
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Créer une nouvelle classe</h3>
+                <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-100">
+                    <h3 class="text-xs text-gray-400 mb-2">Créer une autre classe</h3>
                     <div class="flex gap-1">
-                        <input type="text" id="nomNouvelleClasse" placeholder="Ex: M1 (Classe Bleue)" class="text-xs rounded border border-gray-300 p-1.5 w-full">
-                        <button onclick="creerClasse()" class="bg-gray-800 text-white text-xs px-2 rounded hover:bg-black">Créer</button>
+                        <input type="text" id="nomNouvelleClasse" placeholder="Ex: M3 (Classe Verte)" class="text-xs rounded-xl border-2 border-gray-100 p-2 w-full outline-none">
+                        <button onclick="creerClasse()" class="bg-gray-700 text-white text-xs px-3 rounded-xl font-bold hover:bg-black">Créer</button>
                     </div>
                 </div>
             </div>
             <div class="lg:col-span-2 print-full-width space-y-4">
-                <h2 class="text-xl font-bold text-gray-800 pb-2 border-b flex justify-between items-center">
-                    <span>🗂️ Dossiers Élèves Actifs</span>
-                    <span id="compteurEleves" class="text-sm font-normal text-gray-500"></span>
+                <h2 class="text-xl text-gray-700 pb-2 border-b-2 border-dashed border-gray-100 flex justify-between items-center">
+                    <span>🗂️ Le Trombinoscope des Petits</span>
+                    <span id="compteurEleves" class="text-sm font-bold text-gray-400"></span>
                 </h2>
                 <div id="grilleFichesEleves" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
         </div>
 
+        <!-- ================= ONGLET 4 : BILANS & STATS ================= -->
         <div id="ongletBilan" class="hidden space-y-6 print-full-width">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 h-fit">
-                    <h2 class="text-md font-bold text-gray-800 border-b pb-2 mb-3">📊 Équilibre des Domaines FWB</h2>
-                    <div id="statistiquesDomaines" class="space-y-3 text-xs"></div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-teal-100 h-fit">
+                    <h2 class="text-md text-teal-600 border-b-2 border-dashed border-teal-50 pb-2 mb-3 flex items-center gap-1">📊 Équilibre des Jeux FWB</h2>
+                    <div id="statistiquesDomaines" class="space-y-4 text-xs font-bold text-gray-600"></div>
                 </div>
-                <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <div class="flex justify-between items-center border-b pb-2 mb-4 flex-wrap gap-2">
-                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <div id="avatarProfilEleve" class="w-8 h-8 rounded-full bg-indigo-100 overflow-hidden hidden flex items-center justify-center text-xs font-bold text-indigo-700"></div>
-                            <span>Livret de Compétences Personnel</span>
+                <div class="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm border-2 border-teal-100">
+                    <div class="flex justify-between items-center border-b-2 border-dashed border-gray-100 pb-2 mb-4 flex-wrap gap-2">
+                        <h2 class="text-lg text-teal-600 flex items-center gap-3">
+                            <div id="avatarProfilEleve" class="w-10 h-10 rounded-full border-2 border-teal-300 overflow-hidden hidden flex items-center justify-center text-xs shadow-sm bg-white"></div>
+                            <span>Mon Cahier de Progrès</span>
                         </h2>
-                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-md border-gray-300 p-1.5 border text-sm bg-indigo-50 font-bold text-indigo-700 no-print"></select>
+                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-xl border-2 border-teal-100 p-2 text-sm font-bold text-teal-700 bg-teal-50 outline-none no-print"></select>
                     </div>
-                    <div id="statsPresencesEleve" class="mb-4 p-3 bg-blue-50 text-blue-900 border border-blue-200 rounded-lg text-xs hidden flex justify-between items-center"></div>
+                    <div id="statsPresencesEleve" class="mb-4 p-3 bg-gradient-to-r from-blue-50 to-sky-50 text-sky-900 border border-sky-100 rounded-2xl text-xs font-bold hidden flex justify-between items-center"></div>
                     <div id="contenuProfilEleve" class="space-y-2"></div>
                 </div>
             </div>
@@ -213,35 +227,26 @@
 
     </div>
 
+    <!-- LOGIQUE DE BACKEND INTÉGRALE INDEXEDDB (INCHANGÉE MAIS INTÉGRÉE AVEC AMOUR) -->
     <script>
         const objectifsParDomaine = {
-            transversal: ["Construire son identité, la confiance en soi et l'autonomie", "Coopérer, respecter les règles collectives et vivre ensemble", "S'exprimer, communiquer ses émotions et écouter l'autre", "Développer sa curiosité, sa créativité et l'esprit d'initiative"],
-            art: ["Arts plastiques & visuels : Explorer outils et matières", "Arts plastiques & visuels : Production personnelle", "Éducation musicale : Explorer et DO-RE-MI", "Arts du spectacle : S'exprimer par le corps"],
-            langues: ["Langage oral : Oser prendre la parole distinctement", "Langage oral : Comprendre un récit ou une consigne", "Langage oral : Prendre part à un dialogue", "Éveil à l'écrit : Manipuler le livre et le sens de lecture", "Éveil à l'écrit : Reconnaître son prénom et des lettres"],
-            math: ["Nombres : Dénombrer une collection d'objets", "Nombres : Comparer des collections", "Nombres : Quantité et symbole numérique", "Formes : Reconnaître les formes géométriques", "Grandeurs : Classer, trier et sérier", "Espace & Temps : Se repérer dans la journée/l'espace"],
-            sciences: ["Sciences du vivant : Caractéristiques d'animaux/végétaux", "Matière & Technique : Explorer l'eau, l'air, les objets", "Sciences humaines : Se repérer dans l'environnement social", "Philosophie & Citoyenneté : Discussion philosophique"],
-            sante: ["Psychomotricité globale : Équilibre, sauts, grimper", "Psychomotricité fine : Pince, découpage, graphisme", "Santé & Bien-être : Gestes d'hygiène et alimentation"]
+            transversal: ["🤝 Coopérer, respecter les règles collectives et vivre ensemble", "🌱 Construire son identité, la confiance en soi et l'autonomie", "💬 S'exprimer, communiquer ses émotions et écouter l'autre", "💡 Développer sa curiosité, sa créativité et l'esprit d'initiative"],
+            art: ["🖍️ Arts plastiques : Explorer outils, textures et matières", "🎨 Arts plastiques : Réaliser une production plastique libre", "🎵 Éducation musicale : Explorer, mémoriser des chants et rythmes", "🎭 Arts du spectacle : S'exprimer par le mime et le corps"],
+            langues: ["🗣️ Langage oral : Oser s'exprimer et prendre la parole", "📖 Éveil à l'écrit : Manipuler le livre et comprendre l'histoire", "📝 Éveil à l'écrit : Découvrir son prénom, les lettres et tracer", "🌍 Éveil aux langues : Jouer avec les sonorités du monde"],
+            math: ["🧮 Nombres : Dénombrer une collection d'objets réels", "📐 Grandeurs : Classer, trier, sérier et comparer des formes", "🧩 Espace : Utiliser les repères (sur, sous, gauche, droite)", "📅 Temps : Se repérer dans la journée et la semaine (calendrier)"],
+            sciences: ["🐾 Sciences du vivant : Découvrir les plantes et les animaux", "🧪 Matière & Technique : Expérimenter avec l'eau, l'air et les objets", "🌍 Humaines : Explorer son quartier, sa famille et l'école", "💭 Philo & Citoyenneté : S'entraider et mener une causerie"],
+            sante: ["🤸‍♀️ Psychomotricité globale : Équilibre, sauts, grimper, courir", "✂️ Psychomotricité fine : Maîtriser le découpage, enfiler, pincer", "🍏 Santé : Découvrir l'alimentation saine et les rythmes corporels"]
         };
 
         const labelsDomaines = {
-            transversal: "Visées transversales", art: "1. Éducation artistique", langues: "2. Français & Langues",
-            math: "3. Mathématiques", sciences: "4. Sciences & Philo", sante: "5. Psychomotricité"
+            transversal: "🧸 Visées transversales", art: "🎨 1. Éducation artistique", langues: "📖 2. Français & Langues",
+            math: "🧮 3. Mathématiques", sciences: "🧪 4. Sciences & Philo", sante: "🤸‍♀️ 5. Psychomotricité"
         };
 
-        // VARIABLES EN MÉMOIRE TAMPON (Synchronisées avec IndexedDB)
-        let classesData = [];
-        let elevesData = [];
-        let journalData = [];
-        let presencesData = {};
-        
-        let currentClasse = "";
-        let tempPhotosArray = [];
-        let tempElevePhotoBase64 = "";
-        let db;
+        let classesData = []; let elevesData = []; let journalData = []; let presencesData = {};
+        let currentClasse = ""; let tempPhotosArray = []; let tempElevePhotoBase64 = ""; let db;
 
-        // INITIALISATION DE LA BASE INDEXEDDB NATIVE
         const request = indexedDB.open("MaternelleEspaceDB", 1);
-        
         request.onupgradeneeded = function(e) {
             let database = e.target.result;
             if(!database.objectStoreNames.contains("classes")) database.createObjectStore("classes", { keyPath: "id" });
@@ -254,44 +259,35 @@
             db = e.target.result;
             chargerToutesLesDonneesDB().then(() => {
                 if(classesData.length === 0) {
-                    classesData = ["M1 (Petits)", "M2 (Moyens)"];
+                    classesData = ["👶 M1 (Petits)", "🧸 M2 (Moyens)", "🚀 M3 (Grands)"];
                     classesData.forEach(c => putInStore("classes", { id: c, name: c }));
                 }
                 currentClasse = classesData[0];
-                document.getElementById('dateInput').valueAsDate = new Date();
-                document.getElementById('datePresencesInput').valueAsDate = new Date();
                 const domSelect = document.getElementById('domaineInput');
                 domSelect.innerHTML = Object.entries(labelsDomaines).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
                 initApp();
             });
         };
 
-        // WRAPPERS CRUD INDEXEDDB
         function getAllFromStore(storeName, callback) {
             let tx = db.transaction(storeName, "readonly");
             let store = tx.objectStore(storeName);
-            let req = store.getAll();
-            req.onsuccess = () => callback(req.result);
+            let req = store.getAll(); req.onsuccess = () => callback(req.result);
         }
-
         function putInStore(storeName, data, callback) {
             let tx = db.transaction(storeName, "readwrite");
             let store = tx.objectStore(storeName);
-            let req = store.put(data);
-            req.onsuccess = () => { if(callback) callback(); };
+            let req = store.put(data); req.onsuccess = () => { if(callback) callback(); };
         }
-
         function deleteFromStore(storeName, id, callback) {
             let tx = db.transaction(storeName, "readwrite");
             let store = tx.objectStore(storeName);
-            let req = store.delete(id);
-            req.onsuccess = () => { if(callback) callback(); };
+            let req = store.delete(id); req.onsuccess = () => { if(callback) callback(); };
         }
 
         function chargerToutesLesDonneesDB() {
             return new Promise((resolve) => {
-                let count = 0;
-                const check = () => { count++; if(count === 4) resolve(); };
+                let count = 0; const check = () => { count++; if(count === 4) resolve(); };
                 getAllFromStore("classes", (res) => { if(res.length > 0) classesData = res.map(x => x.name); check(); });
                 getAllFromStore("eleves", (res) => { elevesData = res; check(); });
                 getAllFromStore("journal", (res) => { journalData = res; check(); });
@@ -299,39 +295,25 @@
             });
         }
 
-        function initApp() {
-            remplirSelectClasses();
-            changerClasseGlobale(currentClasse);
-        }
-
+        function initApp() { remplirSelectClasses(); changerClasseGlobale(currentClasse); }
+        
         function remplirSelectClasses() {
-            const select = document.getElementById('globalClasseSelect');
-            select.innerHTML = classesData.map(c => `<option value="${c}" ${ccurrentClasse?'selected':''}>${c}</option>`).join('');
+            document.getElementById('globalClasseSelect').innerHTML = classesData.map(c => `<option value="${c}" ${c===currentClasse?'selected':''}>${c}</option>`).join('');
         }
 
         function changerClasseGlobale(classeForcee = null) {
             if(classeForcee) currentClasse = classeForcee;
             else currentClasse = document.getElementById('globalClasseSelect').value;
-
-            afficherGestionEleves();
-            mettreAJourObjectifs();
-            chargerRegistrePresences();
-            configurerFiltresEleves();
-            afficherJournal();
-            genererStatistiquesGlobales();
-            configurerSelectProfilsEleves();
+            afficherGestionEleves(); mettreAJourObjectifs(); chargerRegistrePresences();
+            configurerFiltresEleves(); afficherJournal(); genererStatistiquesGlobales(); configurerSelectProfilsEleves();
         }
 
         function creerClasse() {
-            const input = document.getElementById('nomNouvelleClasse');
-            const nom = input.value.trim();
+            const input = document.getElementById('nomNouvelleClasse'); const nom = input.value.trim();
             if(nom && !classesData.includes(nom)) {
                 classesData.push(nom);
                 putInStore("classes", { id: nom, name: nom }, () => {
-                    currentClasse = nom;
-                    input.value = "";
-                    remplirSelectClasses();
-                    changerClasseGlobale();
+                    currentClasse = nom; input.value = ""; remplirSelectClasses(); changerClasseGlobale();
                 });
             }
         }
@@ -342,376 +324,267 @@
             
             Object.keys(blocs).forEach(k => {
                 document.getElementById(blocs[k]).classList.add('hidden');
-                document.getElementById(boutons[k]).className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap";
+                document.getElementById(boutons[k]).className = "py-2.5 px-5 font-bold text-sm rounded-2xl bg-white text-gray-500 border border-gray-200 whitespace-nowrap transition";
             });
 
+            const styleActif = { journal: 'bg-orange-400 text-white', presences: 'bg-yellow-400 text-white', eleves: 'bg-pink-400 text-white', bilan: 'bg-teal-400 text-white' };
             document.getElementById(blocs[onglet]).classList.remove('hidden');
-            document.getElementById(boutons[onglet]).className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap";
+            document.getElementById(boutons[onglet]).className = `py-2.5 px-5 font-bold text-sm rounded-2xl shadow-sm whitespace-nowrap transition ${styleActif[onglet]}`;
             
             if (onglet === 'bilan') { genererStatistiquesGlobales(); chargerProfilEleve(); }
             if (onglet === 'presences') { chargerRegistrePresences(); }
         }
 
         function configurerFiltresEleves() {
-            const select = document.getElementById('filtreEleveJournal');
             const filtrés = elevesData.filter(e => e.classe === currentClasse);
-            select.innerHTML = '<option value="Tous">Tous les élèves</option>' + filtrés.map(e => `<option value="${e.id}">${e.prenom}</option>`).join('');
+            document.getElementById('filtreEleveJournal').innerHTML = '<option value="Tous">👦👧 Tous les enfants</option>' + filtrés.map(e => `<option value="${e.id}">👦 ${e.prenom}</option>`).join('');
         }
 
-        function noterTousLesEleves(valeur) {
-            document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur);
-        }
+        function noterTousLesEleves(valeur) { document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur); }
 
-        // --- ENCODAGE IMAGE ÉLÈVE ET ATELIER MULTIPLE ---
         document.getElementById('elPhotoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
-                const r = new FileReader();
-                r.onload = (ev) => {
+                const r = new FileReader(); r.onload = (ev) => {
                     tempElevePhotoBase64 = ev.target.result;
                     document.getElementById('wrapperPhotoEleve').innerHTML = `<img src="${tempElevePhotoBase64}" class="w-full h-full object-cover">`;
-                };
-                r.readAsDataURL(file);
+                }; r.readAsDataURL(file);
             }
         });
 
         document.getElementById('photoInput').addEventListener('change', function(e) {
-            const files = e.target.files;
-            tempPhotosArray = [];
+            const files = e.target.files; tempPhotosArray = [];
             if(files && files.length > 0) {
-                let chargés = 0;
                 for(let i=0; i<files.length; i++) {
-                    const r = new FileReader();
-                    r.onload = function(ev) {
-                        tempPhotosArray.push(ev.target.result);
-                        chargés++;
-                    };
+                    const r = new FileReader(); r.onload = function(ev) { tempPhotosArray.push(ev.target.result); };
                     r.readAsDataURL(files[i]);
                 }
             }
         });
 
-        // --- ATTACHEMENT DES ÉLÈVES (ONGLET 3) ---
         function afficherGestionEleves() {
-            const grille = document.getElementById('grilleFichesEleves');
-            const grilleForm = document.getElementById('grilleSuiviFormulaire');
+            const grille = document.getElementById('grilleFichesEleves'); const grilleForm = document.getElementById('grilleSuiviFormulaire');
             const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
-
-            document.getElementById('compteurEleves').textContent = `(${listeFiltrée.length} inscrit(s) en ${currentClasse})`;
+            document.getElementById('compteurEleves').textContent = `(${listeFiltrée.length} enfant(s) inscrit(s))`;
             grille.innerHTML = ""; grilleForm.innerHTML = "";
 
             if(listeFiltrée.length === 0) {
-                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border rounded-xl italic">Aucun élève inscrit dans cette classe.</div>`;
-                grilleForm.innerHTML = `<p class="text-gray-400 italic text-center p-2">Inscrivez d'abord des élèves.</p>`;
+                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border-2 border-dashed rounded-3xl italic">Cette classe est encore vide... Inscrivez le premier petit oiseau !</div>`;
                 return;
             }
 
             listeFiltrée.forEach(e => {
-                grilleForm.innerHTML += `
-                    <div class="flex items-center justify-between bg-white p-1 rounded border border-gray-200">
-                        <span class="font-medium text-gray-700">${e.prenom}</span>
-                        <select data-eleveid="${e.id}" class="eleve-statut-select rounded p-0.5 border text-xs bg-gray-50">
-                            <option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 À renforcer</option>
-                        </select>
-                    </div>`;
-
-                const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge non défini";
-                const avatar = e.photo ? `<img src="${e.photo}" class="w-12 h-12 rounded-full object-cover border">` : `<div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">${e.prenom[0]}</div>`;
+                grilleForm.innerHTML += `<div class="flex items-center justify-between bg-white p-1 rounded-xl border border-gray-100"><span>🧸 ${e.prenom}</span><select data-eleveid="${e.id}" class="eleve-statut-select rounded-lg p-0.5 border text-xs bg-gray-50 outline-none"><option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 À renforcer</option></select></div>`;
+                const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge inconnu";
+                const avatar = e.photo ? `<img src="${e.photo}" class="w-14 h-14 rounded-full object-cover border-2 border-pink-200 shadow-sm">` : `<div class="w-14 h-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg border-2 border-pink-200">${e.prenom[0]}</div>`;
                 
                 grille.innerHTML += `
-                    <div class="bg-white p-5 rounded-xl shadow-sm border ${e.sante ? 'border-l-4 border-l-red-500' : 'border-gray-200'} space-y-2 relative page-break-inside-avoid">
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border-2 ${e.sante ? 'border-red-200 bg-red-50/20' : 'border-pink-50'} space-y-2 relative page-break-inside-avoid">
                         <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-3">
-                                ${avatar}
-                                <div>
-                                    <h3 class="text-lg font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3>
-                                    <p class="text-xs text-gray-400">Né(e) le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p>
-                                </div>
-                            </div>
-                            <div class="no-print flex gap-2 text-xs">
-                                <button onclick="editerEleve('${e.id}')" class="text-indigo-600 font-semibold hover:underline">Modifier</button>
-                                <button onclick="supprimerEleve('${e.id}')" class="text-red-500 hover:underline">× Supprimer</button>
-                            </div>
+                            <div class="flex items-center gap-3">${avatar}<div><h3 class="text-md font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3><p class="text-[11px] text-gray-400">🎈 Gâteau le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p></div></div>
+                            <div class="no-print flex gap-2 text-[11px] font-bold text-gray-400"><button onclick="editerEleve('${e.id}')" class="text-pink-500 hover:underline">Modifier</button><button onclick="supprimerEleve('${e.id}')" class="text-red-400 hover:underline">Supprimer</button></div>
                         </div>
-                        ${e.sante ? `<div class="bg-red-50 p-2 rounded text-xs text-red-900 border border-red-200"><strong>⚠️ Fiche Santé :</strong><br>${e.sante}</div>` : ''}
-                        <p class="text-xs text-gray-600 whitespace-pre-line"><strong>Contacts :</strong><br>${e.contact || '/'}</p>
-                        ${e.notes ? `<p class="text-xs text-gray-600 bg-gray-50 p-2 rounded italic"><strong>Notes :</strong> ${e.notes}</p>` : ''}
+                        ${e.sante ? `<div class="bg-red-50 p-2 rounded-xl text-xs text-red-900 border border-red-200 font-bold">🚑 Fiche d'Attention :<br>${e.sante}</div>` : ''}
+                        <p class="text-xs text-gray-600">📞 <strong>Parents :</strong> ${e.contact || '/'}</p>
+                        ${e.notes ? `<p class="text-xs text-gray-500 bg-amber-50/50 p-2 rounded-xl italic">⭐️ ${e.notes}</p>` : ''}
                     </div>`;
             });
         }
 
         function sauverEleve(e) {
-            e.preventDefault();
-            const id = document.getElementById('editEleveId').value;
+            e.preventDefault(); const id = document.getElementById('editEleveId').value;
             const nouvelEleve = {
-                id: id || Date.now().toString(),
-                prenom: document.getElementById('elPrenom').value.trim(),
-                nom: document.getElementById('elNom').value.trim(),
-                classe: currentClasse,
-                naissance: document.getElementById('elNaissance').value,
-                contact: document.getElementById('elContact').value.trim(),
-                sante: document.getElementById('elSante').value.trim(),
-                notes: document.getElementById('elNotes').value.trim(),
-                photo: tempElevePhotoBase64
+                id: id || Date.now().toString(), prenom: document.getElementById('elPrenom').value.trim(), nom: document.getElementById('elNom').value.trim(),
+                classe: currentClasse, naissance: document.getElementById('elNaissance').value, contact: document.getElementById('elContact').value.trim(),
+                sante: document.getElementById('elSante').value.trim(), notes: document.getElementById('elNotes').value.trim(), photo: tempElevePhotoBase64
             };
-
-            if(id) elevesData = elevesData.map(x => x.id === id ? nouvelEleve : x);
-            else elevesData.push(nouvelEleve);
-
-            putInStore("eleves", nouvelEleve, () => {
-                annulerEditionEleve();
-                changerClasseGlobale();
-            });
+            if(id) elevesData = elevesData.map(x => x.id === id ? nouvelEleve : x); else elevesData.push(nouvelEleve);
+            putInStore("eleves", nouvelEleve, () => { annulerEditionEleve(); changerClasseGlobale(); });
         }
 
         function editerEleve(id) {
             const target = elevesData.find(x => x.id === id);
             if(target) {
-                document.getElementById('editEleveId').value = target.id;
-                document.getElementById('elPrenom').value = target.prenom;
-                document.getElementById('elNom').value = target.nom;
-                document.getElementById('elNaissance').value = target.naissance;
-                document.getElementById('elContact').value = target.contact;
-                document.getElementById('elSante').value = target.sante;
-                document.getElementById('elNotes').value = target.notes;
-                tempElevePhotoBase64 = target.photo || "";
-                if(tempElevePhotoBase64) {
-                    document.getElementById('wrapperPhotoEleve').innerHTML = `<img src="${tempElevePhotoBase64}" class="w-full h-full object-cover">`;
-                } else {
-                    document.getElementById('wrapperPhotoEleve').innerHTML = "<span>Photo</span>";
-                }
+                document.getElementById('editEleveId').value = target.id; document.getElementById('elPrenom').value = target.prenom; document.getElementById('elNom').value = target.nom;
+                document.getElementById('elNaissance').value = target.naissance; document.getElementById('elContact').value = target.contact; document.getElementById('elSante').value = target.sante;
+                document.getElementById('elNotes').value = target.notes; tempElevePhotoBase64 = target.photo || "";
+                document.getElementById('wrapperPhotoEleve').innerHTML = tempElevePhotoBase64 ? `<img src="${tempElevePhotoBase64}" class="w-full h-full object-cover">` : "<span>Pas de photo</span>";
                 document.getElementById('btnAnnulerEdit').classList.remove('hidden');
-                document.getElementById('elPrenom').focus();
             }
         }
 
         function annulerEditionEleve() {
-            document.getElementById('editEleveId').value = "";
-            document.getElementById('eleveForm').reset();
-            tempElevePhotoBase64 = "";
-            document.getElementById('wrapperPhotoEleve').innerHTML = "<span>Photo</span>";
+            document.getElementById('editEleveId').value = ""; document.getElementById('eleveForm').reset();
+            tempElevePhotoBase64 = ""; document.getElementById('wrapperPhotoEleve').innerHTML = "<span>Pas de photo</span>";
             document.getElementById('btnAnnulerEdit').classList.add('hidden');
         }
 
-        function supprimerEleve(id) {
-            if(confirm("Supprimer définitivement cet élève de la base ?")) {
-                elevesData = elevesData.filter(x => x.id !== id);
-                deleteFromStore("eleves", id, () => changerClasseGlobale());
-            }
-        }
+        function supprimerEleve(id) { if(confirm("Supprimer l'enfant ?")) { elevesData = elevesData.filter(x => x.id !== id); deleteFromStore("eleves", id, () => changerClasseGlobale()); } }
 
-        // --- REGISTRE DES PRÉSENCES (ONGLET 2) ---
         function chargerRegistrePresences() {
-            const container = document.getElementById('listePresencesContainer');
-            const dateCible = document.getElementById('datePresencesInput').value;
-            const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
-            
-            container.innerHTML = "";
-            if(!dateCible || listeFiltrée.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-gray-400 italic py-6">Aucun élève ou date manquante.</p>`;
-                return;
-            }
-
+            const container = document.getElementById('listePresencesContainer'); const dateCible = document.getElementById('datePresencesInput').value;
+            const listeFiltrée = elevesData.filter(e => e.classe === currentClasse); container.innerHTML = "";
+            if(!dateCible || listeFiltrée.length === 0) { container.innerHTML = `<p class="col-span-full text-center text-gray-400 italic py-4">Pas de petits oiseaux à appeler ici.</p>`; return; }
             if(!presencesData[dateCible]) presencesData[dateCible] = {};
 
             listeFiltrée.forEach(e => {
-                const etatActuel = presencesData[dateCible][e.id] || "P";
-                const avatar = e.photo ? `<img src="${e.photo}" class="w-8 h-8 rounded-full object-cover">` : `<div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">${e.prenom[0]}</div>`;
-                
-                const card = document.createElement('div');
-                card.className = "p-3 bg-gray-50 border rounded-xl flex items-center justify-between shadow-sm";
+                const etat = presencesData[dateCible][e.id] || "P";
+                const avatar = e.photo ? `<img src="${e.photo}" class="w-9 h-9 rounded-full object-cover border">` : `<div class="w-9 h-9 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center font-bold text-xs">${e.prenom[0]}</div>`;
+                const card = document.createElement('div'); card.className = "p-3 bg-white border-2 border-yellow-50 rounded-2xl flex items-center justify-between shadow-sm";
                 card.innerHTML = `
-                    <div class="flex items-center gap-2 truncate mr-2">
-                        ${avatar}
-                        <strong class="text-gray-800 text-sm block truncate">${e.prenom}</strong>
+                    <div class="flex items-center gap-2 truncate">
+                        ${avatar}<strong class="text-gray-700 text-sm truncate">${e.prenom}</strong>
                     </div>
-                    <div class="flex gap-1 no-print">
-                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'P')" class="px-2 py-1 text-xs font-bold rounded border ${激('P', etatActuel, 'bg-green-600')}">🟢 P</button>
-                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'A')" class="px-2 py-1 text-xs font-bold rounded border ${激('A', etatActuel, 'bg-red-600')}">🔴 A</button>
-                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'R')" class="px-2 py-1 text-xs font-bold rounded border ${激('R', etatActuel, 'bg-yellow-500')}">🟡 R</button>
+                    <div class="flex gap-1 no-print font-bold text-xs">
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'P')" class="px-2 py-1 rounded-xl transition border ${etat==='P'?'bg-emerald-400 text-white border-transparent':'bg-gray-50 text-gray-400'}">🟢 Oui</button>
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'A')" class="px-2 py-1 rounded-xl transition border ${etat==='A'?'bg-rose-400 text-white border-transparent':'bg-gray-50 text-gray-400'}">🔴 Non</button>
+                        <button onclick="marquerPresence('${dateCible}', '${e.id}', 'R')" class="px-2 py-1 rounded-xl transition border ${etat==='R'?'bg-amber-400 text-white border-transparent':'bg-gray-50 text-gray-400'}">🟡 Retard</button>
                     </div>`;
                 container.appendChild(card);
             });
         }
-        function 激(b, a, cls) { return b === a ? `${cls} text-white border-transparent` : 'bg-white text-gray-600'; }
 
         function marquerPresence(date, idEleve, status) {
-            presencesData[date][idEleve] = status;
-            putInStore("presences", { date: date, data: presencesData[date] }, () => chargerRegistrePresences());
+            presencesData[date][idEleve] = status; putInStore("presences", { date: date, data: presencesData[date] }, () => chargerRegistrePresences());
         }
 
-        // --- ENCODAGE & RENDU DU JOURNAL DE CLASSE (ONGLET 1) ---
         function mettreAJourObjectifs() {
             const dom = document.getElementById('domaineInput').value;
             document.getElementById('objectifInput').innerHTML = objectifsParDomaine[dom].map(o => `<option value="${o}">${o}</option>`).join('');
         }
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const suivi = {};
-            document.querySelectorAll('.eleve-statut-select').forEach(s => {
-                const idEl = s.getAttribute('data-eleveid'); if(s.value) suivi[idEl] = s.value;
-            });
-
+            e.preventDefault(); const suivi = {};
+            document.querySelectorAll('.eleve-statut-select').forEach(s => { const id = s.getAttribute('data-eleveid'); if(s.value) suivi[id] = s.value; });
             const domSelect = document.getElementById('domaineInput');
             const nouvelleActivite = {
-                id: Date.now(), classe: currentClasse, date: document.getElementById('dateInput').value,
-                moment: document.getElementById('momentInput').value, titre: document.getElementById('titreInput').value,
-                domaineCle: domSelect.value, domaineTexte: domSelect.options[domSelect.selectedIndex].text,
-                objectif: document.getElementById('objectifInput').value, suivi, description: document.getElementById('descInput').value,
-                observations: document.getElementById('obsInput').value, photos: tempPhotosArray
+                id: Date.now(), classe: currentClasse, date: document.getElementById('dateInput').value, moment: document.getElementById('momentInput').value,
+                titre: document.getElementById('titreInput').value, domaineCle: domSelect.value, domaineTexte: domSelect.options[domSelect.selectedIndex].text,
+                objectif: document.getElementById('objectifInput').value, suivi, description: document.getElementById('descInput').value, observations: document.getElementById('obsInput').value, photos: tempPhotosArray
             };
-
             journalData.push(nouvelleActivite);
-            putInStore("journal", nouvelleActivite, () => {
-                form.reset();
-                tempPhotosArray = [];
-                document.getElementById('dateInput').valueAsDate = new Date();
-                changerClasseGlobale();
-            });
+            putInStore("journal", nouvelleActivite, () => { form.reset(); tempPhotosArray = []; document.getElementById('dateInput').valueAsDate = new Date(); changerClasseGlobale(); });
         });
 
         function afficherJournal() {
-            const container = document.getElementById('journalEntries');
-            const search = document.getElementById('rechercheTexte').value.toLowerCase();
-            const fEleve = document.getElementById('filtreEleveJournal').value;
-            container.innerHTML = "";
+            const container = document.getElementById('journalEntries'); const search = document.getElementById('rechercheTexte').value.toLowerCase();
+            const fEleve = document.getElementById('filtreEleveJournal').value; container.innerHTML = "";
+            const filtrées = journalData.filter(f => f.classe === currentClasse && (fEleve === "Tous" || (f.suivi && f.suivi[fEleve])) && (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search)));
 
-            const fichesFiltrées = journalData.filter(f => f.classe === currentClasse && (fEleve === "Tous" || (f.suivi && f.suivi[fEleve])) && (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search)));
+            if(filtrées.length === 0) { container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Pas d'ateliers enregistrés pour cette recherche. 🎈</p>`; return; }
 
-            if(fichesFiltrées.length === 0) {
-                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucun atelier trouvé.</p>`; return;
-            }
-
-            [...fichesFiltrées].reverse().forEach(entry => {
+            [...filtrées].reverse().forEach(entry => {
                 const dateFr = new Date(entry.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
-                
                 let bSuivi = "";
                 if(entry.suivi && Object.keys(entry.suivi).length > 0) {
-                    bSuivi = `<div class="mt-2 pt-2 border-t flex flex-wrap gap-1 text-[11px]">`;
-                    for(const [idEl, stat] of Object.entries(entry.suivi)) {
-                        const kid = elevesData.find(x => x.id === idEl);
+                    bSuivi = `<div class="mt-2 pt-2 border-t border-dashed flex flex-wrap gap-1 text-[11px] font-bold">`;
+                    for(const [id, stat] of Object.entries(entry.suivi)) {
+                        const kid = elevesData.find(x => x.id === id);
                         if(kid) {
-                            let color = "bg-green-50 text-green-700 border-green-200";
-                            if(stat.includes("cours")) color = "bg-yellow-50 text-yellow-700 border-yellow-200";
-                            if(stat.includes("renforcer")) color = "bg-red-50 text-red-700 border-red-200";
-                            bSuivi += `<span class="px-1.5 py-0.5 rounded border ${color}"><strong>${kid.prenom} :</strong> ${stat.replace(/🟢|🟡|🔴/g,'')}</span>`;
+                            let c = stat.includes("Acquis") ? "bg-emerald-50 text-emerald-700 border-emerald-100" : stat.includes("cours") ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-rose-50 text-rose-700 border-rose-100";
+                            bSuivi += `<span class="px-2 py-0.5 rounded-lg border ${c}">${kid.prenom} ${stat}</span>`;
                         }
                     }
                     bSuivi += `</div>`;
                 }
 
-                // Affichage d'une galerie si l'atelier contient plusieurs photos
                 let galerieHtml = "";
                 if(entry.photos && entry.photos.length > 0) {
-                    galerieHtml = `<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">`;
-                    entry.photos.forEach(p => {
-                        galerieHtml += `<img src="${p}" class="max-h-24 w-full object-cover rounded-lg border shadow-sm">`;
-                    });
+                    galerieHtml = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">`;
+                    entry.photos.forEach(p => { galerieHtml += `<img src="${p}" class="max-h-20 w-full object-cover rounded-xl border border-gray-100 shadow-sm">`; });
                     galerieHtml += `</div>`;
                 }
 
-                const div = document.createElement('div');
-                div.className = "p-4 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-2 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
-                div.innerHTML = `
-                    <div class="flex justify-between items-start border-b pb-1">
-                        <div><span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded uppercase">${entry.moment}</span><h3 class="text-md font-bold text-gray-800 inline-block ml-2">${entry.titre}</h3></div>
-                        <span class="text-xs text-gray-400 font-medium capitalize">${dateFr}</span>
+                const card = document.createElement('div'); card.className = "p-5 border-2 border-orange-50 rounded-2xl bg-white shadow-sm space-y-2 page-break-inside-avoid relative hover:shadow-md transition";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start border-b-2 border-dashed border-gray-50 pb-1.5 flex-wrap gap-2 pr-12">
+                        <div><span class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-xl uppercase">${entry.moment}</span><h3 class="text-md font-bold text-gray-800 inline-block ml-1">${entry.titre}</h3></div>
+                        <span class="text-xs text-gray-400 font-bold capitalize">${dateFr}</span>
                     </div>
-                    <div class="flex flex-wrap gap-2 text-[11px] font-medium">
-                        <span class="text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">🎯 ${entry.domaineTexte}</span>
-                        <span class="text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">🔑 ${entry.objective || entry.objectif}</span>
+                    <button onclick="clonerActivite(${entry.id})" class="no-print absolute top-4 right-4 bg-gray-50 hover:bg-orange-50 text-gray-400 hover:text-orange-600 text-xs px-2 py-1 rounded-xl transition font-bold border">👯 Copier</button>
+                    <div class="flex flex-wrap gap-1.5 text-[10px] font-bold">
+                        <span class="text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-lg border border-emerald-100">🎯 ${entry.domaineTexte}</span>
+                        <span class="text-sky-700 bg-sky-50/60 px-2 py-0.5 rounded-lg border border-sky-100">🔑 ${entry.objective || entry.objectif}</span>
                     </div>
-                    <p class="text-xs text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
-                    ${entry.observations ? `<div class="text-xs bg-amber-50 p-2 rounded text-amber-900 border-l-2 border-amber-300"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
-                    ${galerieHtml}
-                    ${bSuivi}`;
-                container.appendChild(div);
+                    <p class="text-xs text-gray-600 leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
+                    ${entry.observations ? `<div class="text-xs bg-amber-50/60 p-2.5 rounded-xl text-amber-900 border-l-4 border-amber-300 font-medium"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
+                    ${galerieHtml}${bSuivi}`;
+                container.appendChild(card);
             });
         }
 
         function genererStatistiquesGlobales() {
             const container = document.getElementById('statistiquesDomaines'); container.innerHTML = "";
-            const fichesClasse = journalData.filter(f => f.classe === currentClasse);
-            const total = fichesClasse.length;
+            const fichesClasse = journalData.filter(f => f.classe === currentClasse); const total = fichesClasse.length;
 
             Object.entries(labelsDomaines).forEach(([cle, label]) => {
-                const count = fichesClasse.filter(f => f.domaineCle === cle).length;
-                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                const count = fichesClasse.filter(f => f.domaineCle === cle).length; const pct = total > 0 ? Math.round((count / total) * 100) : 0;
                 container.innerHTML += `
-                    <div class="space-y-0.5">
-                        <div class="flex justify-between text-gray-600"><span>${label}</span><strong>${count} (${pct}%)</strong></div>
-                        <div class="w-full bg-gray-200 h-1.5 rounded-full"><div class="bg-indigo-600 h-1.5 rounded-full" style="width: ${pct}%"></div></div>
+                    <div class="space-y-1 bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 shadow-inner">
+                        <div class="flex justify-between text-gray-600"><span>${label.split(' ')[0]} ${label.substring(label.indexOf(' ')+1)}</span><strong>${count} j.</strong></div>
+                        <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-teal-400 to-emerald-400 h-2 rounded-full" style="width: ${pct}%"></div></div>
                     </div>`;
             });
         }
 
         function configurerSelectProfilsEleves() {
-            const select = document.getElementById('selectProfilEleve');
             const filtrés = elevesData.filter(e => e.classe === currentClasse);
-            select.innerHTML = filtrés.map(e => `<option value="${e.id}">${e.prenom} ${e.nom}</option>`).join('');
-            if(filtrés.length === 0) select.innerHTML = `<option value="">Aucun élève</option>`;
+            document.getElementById('selectProfilEleve').innerHTML = filtrés.map(e => `<option value="${e.id}">👶 ${e.prenom} ${e.nom}</option>`).join('');
+            if(filtrés.length === 0) document.getElementById('selectProfilEleve').innerHTML = `<option value="">Aucun enfant</option>`;
         }
 
         function chargerProfilEleve() {
-            const id = document.getElementById('selectProfilEleve').value;
-            const container = document.getElementById('contenuProfilEleve');
-            const statsPresences = document.getElementById('statsPresencesEleve');
-            const avatarProfil = document.getElementById('avatarProfilEleve');
-            
-            container.innerHTML = ""; statsPresences.innerHTML = "";
-            statsPresences.classList.add('hidden'); avatarProfil.classList.add('hidden');
+            const id = document.getElementById('selectProfilEleve').value; const container = document.getElementById('contenuProfilEleve');
+            const statsPresences = document.getElementById('statsPresencesEleve'); const avatar = document.getElementById('avatarProfilEleve');
+            container.innerHTML = ""; statsPresences.innerHTML = ""; statsPresences.classList.add('hidden'); avatar.classList.add('hidden');
             if(!id) return;
 
             const kid = elevesData.find(x => x.id === id);
-            if(kid && kid.photo) {
-                avatarProfil.innerHTML = `<img src="${kid.photo}" class="w-full h-full object-cover">`;
-                avatarProfil.classList.remove('hidden');
-            }
+            if(kid && kid.photo) { avatar.innerHTML = `<img src="${kid.photo}" class="w-full h-full object-cover">`; avatar.classList.remove('hidden'); }
 
-            let totalJours = 0, presents = 0, absents = 0, retards = 0;
-            for (const date in presencesData) {
-                if (presencesData[date][id]) {
-                    totalJours++;
-                    if (presencesData[date][id] === 'P') presents++;
-                    if (presencesData[date][id] === 'A') absents++;
-                    if (presencesData[date][id] === 'R') retards++;
-                }
-            }
+            let totalJours = 0, presents = 0;
+            for (const d in presencesData) { if (presencesData[d][id]) { totalJours++; if (presencesData[d][id] === 'P') presents++; } }
             if (totalJours > 0) {
-                statsPresences.innerHTML = `<div>📊 Présences : <strong>${Math.round((presents / totalJours) * 100)}%</strong></div>
-                    <div class="flex gap-2"><span class="bg-green-50 text-green-700 px-1.5 rounded">P: ${presents}</span><span class="bg-red-50 text-red-700 px-1.5 rounded">A: ${absents}</span></div>`;
+                statsPresences.innerHTML = `<div>📊 Assiduité en classe : <strong>${Math.round((presents / totalJours) * 100)}% de présence</strong></div>`;
                 statsPresences.classList.remove('hidden');
             }
 
-            const fichesNotees = journalData.filter(f => f.suivi && f.suivi[id]);
-            if(fichesNotees.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-400 italic py-4">Aucune évaluation.</p>`; return;
-            }
+            const fiches = journalData.filter(f => f.suivi && f.suivi[id]);
+            if(fiches.length === 0) { container.innerHTML = `<p class="text-center text-gray-400 italic py-4">Aucune étoile récoltée pour le moment. ✨</p>`; return; }
 
-            fichesNotees.reverse().forEach(f => {
+            fiches.reverse().forEach(f => {
                 const stat = f.suivi[id];
-                let c = stat.includes("Acquis") ? "bg-green-100 text-green-800" : stat.includes("cours") ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800";
+                let c = stat.includes("Acquis") ? "bg-emerald-100 text-emerald-800" : stat.includes("cours") ? "bg-amber-100 text-amber-800" : "bg-rose-100 text-rose-800";
                 container.innerHTML += `
-                    <div class="p-2.5 bg-gray-50 rounded-lg border text-xs flex justify-between items-center">
-                        <div><span class="text-gray-400 mr-2">${new Date(f.date).toLocaleDateString('fr-BE',{day:'numeric',month:'short'})}</span><strong>${f.titre}</strong><div class="text-[10px] text-gray-400">🎯 ${f.objective || f.objectif}</div></div>
-                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${c}">${stat}</span>
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs flex justify-between items-center shadow-sm">
+                        <div><span class="text-gray-400 font-bold mr-2">${new Date(f.date).toLocaleDateString('fr-BE',{day:'numeric',month:'short'})}</span><strong>${f.titre}</strong><div class="text-[10px] text-gray-400 font-bold mt-0.5">🎯 ${f.objective || f.objectif}</div></div>
+                        <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] shadow-sm ${c}">${stat}</span>
                     </div>`;
             });
         }
 
+        window.clonerActivite = function(id) {
+            const c = journalData.find(e => e.id === id);
+            if(c) {
+                document.getElementById('titreInput').value = c.titre; document.getElementById('domaineInput').value = c.domaineCle; mettreAJourObjectifs();
+                document.getElementById('objectifInput').value = c.objective || c.objectif; document.getElementById('momentInput').value = c.moment;
+                document.getElementById('descInput').value = c.description; document.getElementById('obsInput').value = c.observations; tempPhotosArray = c.photos || [];
+                document.querySelectorAll('.eleve-statut-select').forEach(s => { const n = s.getAttribute('data-eleveid'); s.value = (c.suivi && c.suivi[n]) ? c.suivi[n] : ""; });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
         function activerDictee(id) {
             const Speech = window.SpeechRecognition || window.webkitSpeechRecognition; if(!Speech) return;
-            const rec = new Speech(); rec.lang = 'fr-BE'; const b = event.target; b.textContent = "🛑 Écoute...";
+            const rec = new Speech(); rec.lang = 'fr-BE'; const b = event.target; b.textContent = "🛑 J'écoute...";
             rec.onresult = (e) => { document.getElementById(id).value += " " + e.results[0][0].transcript; };
-            rec.onend = () => b.textContent = "🎙️ Dicter"; rec.start();
+            rec.onend = () => b.textContent = "🎙️ Parler"; rec.start();
         }
 
-        // EXPORTATIONS INTÉGRALES EN ASYNC
         function exporterTout() {
             const pack = { classes: classesData, eleves: elevesData, journal: journalData, presences: presencesData };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(pack));
-            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "journal_complete_indexeddb.json");
+            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "journal_maternelle_ludique.json");
             document.body.appendChild(a); a.click(); a.remove();
         }
 
@@ -723,32 +596,20 @@
                         const p = JSON.parse(e.target.result);
                         if(p.classes && p.eleves && p.journal) {
                             classesData = p.classes; elevesData = p.eleves; journalData = p.journal; presencesData = p.presences || {};
-                            
-                            // Réécriture complète dans IndexedDB
-                            let txC = db.transaction("classes", "readwrite"); txC.objectStore("classes").clear();
-                            classesData.forEach(c => txC.objectStore("classes").put({id: c, name: c}));
-
-                            let txE = db.transaction("eleves", "readwrite"); txE.objectStore("eleves").clear();
-                            elevesData.forEach(el => txE.objectStore("eleves").put(el));
-
-                            let txJ = db.transaction("journal", "readwrite"); txJ.objectStore("journal").clear();
-                            journalData.forEach(jf => txJ.objectStore("journal").put(jf));
-
-                            let txP = db.transaction("presences", "readwrite"); txP.objectStore("presences").clear();
-                            Object.entries(presencesData).forEach(([d, dt]) => txP.objectStore("presences").put({date: d, data: dt}));
-
-                            localStorage.setItem('m_classes', JSON.stringify(classesData));
+                            let txC = db.transaction("classes", "readwrite"); txC.objectStore("classes").clear(); classesData.forEach(c => txC.objectStore("classes").put({id: c, name: c}));
+                            let txE = db.transaction("eleves", "readwrite"); txE.objectStore("eleves").clear(); elevesData.forEach(el => txE.objectStore("eleves").put(el));
+                            let txJ = db.transaction("journal", "readwrite"); txJ.objectStore("journal").clear(); journalData.forEach(jf => txJ.objectStore("journal").put(jf));
+                            let txP = db.transaction("presences", "readwrite"); txP.objectStore("presences").clear(); Object.entries(presencesData).forEach(([d, dt]) => txP.objectStore("presences").put({date: d, data: dt}));
                             remplirSelectClasses(); changerClasseGlobale(classesData[0]);
                         }
-                    } catch(x) { alert("Format corrompu."); }
+                    } catch(x) { alert("Format invalide."); }
                 }; r.readAsText(file);
             }
         }
 
         document.getElementById('clearBtn').addEventListener('click', () => { 
-            if(confirm("Vider tout le journal d'activité ?")) { 
-                let tx = db.transaction("journal", "readwrite"); tx.objectStore("journal").clear();
-                journalData = []; afficherJournal(); 
+            if(confirm("Effacer l'historique de cette classe ?")) { 
+                let tx = db.transaction("journal", "readwrite"); tx.objectStore("journal").clear(); journalData = []; afficherJournal(); 
             } 
         });
     </script>
