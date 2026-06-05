@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle Pro</title>
+    <title>Mon Journal de Classe Maternelle Intégral</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -20,11 +20,20 @@
         <header class="mb-8 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
             <div>
                 <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
-                <p class="text-gray-600">Version Complète — Maternelle FWB</p>
+                <p class="text-gray-600">Version Intégrale — Maternelle FWB</p>
             </div>
-            <button onclick="window.print()" class="no-print bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 font-medium shadow transition flex items-center gap-2">
-                🖨️ Imprimer / Sauver en PDF
-            </button>
+            <div class="flex gap-2 no-print">
+                <button onclick="exporterJournal()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">
+                    💾 Sauvegarder (Export)
+                </button>
+                <label class="bg-amber-600 text-white px-3 py-2 rounded-lg hover:bg-amber-700 font-medium text-sm shadow transition cursor-pointer">
+                    📂 Charger (Import)
+                    <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerJournal(this)">
+                </label>
+                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-medium text-sm shadow transition flex items-center gap-2">
+                    🖨️ PDF
+                </button>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
@@ -88,8 +97,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500">Ajouter une photo (Optionnel)</label>
-                        <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <label class="block text-xs font-semibold uppercase text-gray-500">Photo (Optionnelle)</label>
+                        <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                     </div>
 
                     <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 font-medium transition shadow">
@@ -102,28 +111,25 @@
                 <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                     
                     <div class="no-print bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200 space-y-3">
-                        <span class="text-xs font-bold uppercase text-gray-400 block">🔍 Filtres de recherche</span>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <select id="filtreDomaine" class="w-full rounded-md border-gray-300 p-2 border text-sm">
-                                    <option value="Tous">Tous les domaines</option>
-                                    <option value="Visées transversales">Visées transversales</option>
-                                    <option value="1. Éducation">1. Éducation artistique</option>
-                                    <option value="2. Éveils">2. Français / Langues</option>
-                                    <option value="3. Mathématiques">3. Mathématiques</option>
-                                    <option value="4. Sciences">4. Sciences / Philo</option>
-                                    <option value="5. Éducation physique">5. Psychomotricité</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select id="filtreGroupe" class="w-full rounded-md border-gray-300 p-2 border text-sm">
-                                    <option value="Tous">Tous les groupes</option>
-                                    <option value="Classe entière">Classe entière</option>
-                                    <option value="Petits">Petits (M1)</option>
-                                    <option value="Moyens">Moyens (M2)</option>
-                                    <option value="Grands">Grands (M3)</option>
-                                </select>
-                            </div>
+                        <span class="text-xs font-bold uppercase text-gray-400 block">🔍 Recherche & Filtres</span>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input type="text" id="rechercheTexte" placeholder="Mot-clé (ex: peinture)..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
+                            <select id="filtreDomaine" class="rounded-md border-gray-300 p-2 border text-sm w-full">
+                                <option value="Tous">Tous les domaines</option>
+                                <option value="Visées transversales">Visées transversales</option>
+                                <option value="1. Éducation">1. Éducation artistique</option>
+                                <option value="2. Éveils">2. Français / Langues</option>
+                                <option value="3. Mathématiques">3. Mathématiques</option>
+                                <option value="4. Sciences">4. Sciences / Philo</option>
+                                <option value="5. Éducation physique">5. Psychomotricité</option>
+                            </select>
+                            <select id="filtreGroupe" class="rounded-md border-gray-300 p-2 border text-sm w-full">
+                                <option value="Tous">Tous les groupes</option>
+                                <option value="Classe entière">Classe entière</option>
+                                <option value="Petits">Petits (M1)</option>
+                                <option value="Moyens">Moyens (M2)</option>
+                                <option value="Grands">Grands (M3)</option>
+                            </select>
                         </div>
                         <div class="text-right">
                             <button id="clearBtn" class="text-xs text-red-500 hover:underline">Supprimer tout l'historique</button>
@@ -140,60 +146,54 @@
     </div>
 
     <script>
-        // Variables globales
         const form = document.getElementById('journalForm');
         const entriesContainer = document.getElementById('journalEntries');
         const clearBtn = document.getElementById('clearBtn');
         const filtreDomaine = document.getElementById('filtreDomaine');
         const filtreGroupe = document.getElementById('filtreGroupe');
+        const rechercheTexte = document.getElementById('rechercheTexte');
         let tempPhotoBase64 = "";
 
-        // Date du jour par défaut
         document.getElementById('dateInput').valueAsDate = new Date();
-
-        // Charger les données sauvegardées
         let journalData = JSON.parse(localStorage.getItem('monJournalMaternellePro')) || [];
 
-        // Écouter l'encodage de la photo
+        // Encodage photo
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    tempPhotoBase64 = event.target.result; // Photo convertie en texte
-                };
+                reader.onload = function(event) { tempPhotoBase64 = event.target.result; };
                 reader.readAsDataURL(file);
-            } else {
-                tempPhotoBase64 = "";
-            }
+            } else { tempPhotoBase64 = ""; }
         });
 
-        // Rendu visuel du journal
         function afficherJournal() {
             entriesContainer.innerHTML = '';
             const fDomaine = filtreDomaine.value;
             const fGroupe = filtreGroupe.value;
+            const tRecherche = rechercheTexte.value.toLowerCase();
 
             let donneesFiltrees = journalData.filter(entree => {
                 const matchDomaine = (fDomaine === "Tous" || entree.domaine.includes(fDomaine));
                 const matchGroupe = (fGroupe === "Tous" || entree.groupes.some(g => g.includes(fGroupe)));
-                return matchDomaine && matchGroupe;
+                const matchTexte = !tRecherche || entree.titre.toLowerCase().includes(tRecherche) || entree.description.toLowerCase().includes(tRecherche);
+                return matchDomaine && matchGroupe && matchTexte;
             });
 
             if (donneesFiltrees.length === 0) {
-                entriesContainer.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune activité ne correspond à vos critères.</p>`;
+                entriesContainer.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune activité trouvée.</p>`;
                 return;
             }
 
             [...donneesFiltrees].reverse().forEach((entree) => {
                 const div = document.createElement('div');
-                div.className = "p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-3 border-l-4 border-l-indigo-600 page-break-inside-avoid";
+                div.className = "p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-3 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
                 
                 const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                 const badgesGroupes = entree.groupes.map(g => `<span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded font-medium">${g}</span>`).join(' ');
 
                 div.innerHTML = `
-                    <div class="flex justify-between items-start flex-wrap gap-2 border-b pb-2 border-gray-200">
+                    <div class="flex justify-between items-start flex-wrap gap-2 border-b pb-2 border-gray-200 pr-16">
                         <div>
                             <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider mr-2">${entree.moment}</span>
                             <h3 class="text-xl font-bold text-gray-800 inline-block mt-1 md:mt-0">${entree.titre}</h3>
@@ -201,6 +201,10 @@
                         <span class="text-sm text-gray-500 font-medium capitalize">${dateFormatee}</span>
                     </div>
                     
+                    <button onclick="clonerActivite(${entree.id})" class="no-print absolute top-4 right-4 bg-gray-200 hover:bg-indigo-100 text-gray-600 hover:text-indigo-700 text-xs px-2 py-1 rounded transition">
+                        👯 Copier
+                    </button>
+
                     <div class="flex flex-wrap gap-2 items-center text-xs">
                         <span class="text-emerald-800 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200">🎯 ${entree.domaine}</span>
                         ${badgesGroupes}
@@ -211,31 +215,19 @@
                             <p class="text-sm text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entree.description || 'Non renseigné.'}</p>
                             ${entree.observations ? `<div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded text-sm text-amber-900"><strong>Observations :</strong><br>${entree.observations}</div>` : ''}
                         </div>
-                        ${entree.photo ? `
-                            <div class="flex justify-center items-center">
-                                <img src="${entree.photo}" class="max-h-40 rounded-lg shadow-sm border border-gray-200 object-cover w-full">
-                            </div>
-                        ` : ''}
+                        ${entree.photo ? `<div class="flex justify-center items-center"><img src="${entree.photo}" class="max-h-40 rounded-lg shadow-sm border border-gray-200 object-cover w-full"></div>` : ''}
                     </div>
                 `;
                 entriesContainer.appendChild(div);
             });
         }
 
-        // Soumission du formulaire
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Récupérer les groupes cochés
             const groupesCoches = [];
-            document.querySelectorAll('.groupe-chk:checked').forEach(chk => {
-                groupesCoches.push(chk.value);
-            });
+            document.querySelectorAll('.groupe-chk:checked').forEach(chk => { groupesCoches.push(chk.value); });
 
-            if (groupesCoches.length === 0) {
-                alert("Veuillez sélectionner au moins un groupe d'enfants.");
-                return;
-            }
+            if (groupesCoches.length === 0) { alert("Sélectionnez au moins un groupe."); return; }
 
             const nouvelleActivite = {
                 id: Date.now(),
@@ -252,32 +244,75 @@
             try {
                 journalData.push(nouvelleActivite);
                 localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                
-                // Reset formulaire et états
                 form.reset();
                 document.getElementById('dateInput').valueAsDate = new Date();
                 tempPhotoBase64 = "";
-                
                 afficherJournal();
             } catch (error) {
-                alert("⚠️ Erreur : La mémoire du navigateur est pleine. Cela arrive si vos photos sont trop lourdes. Supprimez l'historique ou utilisez des images plus petites.");
-                journalData.pop(); // Annuler l'ajout
+                alert("⚠️ Mémoire pleine ! Réduisez la taille de vos photos.");
+                journalData.pop();
             }
         });
 
-        // Filtres & Nettoyage
+        // Fonctionnalité Cloner
+        window.clonerActivite = function(id) {
+            const cible = journalData.find(e => e.id === id);
+            if (cible) {
+                document.getElementById('titreInput').value = cible.titre;
+                document.getElementById('domaineInput').value = cible.domaine;
+                document.getElementById('momentInput').value = cible.moment;
+                document.getElementById('descInput').value = cible.description;
+                document.getElementById('obsInput').value = cible.observations;
+                tempPhotoBase64 = cible.photo;
+                
+                document.querySelectorAll('.groupe-chk').forEach(chk => {
+                    chk.checked = cible.groupes.includes(chk.value);
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        // Sauvegarde externe (Export JSON)
+        window.exporterJournal = function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(journalData));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `journal_maternelle_sauvegarde.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        };
+
+        // Restauration externe (Import JSON)
+        window.importerJournal = function(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (Array.isArray(importedData)) {
+                            if(confirm("Cela va remplacer votre journal actuel. Continuer ?")) {
+                                journalData = importedData;
+                                localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
+                                afficherJournal();
+                            }
+                        } else { alert("Fichier invalide."); }
+                    } catch (err) { alert("Erreur lors de la lecture du fichier."); }
+                };
+                reader.readAsText(file);
+            }
+        };
+
         filtreDomaine.addEventListener('change', afficherJournal);
         filtreGroupe.addEventListener('change', afficherJournal);
-
+        rechercheTexte.addEventListener('input', afficherJournal);
         clearBtn.addEventListener('click', function() {
-            if (confirm("Voulez-vous vraiment vider tout votre journal de classe ?")) {
-                journalData = [];
-                localStorage.removeItem('monJournalMaternellePro');
-                afficherJournal();
+            if (confirm("Voulez-vous vraiment TOUT effacer ?")) {
+                journalData = []; localStorage.removeItem('monJournalMaternellePro'); afficherJournal();
             }
         });
 
-        // Affichage initial
         afficherJournal();
     </script>
 </body>
