@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal de Classe Maternelle — Suivi Intégral FWB</title>
+    <title>Mon Journal de Classe Maternelle — Édition Ultime FWB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
@@ -18,10 +18,10 @@
 
     <div class="max-w-7xl mx-auto p-4 md:p-8">
         <!-- En-tête -->
-        <header class="mb-8 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
+        <header class="mb-6 text-center md:text-left flex justify-between items-center flex-wrap gap-4 border-b pb-4 border-gray-300">
             <div>
                 <h1 class="text-3xl font-bold text-indigo-700">🎒 Mon Journal de Classe Numérique</h1>
-                <p class="text-gray-600">Référentiel FWB, Dictée Vocale & Suivi Individuel des Élèves</p>
+                <p class="text-gray-600">Référentiel FWB, Dictée Vocale, Suivi Élèves & Bilans Évolutifs</p>
             </div>
             <div class="flex gap-2 no-print">
                 <button onclick="exporterJournal()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 font-medium text-sm shadow transition">
@@ -37,27 +37,34 @@
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
+        <!-- Système de Navigation par Onglets (Masqué à l'impression) -->
+        <div class="flex border-b border-gray-300 mb-6 no-print">
+            <button id="tabJournalBtn" onclick="changerOnglet('journal')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition">
+                📋 Journal de classe & Encodage
+            </button>
+            <button id="tabBilanBtn" onclick="changerOnglet('bilan')" class="py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition">
+                📊 Tableaux de Bord & Profils Élèves
+            </button>
+        </div>
+
+        <!-- ================= ONGLET 1 : JOURNAL DE CLASSE ================= -->
+        <div id="ongletJournal" class="grid grid-cols-1 lg:grid-cols-3 gap-8 print-full-width">
             
-            <!-- COLONNE GAUCHE : Formulaire & Gestion Élèves -->
+            <!-- FORMULAIRE DE SAISIE (GAUCHE) -->
             <div class="space-y-6 no-print">
-                
                 <!-- GESTION DES ÉLÈVES -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h2 class="text-lg font-bold mb-3 text-gray-800 border-b pb-1">👥 Gestion de la Classe</h2>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-md font-bold mb-3 text-gray-800 border-b pb-1">👥 Gestion de la Classe</h2>
                     <div class="flex gap-2 mb-3">
                         <input type="text" id="nouvelEleveInput" placeholder="Prénom de l'élève..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
                         <button type="button" onclick="ajouterEleve()" class="bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 text-sm font-medium">Ajouter</button>
                     </div>
-                    <div id="listeElevesGestion" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1 bg-gray-50 rounded border">
-                        <!-- Liste des élèves avec bouton supprimer -->
-                    </div>
+                    <div id="listeElevesGestion" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-1 bg-gray-50 rounded border"></div>
                 </div>
 
-                <!-- FORMULAIRE ACTIVITÉ -->
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">➕ Nouvelle Activité</h2>
-                    
+                <!-- ATELIER -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-bold mb-4 text-gray-800 border-b pb-2">➕ Nouvelle Activité</h2>
                     <form id="journalForm" class="space-y-4">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -75,33 +82,27 @@
                                 </select>
                             </div>
                         </div>
-
                         <div>
                             <label class="block text-xs font-semibold uppercase text-gray-500">Nom de l'activité</label>
-                            <input type="text" id="titreInput" placeholder="Ex: Tri des blocs logiques..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
+                            <input type="text" id="titreInput" placeholder="Ex: Tracés de ponts..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" required>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Domaine de développement</label>
+                            <label class="block text-xs font-semibold uppercase text-gray-500">Domaine</label>
                             <select id="domaineInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm" onchange="mettreAJourObjectifs()">
-                                <option value="transversal">Visées transversales (Autonomie, Socialisation)</option>
+                                <option value="transversal">Visées transversales</option>
                                 <option value="art">1. Éducation culturelle et artistique</option>
-                                <option value="langues">2. Français, arts de la parole & éveil aux langues</option>
+                                <option value="langues">2. Français & Arts de la parole</option>
                                 <option value="math">3. Mathématiques</option>
-                                <option value="sciences">4. Sciences, sciences humaines, philo & citoyenneté</option>
-                                <option value="sante">5. Éducation physique, psychomotricité et santé</option>
+                                <option value="sciences">4. Sciences & Citoyenneté</option>
+                                <option value="sante">5. Psychomotricité et santé</option>
                             </select>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Attendu / Compétence visée</label>
-                            <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm bg-gray-50">
-                                <!-- Dynamique -->
-                            </select>
+                            <label class="block text-xs font-semibold uppercase text-gray-500">Attendu / Compétence</label>
+                            <select id="objectifInput" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm bg-gray-50"></select>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Groupes concernés</label>
+                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Groupes</label>
                             <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-md border text-sm">
                                 <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Classe entière" checked> Classe entière</label>
                                 <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Petits (M1)"> Petits (M1)</label>
@@ -109,393 +110,354 @@
                                 <label class="flex items-center gap-2"><input type="checkbox" class="groupe-chk" value="Grands (M3)"> Grands (M3)</label>
                             </div>
                         </div>
-
-                        <!-- SUIVI INDIVIDUEL DES ÉLÈVES DANS LE FORMULAIRE -->
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">🎯 Suivi Individuel des Élèves</label>
-                            <div id="grilleSuiviFormulaire" class="border rounded-md p-2 bg-gray-50 space-y-1.5 max-h-48 overflow-y-auto text-xs">
-                                <!-- Rempli en JS par la liste des élèves -->
-                            </div>
+                            <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">🎯 Suivi des Élèves à cet atelier</label>
+                            <div id="grilleSuiviFormulaire" class="border rounded-md p-2 bg-gray-50 space-y-1 max-h-40 overflow-y-auto text-xs"></div>
                         </div>
-
                         <div>
-                            <div class="flex justify-between items-center">
-                                <label class="block text-xs font-semibold uppercase text-gray-500">Déroulement</label>
-                                <button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">🎙️ Dicter</button>
-                            </div>
-                            <textarea id="descInput" rows="2" placeholder="Description de l'atelier..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="block text-xs font-semibold uppercase text-gray-500">Déroulement</label><button type="button" onclick="activerDictee('descInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
+                            <textarea id="descInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
                         </div>
-
                         <div>
-                            <div class="flex justify-between items-center">
-                                <label class="block text-xs font-semibold uppercase text-gray-500">Observations générales</label>
-                                <button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">🎙️ Dicter</button>
-                            </div>
-                            <textarea id="obsInput" rows="2" placeholder="Remarques globales..." class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
+                            <div class="flex justify-between items-center"><label class="block text-xs font-semibold uppercase text-gray-500">Observations</label><button type="button" onclick="activerDictee('obsInput')" class="text-xs text-indigo-600 font-medium">🎙️ Dicter</button></div>
+                            <textarea id="obsInput" rows="2" class="mt-1 block w-full rounded-md border-gray-300 p-2 border text-sm"></textarea>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-semibold uppercase text-gray-500">Photo d'illustration</label>
-                            <input type="file" id="photoInput" accept="image/*" class="mt-1 block w-full text-xs text-gray-500 file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700">
+                            <input type="file" id="photoInput" accept="image/*" class="block w-full text-xs text-gray-500">
                         </div>
-
-                        <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-700 font-medium transition shadow">
-                            Enregistrer la fiche
-                        </button>
+                        <button type="submit" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg font-medium shadow hover:bg-indigo-700 transition">Enregistrer la fiche</button>
                     </form>
                 </div>
             </div>
 
-            <!-- COLONNE DROITE : Liste du Journal (Prend toute la largeur à l'impression) -->
+            <!-- VUE FLUX CHRONOLOGIQUE (DROITE) -->
             <div class="lg:col-span-2 print-full-width">
-                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                    
-                    <!-- Zone de Filtres (No-print) -->
-                    <div class="no-print bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200 space-y-3">
-                        <span class="text-xs font-bold uppercase text-gray-400 block">🔍 Recherche & Filtres</span>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <input type="text" id="rechercheTexte" placeholder="Mot-clé (ex: kapla)..." class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                            <select id="filtreDomaine" class="rounded-md border-gray-300 p-2 border text-sm w-full">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="no-print bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200 flex flex-wrap gap-3 items-center justify-between">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full md:w-auto">
+                            <input type="text" id="rechercheTexte" placeholder="Mot-clé..." class="rounded-md border-gray-300 p-1.5 border text-sm">
+                            <select id="filtreDomaine" class="rounded-md border-gray-300 p-1.5 border text-sm">
                                 <option value="Tous">Tous les domaines</option>
                                 <option value="Visées transversales">Visées transversales</option>
                                 <option value="Éducation culturelle">1. Arts / Culture</option>
-                                <option value="Français">2. Français / Langues</option>
+                                <option value="Français">2. Français</option>
                                 <option value="Mathématiques">3. Mathématiques</option>
-                                <option value="Sciences">4. Sciences / Citoyenneté</option>
-                                <option value="Éducation physique">5. Psychomotricité / Santé</option>
-                            </select>
-                            <select id="filtreGroupe" class="rounded-md border-gray-300 p-2 border text-sm w-full">
-                                <option value="Tous">Tous les groupes</option>
-                                <option value="Classe entière">Classe entière</option>
-                                <option value="Petits">Petits (M1)</option>
-                                <option value="Moyens">Moyens (M2)</option>
-                                <option value="Grands">Grands (M3)</option>
+                                <option value="Sciences">4. Sciences / Philo</option>
+                                <option value="Éducation physique">5. Psychomotricité</option>
                             </select>
                         </div>
-                        <div class="text-right">
-                            <button id="clearBtn" class="text-xs text-red-500 hover:underline">Supprimer tout l'historique</button>
-                        </div>
+                        <button id="clearBtn" class="text-xs text-red-500 hover:underline">Supprimer tout l'historique</button>
                     </div>
-
                     <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">📋 Déroulement de la classe</h2>
-                    
-                    <div id="journalEntries" class="space-y-6">
-                        <!-- Fiches insérées ici -->
+                    <div id="journalEntries" class="space-y-6"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ONGLET 2 : TABLEAUX DE BORD & PROFILS ================= -->
+        <div id="ongletBilan" class="hidden space-y-6 print-full-width">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- COUVERTURE DU RÉFÉRENTIEL FWB -->
+                <div class="md:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
+                    <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">📊 Couverture des Domaines</h2>
+                    <div id="statistiquesDomaines" class="space-y-3.5 text-xs">
+                        <!-- Rempli en JS -->
+                    </div>
+                </div>
+
+                <!-- PROFIL INDIVIDUEL DE L'ÉLÈVE -->
+                <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center border-b pb-2 mb-4 flex-wrap gap-2">
+                        <h2 class="text-lg font-bold text-gray-800">🎯 Livret de Compétences Individuel</h2>
+                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-md border-gray-300 p-2 border text-sm no-print bg-indigo-50 font-semibold text-indigo-700">
+                            <!-- Rempli en JS -->
+                        </select>
+                    </div>
+                    <div id="contenuProfilEleve" class="space-y-4">
+                        <!-- Rempli en JS lors de la sélection d'un élève -->
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
-        // RÉFÉRENTIEL FWB
         const objectifsParDomaine = {
             transversal: ["Construire son identité, la confiance en soi et l'autonomie", "Coopérer, respecter les règles collectives et vivre ensemble", "S'exprimer, communiquer ses émotions et écouter l'autre", "Développer sa curiosité, sa créativité et l'esprit d'initiative"],
             art: ["Arts plastiques & visuels : Explorer outils et matières", "Arts plastiques & visuels : Production personnelle", "Éducation musicale : Explorer et produire des sons", "Éducation musicale : Mémoriser des chants", "Arts du spectacle : S'exprimer par le corps"],
             langues: ["Langage oral : Oser prendre la parole distinctement", "Langage oral : Comprendre un récit ou une consigne", "Langage oral : Prendre part à un dialogue", "Éveil à l'écrit : Manipuler le livre et le sens de lecture", "Éveil à l'écrit : Reconnaître son prénom et des lettres", "Éveil aux langues : Percevoir des sonorités différentes"],
-            math: ["Nombres : Dénombrer une collection d'objets", "Nombres : Comparer des collections (plus, moins, autant)", "Nombres : Associer quantité et symbole numérique", "Formes : Reconnaître les formes géométriques planes", "Grandeurs : Classer, trier et sérier des objets", "Espace : Utiliser des repères spatiaux", "Temps : Se repérer dans la journée, la semaine"],
+            math: ["Nombres : Dénombrer une collection d'objets", "Nombres : Comparer des collections", "Nombres : Quantité et symbole numérique", "Formes : Reconnaître les formes géométriques planes", "Grandeurs : Classer, trier et sérier des objets", "Espace : Utiliser des repères spatiaux", "Temps : Se repérer dans la journée, la semaine"],
             sciences: ["Sciences du vivant : Caractéristiques d'animaux/végétaux", "Matière & Technique : Explorer l'eau, l'air, les objets", "Sciences humaines : Se repérer dans l'environnement social", "Philosophie & Citoyenneté : Discussion philosophique"],
             sante: ["Psychomotricité globale : Équilibre et mouvements", "Psychomotricité globale : Ajuster ses déplacements", "Psychomotricité fine : Pince, découpage, enfilage", "Psychomotricité fine : Graphisme et coordination", "Santé & Bien-être : Gestes d'hygiène et alimentation"]
         };
 
-        // ÉLÉMENTS HTML
-        const form = document.getElementById('journalForm');
-        const entriesContainer = document.getElementById('journalEntries');
-        const clearBtn = document.getElementById('clearBtn');
-        const filtreDomaine = document.getElementById('filtreDomaine');
-        const filtreGroupe = document.getElementById('filtreGroupe');
-        const rechercheTexte = document.getElementById('rechercheTexte');
-        const listeElevesGestion = document.getElementById('listeElevesGestion');
-        const grilleSuiviFormulaire = document.getElementById('grilleSuiviFormulaire');
-        let tempPhotoBase64 = "";
-
-        // BASE DE DONNÉES LOCALSTORAGE
-        document.getElementById('dateInput').valueAsDate = new Date();
         let journalData = JSON.parse(localStorage.getItem('monJournalMaternellePro')) || [];
         let elevesData = JSON.parse(localStorage.getItem('mesElevesMaternelle')) || ["Lucas", "Emma", "Nathan", "Chloé", "Arthur", "Léa"];
+        let tempPhotoBase64 = "";
 
-        // GESTION DES ÉLÈVES (AJOUT / SUPPRESSION)
+        // CHANGER D'ONGLET
+        function changerOnglet(onglet) {
+            const tabJournalBtn = document.getElementById('tabJournalBtn');
+            const tabBilanBtn = document.getElementById('tabBilanBtn');
+            const divJournal = document.getElementById('ongletJournal');
+            const divBilan = document.getElementById('ongletBilan');
+
+            if (onglet === 'journal') {
+                divJournal.classList.remove('hidden'); divBilan.classList.add('hidden');
+                tabJournalBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition";
+                tabBilanBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition";
+            } else {
+                divJournal.classList.add('hidden'); divBilan.classList.remove('hidden');
+                tabBilanBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 transition";
+                tabJournalBtn.className = "py-2.5 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition";
+                genererStatistiquesGlobales();
+                chargerProfilEleve();
+            }
+        }
+
+        // CLASSE & ÉLÈVES
         function afficherGestionEleves() {
-            listeElevesGestion.innerHTML = "";
-            grilleSuiviFormulaire.innerHTML = "";
+            const listeElevesGestion = document.getElementById('listeElevesGestion');
+            const grilleSuiviFormulaire = document.getElementById('grilleSuiviFormulaire');
+            const selectProfilEleve = document.getElementById('selectProfilEleve');
+            
+            listeElevesGestion.innerHTML = ""; grilleSuiviFormulaire.innerHTML = "";
+            const profilSelectionnePrecedent = selectProfilEleve.value;
+            selectProfilEleve.innerHTML = "";
 
             elevesData.sort().forEach(prenom => {
-                // Badge dans la zone de gestion
+                // Gestion
                 const span = document.createElement('span');
-                span.className = "inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded border border-indigo-200 font-medium";
-                span.innerHTML = `${prenom} <button type="button" onclick="supprimerEleve('${prenom}')" class="text-red-500 font-bold hover:text-red-700 ml-1">×</button>`;
+                span.className = "inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-xs px-2 py-0.5 rounded border border-indigo-200 font-medium";
+                span.innerHTML = `${prenom} <button type="button" onclick="supprimerEleve('${prenom}')" class="text-red-500 ml-1">×</button>`;
                 listeElevesGestion.appendChild(span);
 
-                // Ligne de notation dans le formulaire de nouvelle activité
+                // Note d'évaluation
                 const divRow = document.createElement('div');
                 divRow.className = "flex items-center justify-between bg-white p-1 rounded border border-gray-200";
-                divRow.innerHTML = `
-                    <span class="font-medium text-gray-700 ml-1">${prenom}</span>
-                    <select data-eleve="${prenom}" class="eleve-statut-select rounded p-0.5 border border-gray-300 text-xs bg-gray-50">
-                        <option value="">-</option>
-                        <option value="🟢 Acquis">🟢 Acquis</option>
-                        <option value="🟡 En cours">🟡 En cours</option>
-                        <option value="🔴 A renforcer">🔴 À renforcer</option>
-                    </select>
-                `;
+                divRow.innerHTML = `<span>${prenom}</span><select data-eleve="${prenom}" class="eleve-statut-select rounded border p-0.5 bg-gray-50"><option value="">-</option><option value="🟢 Acquis">🟢 Acquis</option><option value="🟡 En cours">🟡 En cours</option><option value="🔴 A renforcer">🔴 A renf.</option></select>`;
                 grilleSuiviFormulaire.appendChild(divRow);
+
+                // Menu déroulant bilan
+                const opt = document.createElement('option');
+                opt.value = prenom; opt.textContent = `Profil de ${prenom}`;
+                selectProfilEleve.appendChild(opt);
             });
-            if(elevesData.length === 0) {
-                grilleSuiviFormulaire.innerHTML = `<p class="text-gray-400 italic text-center py-2">Aucun élève enregistré.</p>`;
-            }
+            if(profilSelectionnePrecedent && elevesData.includes(profilSelectionnePrecedent)) selectProfilEleve.value = profilSelectionnePrecedent;
         }
 
         function ajouterEleve() {
-            const input = document.getElementById('nouvelEleveInput');
-            const prenom = input.value.trim();
-            if(prenom && !elevesData.includes(prenom)) {
-                elevesData.push(prenom);
-                localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
-                input.value = "";
-                afficherGestionEleves();
+            const input = document.getElementById('nouvelEleveInput'); const p = input.value.trim();
+            if(p && !elevesData.includes(p)) {
+                elevesData.push(p); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
+                input.value = ""; afficherGestionEleves();
             }
         }
 
-        window.supprimerEleve = function(prenom) {
-            if(confirm(`Supprimer ${prenom} de la classe ?`)) {
-                elevesData = elevesData.filter(e => e !== prenom);
-                localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
-                afficherGestionEleves();
+        window.supprimerEleve = function(p) {
+            if(confirm(`Supprimer ${p} ?`)) {
+                elevesData = elevesData.filter(e => e !== p); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData)); afficherGestionEleves();
             }
         }
 
         function mettreAJourObjectifs() {
-            const domaineSelectionne = document.getElementById('domaineInput').value;
-            const objectifSelect = document.getElementById('objectifInput');
-            objectifSelect.innerHTML = "";
-            objectifsParDomaine[domaineSelectionne].forEach(obj => {
-                const opt = document.createElement('option');
-                opt.value = obj; opt.textContent = obj;
-                objectifSelect.appendChild(opt);
+            const dom = document.getElementById('domaineInput').value; const objSelect = document.getElementById('objectifInput');
+            objSelect.innerHTML = ""; objectifsParDomaine[dom].forEach(obj => {
+                const opt = document.createElement('option'); opt.value = obj; opt.textContent = obj; objSelect.appendChild(opt);
             });
         }
 
-        // DICTÉE VOCALE
-        function activerDictee(textareaId) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { alert("Dictée non supportée sur ce navigateur."); return; }
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'fr-BE';
-            const bouton = event.target;
-            bouton.textContent = "🛑 Écoute...";
-            
-            recognition.onresult = function(event) {
-                const texteDicte = event.results[0][0].transcript;
-                const textarea = document.getElementById(textareaId);
-                textarea.value = textarea.value ? textarea.value + " " + texteDicte : texteDicte;
-                bouton.textContent = "🎙️ Dicter";
-            };
-            recognition.onerror = function() { bouton.textContent = "🎙️ Dicter"; };
-            recognition.onend = function() { bouton.textContent = "🎙️ Dicter"; };
-            recognition.start();
-        }
-
-        // ENCODAGE PHOTO
-        document.getElementById('photoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) { tempPhotoBase64 = event.target.result; };
-                reader.readAsDataURL(file);
-            } else { tempPhotoBase64 = ""; }
-        });
-
-        // RENDU DU JOURNAL DE CLASSE
+        // RENDU JAVASCRIPT DU JOURNAL CHRONOLOGIQUE
         function afficherJournal() {
-            entriesContainer.innerHTML = '';
-            const fDomaine = filtreDomaine.value;
-            const fGroupe = filtreGroupe.value;
-            const tRecherche = rechercheTexte.value.toLowerCase();
+            const container = document.getElementById('journalEntries'); container.innerHTML = '';
+            const fDomaine = document.getElementById('filtreDomaine').value;
+            const tRecherche = document.getElementById('rechercheTexte').value.toLowerCase();
 
-            let donneesFiltrees = journalData.filter(entree => {
-                const matchDomaine = (fDomaine === "Tous" || entree.domaineTexte.includes(fDomaine));
-                const matchGroupe = (fGroupe === "Tous" || entree.groupes.some(g => g.includes(fGroupe)));
-                const matchTexte = !tRecherche || entree.titre.toLowerCase().includes(tRecherche) || entree.description.toLowerCase().includes(tRecherche);
-                return matchDomaine && matchGroupe && matchTexte;
-            });
+            let filtre = journalData.filter(e => (fDomaine === "Tous" || e.domaineTexte.includes(fDomaine)) && (!tRecherche || e.titre.toLowerCase().includes(tRecherche) || e.description.toLowerCase().includes(tRecherche)));
 
-            if (donneesFiltrees.length === 0) {
-                entriesContainer.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche trouvée.</p>`;
-                return;
-            }
+            if(filtre.length === 0) { container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune fiche.</p>`; return; }
 
-            [...donneesFiltrees].reverse().forEach((entree) => {
+            [...filtre].reverse().forEach(entree => {
                 const div = document.createElement('div');
                 div.className = "p-5 border border-gray-200 rounded-xl bg-gray-50 shadow-sm space-y-3 border-l-4 border-l-indigo-600 page-break-inside-avoid relative";
-                
                 const dateFormatee = new Date(entree.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                const badgesGroupes = entree.groupes.map(g => `<span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded font-medium">${g}</span>`).join(' ');
-
-                // Génération des badges de suivi individuel pour cette fiche
-                let htmlSuiviIndividuel = "";
+                
+                let suiviHtml = "";
                 if(entree.suivi && Object.keys(entree.suivi).length > 0) {
-                    htmlSuiviIndividuel = `<div class="mt-2 pt-2 border-t border-gray-200"><strong class="text-xs text-gray-500 uppercase tracking-wider block mb-1">🎯 Suivi individuel :</strong><div class="flex flex-wrap gap-1.5 text-xs">`;
-                    for(const [nom, statut] of Object.entries(entree.suivi)) {
-                        let couleurBadge = "bg-gray-100 text-gray-600 border-gray-200";
-                        if(statut.includes("Acquis")) couleurBadge = "bg-green-50 text-green-700 border-green-200";
-                        if(statut.includes("en cours")) couleurBadge = "bg-yellow-50 text-yellow-700 border-yellow-200";
-                        if(statut.includes("renforcer")) couleurBadge = "bg-red-50 text-red-700 border-red-200";
-                        
-                        htmlSuiviIndividuel += `<span class="px-2 py-0.5 rounded border ${couleurBadge}"><strong>${nom} :</strong> ${statut.replace(/🟢|🟡|🔴/g, '')}</span>`;
+                    suiviHtml = `<div class="mt-2 pt-2 border-t border-gray-200 flex flex-wrap gap-1.5 text-xs">`;
+                    for(const [nom, stat] of Object.entries(entree.suivi)) {
+                        let c = "bg-gray-100 text-gray-600";
+                        if(stat.includes("Acquis")) c = "bg-green-50 text-green-700 border-green-200";
+                        if(stat.includes("cours")) c = "bg-yellow-50 text-yellow-700 border-yellow-200";
+                        if(stat.includes("renforcer")) c = "bg-red-50 text-red-700 border-red-200";
+                        suiviHtml += `<span class="px-2 py-0.5 rounded border ${c}"><strong>${nom} :</strong> ${stat.replace(/🟢|🟡|🔴/g, '')}</span>`;
                     }
-                    htmlSuiviIndividuel += `</div></div>`;
+                    suiviHtml += `</div>`;
                 }
 
                 div.innerHTML = `
                     <div class="flex justify-between items-start flex-wrap gap-2 border-b pb-2 border-gray-200 pr-16">
-                        <div>
-                            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider mr-2">${entree.moment}</span>
-                            <h3 class="text-xl font-bold text-gray-800 inline-block mt-1 md:mt-0">${entree.titre}</h3>
-                        </div>
+                        <div><span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider mr-2">${entree.moment}</span><h3 class="text-xl font-bold text-gray-800 inline-block mt-1 md:mt-0">${entree.titre}</h3></div>
                         <span class="text-sm text-gray-500 font-medium capitalize">${dateFormatee}</span>
                     </div>
-                    
-                    <button onclick="clonerActivite(${entree.id})" class="no-print absolute top-4 right-4 bg-gray-200 hover:bg-indigo-100 text-gray-600 hover:text-indigo-700 text-xs px-2 py-1 rounded transition">
-                        👯 Copier
-                    </button>
-
-                    <div class="flex flex-wrap gap-2 items-center text-xs">
+                    <button onclick="clonerActivite(${entree.id})" class="no-print absolute top-4 right-4 bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded">👯 Copier</button>
+                    <div class="flex flex-wrap gap-2 text-xs">
                         <span class="text-emerald-800 font-semibold bg-emerald-50 px-2 py-1 rounded border border-emerald-200">🎯 ${entree.domaineTexte}</span>
                         <span class="text-blue-800 font-medium bg-blue-50 px-2 py-1 rounded border border-blue-200">🔑 ${entree.objectif}</span>
-                        ${badgesGroupes}
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-                        <div class="${entree.photo ? 'md:col-span-2' : 'md:col-span-3'} space-y-2">
-                            <p class="text-sm text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entree.description || 'Non renseigné.'}</p>
-                            ${entree.observations ? `<div class="bg-amber-50 border-l-4 border-amber-400 p-2.5 rounded text-sm text-amber-900"><strong>Observations :</strong><br>${entree.observations}</div>` : ''}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div class="${entree.photo ? 'md:col-span-2' : 'md:col-span-3'} space-y-1">
+                            <p class="text-gray-700 whitespace-pre-line"><strong>Déroulement :</strong><br>${entree.description || '/'}</p>
+                            ${entree.observations ? `<div class="bg-amber-50 border-l-4 border-amber-400 p-2 rounded text-amber-900"><strong>Obs :</strong> ${entree.observations}</div>` : ''}
                         </div>
-                        ${entree.photo ? `<div class="flex justify-center items-center"><img src="${entree.photo}" class="max-h-40 rounded-lg shadow-sm border border-gray-200 object-cover w-full"></div>` : ''}
+                        ${entree.photo ? `<div class="flex justify-center items-center"><img src="${entree.photo}" class="max-h-36 rounded-lg object-cover w-full"></div>` : ''}
                     </div>
-                    ${htmlSuiviIndividuel}
+                    ${suiviHtml}
                 `;
-                entriesContainer.appendChild(div);
+                container.appendChild(div);
             });
         }
 
-        // SOUCOUMISSION FORMULAIRE
+        // MODULE ANALYTICS : COUVERTURE DU PROGRAMME FWB
+        function genererStatistiquesGlobales() {
+            const statsContainer = document.getElementById('statistiquesDomaines');
+            statsContainer.innerHTML = "";
+            const totalFiches = journalData.length;
+
+            const clesDomaines = {
+                "transversal": "Visées transversales",
+                "art": "1. Éducation artistique",
+                "langues": "2. Français & Langues",
+                "math": "3. Mathématiques",
+                "sciences": "4. Sciences & Philo",
+                "sante": "5. Psychomotricité"
+            };
+
+            Object.entries(clesDomaines).forEach(([cle, label]) => {
+                const count = journalData.filter(f => f.domaineCle === cle).length;
+                const pourcentage = totalFiches > 0 ? Math.round((count / totalFiches) * 100) : 0;
+
+                const divBar = document.createElement('div');
+                divBar.className = "space-y-1";
+                divBar.innerHTML = `
+                    <div class="flex justify-between font-medium text-gray-700"><span>${label}</span><span class="font-bold">${count} fiche(s) (${pourcentage}%)</span></div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${pourcentage}%"></div></div>
+                `;
+                statsContainer.appendChild(divBar);
+            });
+        }
+
+        // MODULE BILAN : CARNET DE COMPÉTENCES INDIVIDUEL DE L'ÉLÈVE
+        window.chargerProfilEleve = function() {
+            const prenom = document.getElementById('selectProfilEleve').value;
+            const container = document.getElementById('contenuProfilEleve');
+            container.innerHTML = "";
+
+            if(!prenom) { container.innerHTML = `<p class="text-gray-400 italic">Aucun élève sélectionné.</p>`; return; }
+
+            // Filtrer les activités où l'élève possède une évaluation enregistrée
+            const fichesEleve = journalData.filter(f => f.suivi && f.suivi[prenom]);
+
+            if(fichesEleve.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Aucune activité notée pour ${prenom} jusqu'à présent.</p>`;
+                return;
+            }
+
+            fichesEleve.reverse().forEach(fiche => {
+                const statut = fiche.suivi[prenom];
+                let cssColor = "bg-gray-100 text-gray-700";
+                if(statut.includes("Acquis")) cssColor = "bg-green-100 text-green-800 font-bold border border-green-300";
+                if(statut.includes("cours")) cssColor = "bg-yellow-100 text-yellow-800 font-bold border border-yellow-300";
+                if(statut.includes("renforcer")) cssColor = "bg-red-100 text-red-800 font-bold border border-red-300";
+
+                const dateFormatee = new Date(fiche.date).toLocaleDateString('fr-BE', {day:'numeric', month:'short'});
+
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200 gap-4";
+                item.innerHTML = `
+                    <div class="text-sm">
+                        <span class="text-xs text-gray-400 mr-2 font-mono">${dateFormatee}</span>
+                        <strong class="text-gray-800">${fiche.titre}</strong>
+                        <div class="text-xs text-gray-500 mt-0.5">🎯 ${fiche.objectif}</div>
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full ${cssColor}">${statut}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // ENREGISTREMENT ET SOUMISSION
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            const groupesCoches = [];
-            document.querySelectorAll('.groupe-chk:checked').forEach(chk => { groupesCoches.push(chk.value); });
-
-            // Capturer le suivi des élèves
-            const suiviEleves = {};
-            document.querySelectorAll('.eleve-statut-select').forEach(select => {
-                if(select.value) {
-                    suiviEleves[select.getAttribute('data-eleve')] = select.value;
-                }
-            });
+            const groupes = []; document.querySelectorAll('.groupe-chk:checked').forEach(c => groupes.push(c.value));
+            const suivi = {}; document.querySelectorAll('.eleve-statut-select').forEach(s => { if(s.value) suivi[s.getAttribute('data-eleve')] = s.value; });
 
             const domSelect = document.getElementById('domaineInput');
-
             const nouvelleActivite = {
-                id: Date.now(),
-                date: document.getElementById('dateInput').value,
-                moment: document.getElementById('momentInput').value,
-                titre: document.getElementById('titreInput').value,
-                domaineCle: domSelect.value,
-                domaineTexte: domSelect.options[domSelect.selectedIndex].text,
-                objectif: document.getElementById('objectifInput').value,
-                groupes: groupesCoches,
-                suivi: suiviEleves,
-                description: document.getElementById('descInput').value,
-                observations: document.getElementById('obsInput').value,
-                photo: tempPhotoBase64
+                id: Date.now(), date: document.getElementById('dateInput').value, moment: document.getElementById('momentInput').value,
+                titre: document.getElementById('titreInput').value, domaineCle: domSelect.value, domaineTexte: domSelect.options[domSelect.selectedIndex].text,
+                objectif: document.getElementById('objectifInput').value, groupes, suivi, description: document.getElementById('descInput').value,
+                observations: document.getElementById('obsInput').value, photo: tempPhotoBase64
             };
 
             try {
-                journalData.push(nouvelleActivite);
-                localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                form.reset();
-                document.getElementById('dateInput').valueAsDate = new Date();
-                tempPhotoBase64 = "";
-                afficherGestionEleves();
-                mettreAJourObjectifs();
-                afficherJournal();
-            } catch (error) {
-                alert("⚠️ Mémoire saturée par des photos trop lourdes.");
-                journalData.pop();
-            }
+                journalData.push(nouvelleActivite); localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
+                form.reset(); document.getElementById('dateInput').valueAsDate = new Date(); tempPhotoBase64 = "";
+                afficherGestionEleves(); mettreAJourObjectifs(); afficherJournal();
+            } catch(err) { alert("Mémoire pleine ! Réduisez la taille de vos photos."); journalData.pop(); }
         });
 
-        // CLONER UN ATELIER
+        // ACTION CLONER, EXPORT & DICTÉE
         window.clonerActivite = function(id) {
-            const cible = journalData.find(e => e.id === id);
-            if (cible) {
-                document.getElementById('titreInput').value = cible.titre;
-                document.getElementById('domaineInput').value = cible.domaineCle;
-                mettreAJourObjectifs();
-                document.getElementById('objectifInput').value = cible.objectif;
-                document.getElementById('momentInput').value = cible.moment;
-                document.getElementById('descInput').value = cible.description;
-                document.getElementById('obsInput').value = cible.observations;
-                tempPhotoBase64 = cible.photo;
-                
-                document.querySelectorAll('.groupe-chk').forEach(chk => {
-                    chk.checked = cible.groupes.includes(chk.value);
-                });
-
-                // Réinjecter les statuts des élèves clonés
-                document.querySelectorAll('.eleve-statut-select').forEach(select => {
-                    const nom = select.getAttribute('data-eleve');
-                    select.value = (cible.suivi && cible.suivi[nom]) ? cible.suivi[nom] : "";
-                });
-
+            const c = journalData.find(e => e.id === id);
+            if(c) {
+                document.getElementById('titreInput').value = c.titre; document.getElementById('domaineInput').value = c.domaineCle; mettreAJourObjectifs();
+                document.getElementById('objectifInput').value = c.objectif; document.getElementById('momentInput').value = c.moment;
+                document.getElementById('descInput').value = c.description; document.getElementById('obsInput').value = c.observations; tempPhotoBase64 = c.photo;
+                document.querySelectorAll('.groupe-chk').forEach(chk => chk.checked = c.groupes.includes(chk.value));
+                document.querySelectorAll('.eleve-statut-select').forEach(s => { const n = s.getAttribute('data-eleve'); s.value = (c.suivi && c.suivi[n]) ? c.suivi[n] : ""; });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         };
 
-        // EXPORT / IMPORT
+        function activerDictee(id) {
+            const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!Speech) return; const rec = new Speech(); rec.lang = 'fr-BE'; const b = event.target; b.textContent = "🛑 Écoute...";
+            rec.onresult = (e) => { document.getElementById(id).value += " " + e.results[0][0].transcript; b.textContent = "🎙️ Dicter"; };
+            rec.onend = () => b.textContent = "🎙️ Dicter"; rec.start();
+        }
+
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if(file) { const r = new FileReader(); r.onload = (ev) => tempPhotoBase64 = ev.target.result; r.readAsDataURL(file); }
+        });
+
         window.exporterJournal = function() {
-            const packageComplet = { journal: journalData, eleves: elevesData };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageComplet));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `sauvegarde_journal_classe.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click(); downloadAnchor.remove();
+            const pack = { journal: journalData, eleves: elevesData };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(pack));
+            const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "sauvegarde_journal.json");
+            document.body.appendChild(a); a.click(); a.remove();
         };
 
         window.importerJournal = function(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
+            const file = input.files[0]; if(file) {
+                const r = new FileReader(); r.onload = (e) => {
                     try {
-                        const pack = JSON.parse(e.target.result);
-                        if (pack.journal && pack.eleves) {
-                            if(confirm("Écraser les données actuelles par cette sauvegarde ?")) {
-                                journalData = pack.journal;
-                                elevesData = pack.eleves;
-                                localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData));
-                                localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
-                                afficherGestionEleves();
-                                afficherJournal();
-                            }
+                        const p = JSON.parse(e.target.result); if(p.journal && p.eleves) {
+                            journalData = p.journal; elevesData = p.eleves;
+                            localStorage.setItem('monJournalMaternellePro', JSON.stringify(journalData)); localStorage.setItem('mesElevesMaternelle', JSON.stringify(elevesData));
+                            afficherGestionEleves(); afficherJournal();
                         }
-                    } catch (err) { alert("Fichier invalide."); }
-                };
-                reader.readAsText(file);
+                    } catch(x) { alert("Erreur."); }
+                }; r.readAsText(file);
             }
         };
 
-        // EVENT LISTENERS FILTRES
-        filtreDomaine.addEventListener('change', afficherJournal);
-        filtreGroupe.addEventListener('change', afficherJournal);
-        rechercheTexte.addEventListener('input', afficherJournal);
-        clearBtn.addEventListener('click', function() {
-            if (confirm("Voulez-vous vraiment TOUT effacer ?")) {
-                journalData = []; localStorage.removeItem('monJournalMaternellePro'); afficherJournal();
-            }
-        });
+        document.getElementById('filtreDomaine').addEventListener('change', afficherJournal);
+        document.getElementById('rechercheTexte').addEventListener('input', afficherJournal);
+        document.getElementById('clearBtn').addEventListener('click', () => { if(confirm("Tout effacer ?")) { journalData = []; localStorage.removeItem('monJournalMaternellePro'); afficherJournal(); } });
 
-        // INIT
+        // INITIALISATION
         afficherGestionEleves();
         mettreAJourObjectifs();
         afficherJournal();
