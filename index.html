@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal & Gestion Maternelle — FWB Pro Max</title>
+    <title>Mon Journal & Gestion Maternelle — FWB Édition Intégrale</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importation de Nunito (pour les titres) et Quicksand (pour le texte) -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; }
@@ -15,11 +14,22 @@
             body { background: white; }
             .print-full-width { width: 100% !important; max-width: 100% !important; }
             .page-break-inside-avoid { page-break-inside: avoid; }
-            #zoneImpressionCartes { position: absolute; top: 0; left: 0; width: 100%; z-index: 9999; display: block !important; }
+            #zoneImpressionCartes, #zoneImpressionCahier { position: absolute; top: 0; left: 0; width: 100%; z-index: 9999; display: block !important; }
         }
     </style>
 </head>
 <body class="bg-amber-50/40 min-h-screen text-gray-800 antialiased">
+
+    <!-- ÉCRAN DE VERROUILLAGE PIN (RGPD SÉCURITÉ) -->
+    <div id="lockScreen" class="fixed inset-0 bg-indigo-900/95 z-[9999] flex flex-col items-center justify-center hidden text-white p-4 no-print">
+        <div class="bg-white text-gray-800 p-6 rounded-3xl shadow-xl border-4 border-orange-200 text-center max-w-sm w-full">
+            <span class="text-4xl block mb-2">🔒</span>
+            <h2 class="text-xl font-bold mb-1 text-indigo-700">Espace Sécurisé</h2>
+            <p class="text-xs text-gray-400 mb-4 font-semibold">Veuillez entrer votre code PIN pour accéder aux journaux et fiches enfants.</p>
+            <input type="password" id="inputPinVerify" maxlength="4" placeholder="••••" class="w-28 text-center tracking-widest text-2xl rounded-xl border-2 border-gray-100 p-2 font-bold mb-4 outline-none focus:border-indigo-400 bg-gray-50">
+            <button onclick="verifierCodePIN()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition text-sm shadow">Déverrouiller l'Espace</button>
+        </div>
+    </div>
 
     <!-- CONTENEUR PRINCIPAL DE L'APPLICATION -->
     <div id="appWrapper" class="max-w-7xl mx-auto p-4 md:p-6">
@@ -40,6 +50,7 @@
             </div>
 
             <div class="flex gap-2 no-print flex-wrap justify-center">
+                <button onclick="configurerCodePIN()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-2xl font-bold text-xs shadow-sm transition flex items-center gap-1">🔑 Sécurité PIN</button>
                 <button onclick="exporterTout()" class="bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm transition flex items-center gap-1">💾 Sauver</button>
                 <label class="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-2xl font-bold text-xs shadow-sm transition cursor-pointer flex items-center gap-1">
                     📂 Charger <input type="file" id="importInput" accept=".json" class="hidden" onchange="importerTout(this)">
@@ -86,6 +97,13 @@
                             <label class="text-gray-400 block mb-1">OBJECTIF VISÉ</label>
                             <select id="objectifInput" class="w-full rounded-xl border-2 border-gray-50 p-2 text-xs bg-amber-50/30 text-amber-900 outline-none"></select>
                         </div>
+
+                        <!-- MODIFICATEUR : PLANIFICATEUR / BROUILLON -->
+                        <div class="flex items-center gap-2 bg-orange-50/60 p-2.5 rounded-xl border border-orange-100">
+                            <input type="checkbox" id="draftCheckbox" class="w-4 h-4 rounded text-orange-500 border-gray-300 focus:ring-orange-400">
+                            <label for="draftCheckbox" class="text-[11px] text-orange-700 font-bold select-none cursor-pointer">⏳ Enregistrer comme brouillon (Semainier)</label>
+                        </div>
+
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="text-gray-400">RÉUSSITE DES ÉLÈVES PRÉSENTS</label>
@@ -108,20 +126,37 @@
                             <label class="text-gray-400 block mb-1">📸 PHOTOS SOUVENIRS (ILLIMITÉES)</label>
                             <input type="file" id="photoInput" accept="image/*" class="text-xs text-gray-400 file:bg-orange-50 file:text-orange-600 file:border-0 file:rounded-xl file:px-3 file:py-1 file:font-bold hover:file:bg-orange-100 cursor-pointer" multiple>
                         </div>
-                        <button type="submit" class="w-full bg-orange-400 text-white p-3 rounded-2xl font-bold shadow-sm hover:bg-orange-500 transition text-sm tracking-wide">Enregistrer dans le journal 🎈</button>
+                        <button type="submit" class="w-full bg-orange-400 text-white p-3 rounded-2xl font-bold shadow-sm hover:bg-orange-500 transition text-sm tracking-wide">Enregistrer l'activité 🎈</button>
                     </form>
                 </div>
             </div>
             <div class="lg:col-span-2 print-full-width">
+                <!-- ACCORDÉON GAZETTE COMMUNICATIVE -->
+                <div class="no-print bg-gradient-to-r from-teal-50 to-emerald-50 border-2 border-dashed border-teal-200 p-4 rounded-3xl mb-4 flex justify-between items-center flex-wrap gap-2">
+                    <div>
+                        <h3 class="font-bold text-teal-700">📰 Gazette de la Semaine</h3>
+                        <p class="text-xs text-gray-500 font-medium">Générez un résumé de vos ateliers officiels pour les parents.</p>
+                    </div>
+                    <button type="button" onclick="ouvrirGenerateurGazette()" class="bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">Créer le Mémo ✨</button>
+                </div>
+
                 <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-orange-100">
-                    <div class="no-print bg-amber-50/40 p-3 rounded-2xl border-2 border-dashed border-amber-200 mb-4 flex flex-wrap gap-2">
+                    <div class="no-print bg-amber-50/40 p-3 rounded-2xl border-2 border-dashed border-amber-200 mb-6 flex flex-wrap gap-2">
                         <input type="text" id="rechercheTexte" oninput="afficherJournal()" placeholder="🔍 Rechercher un atelier magique..." class="rounded-xl border-2 border-gray-100 p-2 text-sm flex-1 min-w-[200px] outline-none focus:border-orange-200">
                         <select id="filtreEleveJournal" onchange="afficherJournal()" class="rounded-xl border-2 border-gray-100 p-2 text-sm font-bold text-gray-600 bg-white outline-none">
                             <option value="Tous">👦👧 Tous les enfants</option>
                         </select>
                     </div>
-                    <h2 class="text-xl text-gray-700 mb-4 pb-2 border-b-2 border-dashed border-gray-100">📋 Les Aventures de la Classe</h2>
-                    <div id="journalEntries" class="space-y-4"></div>
+                    
+                    <!-- DIVISION EXPLICITE CHRONOLOGIE (OFFICIEL VS BROUILLONS) -->
+                    <div class="space-y-6">
+                        <div id="zoneBrouillons" class="space-y-4">
+                            <!-- Les planifications s'affichent ici -->
+                        </div>
+                        <div id="zoneJournalOfficiel" class="space-y-4">
+                            <!-- Le cahier validé s'affiche ici -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,120 +178,127 @@
 
         <!-- ================= ONGLET 3 : FICHES SIGNALÉTIQUES ================= -->
         <div id="ongletEleves" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 print-full-width">
-            <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-pink-100 h-fit no-print">
-                <h2 class="text-lg text-pink-500 mb-3 flex items-center gap-1">🧸 Accueillir un Enfant</h2>
-                <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-xs font-bold">
-                    <input type="hidden" id="editEleveId">
-                    <div class="flex justify-center mb-1">
-                        <div id="wrapperPhotoEleve" class="w-24 h-24 bg-pink-50/50 border-2 border-dashed border-pink-200 rounded-full flex items-center justify-center text-pink-400 overflow-hidden shadow-inner font-bold">
-                            <span>Pas de photo</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">SÉLECTIONNER SA PHOTO</label>
-                        <input type="file" id="elPhotoInput" accept="image/*" class="text-xs text-gray-400 w-full cursor-pointer">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-gray-400 block mb-0.5">PRÉNOM</label>
-                            <input type="text" id="elPrenom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
+            <div class="space-y-4 no-print">
+                <!-- FORMULAIRE ENFANT -->
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-pink-100 h-fit">
+                    <h2 class="text-lg text-pink-500 mb-3 flex items-center gap-1">🧸 Accueillir un Enfant</h2>
+                    <form id="eleveForm" onsubmit="sauverEleve(event)" class="space-y-3 text-xs font-bold">
+                        <input type="hidden" id="editEleveId">
+                        <div class="flex justify-center mb-1">
+                            <div id="wrapperPhotoEleve" class="w-24 h-24 bg-pink-50/50 border-2 border-dashed border-pink-200 rounded-full flex items-center justify-center text-pink-400 overflow-hidden shadow-inner font-bold">
+                                <span>Pas de photo</span>
+                            </div>
                         </div>
                         <div>
-                            <label class="text-gray-400 block mb-0.5">NOM</label>
-                            <input type="text" id="elNom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">DATE DE NAISSANCE</label>
-                        <input type="date" id="elNaissance" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
-                    </div>
-
-                    <!-- ADRESSES -->
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">ADRESSE PRINCIPALE</label>
-                        <input type="text" id="elAdresse1" placeholder="Rue de l'Église 12, 7130 Binche" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
-                    </div>
-                    <div id="containerAdresse2" class="hidden">
-                        <label class="text-pink-400 block mb-0.5">SECONDE ADRESSE (PARENTS SÉPARÉS)</label>
-                        <input type="text" id="elAdresse2" placeholder="Rue de la Station 45, 1000 Bruxelles" class="w-full rounded-xl border-2 border-pink-200 p-2 text-sm outline-none focus:border-pink-300">
-                    </div>
-                    <div class="text-right">
-                        <button type="button" onclick="toggleAdresse2Field()" class="text-[11px] text-pink-500 font-bold hover:underline">➕ Gérer la seconde adresse</button>
-                    </div>
-
-                    <!-- SITUATION FAMILIALE -->
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">STATUT MARITAL DES PARENTS</label>
-                        <select id="elStatutMarital" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
-                            <option value="Mariés">💍 Mariés</option>
-                            <option value="Cohabitants">🏡 Cohabitants légaux / de fait</option>
-                            <option value="Séparés / Divorcés">💔 Séparés / Divorcés</option>
-                            <option value="Célibataire">👤 Parent célibataire</option>
-                        </select>
-                    </div>
-
-                    <!-- COORDONNÉES MAMAN -->
-                    <div class="bg-pink-50/40 p-2.5 rounded-2xl border-2 border-pink-100 space-y-2">
-                        <span class="text-[10px] uppercase font-bold text-pink-600 block">👩 MAMAN</span>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="elMamanNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                            <input type="text" id="elMamanPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <label class="text-gray-400 block mb-0.5">SÉLECTIONNER SA PHOTO</label>
+                            <input type="file" id="elPhotoInput" accept="image/*" class="text-xs text-gray-400 w-full cursor-pointer">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="tel" id="elMamanTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                            <input type="email" id="elMamanEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <div>
+                                <label class="text-gray-400 block mb-0.5">PRÉNOM</label>
+                                <input type="text" id="elPrenom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 block mb-0.5">NOM</label>
+                                <input type="text" id="elNom" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" required>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- COORDONNÉES PAPA -->
-                    <div class="bg-sky-50/40 p-2.5 rounded-2xl border-2 border-sky-100 space-y-2">
-                        <span class="text-[10px] uppercase font-bold text-sky-600 block">👨 PAPA</span>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="elPapaNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                            <input type="text" id="elPapaPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">DATE DE NAISSANCE</label>
+                            <input type="date" id="elNaissance" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="tel" id="elPapaTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                            <input type="email" id="elPapaEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">ADRESSE PRINCIPALE</label>
+                            <input type="text" id="elAdresse1" placeholder="Rue de l'Église 12, 7130 Binche" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                         </div>
-                    </div>
+                        <div id="containerAdresse2" class="hidden">
+                            <label class="text-pink-400 block mb-0.5">SECONDE ADRESSE (PARENTS SÉPARÉS)</label>
+                            <input type="text" id="elAdresse2" placeholder="Rue de la Station 45, 1000 Bruxelles" class="w-full rounded-xl border-2 border-pink-200 p-2 text-sm outline-none focus:border-pink-300">
+                        </div>
+                        <div class="text-right">
+                            <button type="button" onclick="toggleAdresse2Field()" class="text-[11px] text-pink-500 font-bold hover:underline">➕ Gérer la seconde adresse</button>
+                        </div>
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">STATUT MARITAL DES PARENTS</label>
+                            <select id="elStatutMarital" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
+                                <option value="Mariés">💍 Mariés</option>
+                                <option value="Cohabitants">🏡 Cohabitants légaux</option>
+                                <option value="Séparés / Divorcés">💔 Séparés / Divorcés</option>
+                                <option value="Célibataire">👤 Parent célibataire</option>
+                            </select>
+                        </div>
+                        <div class="bg-pink-50/40 p-2.5 rounded-2xl border-2 border-pink-100 space-y-2">
+                            <span class="text-[10px] uppercase font-bold text-pink-600 block">👩 MAMAN</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="elMamanNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                                <input type="text" id="elMamanPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="tel" id="elMamanTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                                <input type="email" id="elMamanEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            </div>
+                        </div>
+                        <div class="bg-sky-50/40 p-2.5 rounded-2xl border-2 border-sky-100 space-y-2">
+                            <span class="text-[10px] uppercase font-bold text-sky-600 block">👨 PAPA</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="elPapaNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                                <input type="text" id="elPapaPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="tel" id="elPapaTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                                <input type="email" id="elPapaEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            </div>
+                        </div>
+                        <div class="space-y-2 bg-gray-50/50 p-2 rounded-2xl border border-gray-100">
+                            <div id="containerTelsSupp" class="space-y-1"></div>
+                            <button type="button" onclick="ajouterChampTelSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">📞 Ajouter un numéro</button>
+                            <div id="containerEmailsSupp" class="space-y-1 pt-1 border-t border-dashed border-gray-200"></div>
+                            <button type="button" onclick="ajouterChampEmailSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">✉️ Ajouter un e-mail</button>
+                        </div>
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">🚨 CONTACT ALTERNATIF / URGENCE</label>
+                            <input type="text" id="elContactUrgence" placeholder="Nom et numéro..." class="w-full rounded-xl border-2 border-gray-100 p-2 text-xs outline-none focus:border-pink-300">
+                        </div>
+                        <div class="bg-red-50 p-2.5 rounded-2xl border-2 border-red-100">
+                            <label class="block text-xs font-bold text-red-600 flex items-center gap-1">⚠️ ALLERGIES / SANTÉ / FIP</label>
+                            <textarea id="elSante" rows="2" placeholder="Allergie laitière, asthme, protocole PAI..." class="mt-1 w-full rounded-xl border-2 border-red-200 p-2 font-normal text-xs outline-none focus:border-red-400 bg-white"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">REMARQUES ET PRÉFÉRENCES</label>
+                            <textarea id="elNotes" rows="1" placeholder="Doudou lapin, adore les puzzles..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-pink-300"></textarea>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" class="w-full bg-pink-400 text-white p-2.5 rounded-xl font-bold hover:bg-pink-500 shadow-sm transition">Enregistrer l'enfant 🧸</button>
+                            <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-200 px-3 rounded-xl text-gray-600">Annuler</button>
+                        </div>
+                    </form>
+                </div>
 
-                    <!-- NUMÉROS ET EMAILS EXTRA -->
-                    <div class="space-y-2 bg-gray-50/50 p-2 rounded-2xl border border-gray-100">
-                        <div id="containerTelsSupp" class="space-y-1"></div>
-                        <button type="button" onclick="ajouterChampTelSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">📞 Ajouter un téléphone supplémentaire</button>
-                        
-                        <div id="containerEmailsSupp" class="space-y-1 pt-1 border-t border-dashed border-gray-200"></div>
-                        <button type="button" onclick="ajouterChampEmailSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">✉️ Ajouter un e-mail supplémentaire</button>
+                <!-- ADDITION COMPORTEMENTALE : OBSERVATIONS FLASH -->
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-2 border-indigo-100 h-fit">
+                    <h2 class="text-md text-indigo-600 mb-2 flex items-center gap-1">🎙️ Note Flash (À la volée)</h2>
+                    <div class="space-y-2 text-xs font-bold">
+                        <div>
+                            <label class="text-gray-400 block mb-0.5">CHOISIR L'ENFANT</label>
+                            <select id="flashSelectEleve" class="w-full rounded-xl border-2 border-gray-100 p-1.5 bg-white text-gray-700 outline-none"></select>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center"><label class="text-gray-400">NOTE COGNITIVE OU COMPORTEMENTALE</label><button type="button" onclick="activerDictee('flashTexte')" class="text-xs text-indigo-500">🎙️ Parler</button></div>
+                            <textarea id="flashTexte" rows="2" placeholder="Ex: A trié les blocs par taille spontanément..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-indigo-300 mt-1"></textarea>
+                        </div>
+                        <button type="button" onclick="sauverNoteFlash()" class="w-full bg-indigo-500 text-white p-2 rounded-xl font-bold shadow-sm hover:bg-indigo-600 transition">Fixer la note ✨</button>
                     </div>
+                </div>
 
-                    <!-- AUTRE NUMÉRO DE CONTACT / URGENCE -->
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">🚨 PERSONNE DE CONTACT ALTERNATIVE (Urgence)</label>
-                        <input type="text" id="elContactUrgence" placeholder="Ex: Grand-Mère Nicole (0477/12.34.56)" class="w-full rounded-xl border-2 border-gray-100 p-2 text-xs outline-none focus:border-pink-300">
-                    </div>
-
-                    <div class="bg-red-50 p-2.5 rounded-2xl border-2 border-red-100">
-                        <label class="block text-xs font-bold text-red-600 flex items-center gap-1">⚠️ ALLERGIES / SANTÉ / FIP</label>
-                        <textarea id="elSante" rows="2" placeholder="Allergie laitière, asthme, protocole PAI..." class="mt-1 w-full rounded-xl border-2 border-red-200 p-2 font-normal text-xs outline-none focus:border-red-400 bg-white"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-gray-400 block mb-0.5">REMARQUES ET PRÉFÉRENCES</label>
-                        <textarea id="elNotes" rows="1" placeholder="Doudou lapin, adore les puzzles..." class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-pink-300"></textarea>
-                    </div>
-                    <div class="flex gap-2">
-                        <button type="submit" class="w-full bg-pink-400 text-white p-2.5 rounded-xl font-bold hover:bg-pink-500 shadow-sm transition">Enregistrer le doudou 🧸</button>
-                        <button type="button" onclick="annulerEditionEleve()" id="btnAnnulerEdit" class="hidden bg-gray-200 px-3 rounded-xl text-gray-600">Annuler</button>
-                    </div>
-                </form>
-                <div class="mt-4 pt-4 border-t-2 border-dashed border-gray-100">
-                    <h3 class="text-xs text-gray-400 mb-2">Créer une autre classe</h3>
+                <div class="pt-2">
                     <div class="flex gap-1">
                         <input type="text" id="nomNouvelleClasse" placeholder="Ex: M3 (Classe Verte)" class="text-xs rounded-xl border-2 border-gray-100 p-2 w-full outline-none">
                         <button onclick="creerClasse()" class="bg-gray-700 text-white text-xs px-3 rounded-xl font-bold hover:bg-black">Créer</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Trombinoscope -->
             <div class="lg:col-span-2 print-full-width space-y-4">
                 <h2 class="text-xl text-gray-700 pb-2 border-b-2 border-dashed border-gray-100 flex justify-between items-center">
                     <span>🗂️ Le Trombinoscope des Petits</span>
@@ -282,7 +324,10 @@
                             <div id="avatarProfilEleve" class="w-10 h-10 rounded-full border-2 border-teal-300 overflow-hidden hidden flex items-center justify-center text-xs shadow-sm bg-white"></div>
                             <span>Mon Cahier de Progrès</span>
                         </h2>
-                        <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-xl border-2 border-teal-100 p-2 text-sm font-bold text-teal-700 bg-teal-50 outline-none no-print"></select>
+                        <div class="flex gap-1">
+                            <button onclick="imprimerCahierReussites()" class="no-print bg-teal-500 hover:bg-teal-600 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow-sm transition">🖨️ Imprimer le Livret</button>
+                            <select id="selectProfilEleve" onchange="chargerProfilEleve()" class="rounded-xl border-2 border-teal-100 p-2 text-sm font-bold text-teal-700 bg-teal-50 outline-none no-print"></select>
+                        </div>
                     </div>
                     <div id="statsPresencesEleve" class="mb-4 p-3 bg-gradient-to-r from-blue-50 to-sky-50 text-sky-900 border border-sky-100 rounded-2xl text-xs font-bold hidden flex justify-between items-center"></div>
                     <div id="contenuProfilEleve" class="space-y-2"></div>
@@ -292,20 +337,46 @@
 
     </div>
 
-    <!-- ================= ZONE SPECIALE ÉTIQUETTES DE RITUEL ================= -->
+    <!-- ================= IMPRESSION CARTES RITUEL ================= -->
     <div id="zoneImpressionCartes" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
         <div class="no-print mb-8 bg-pink-50 border-2 border-dashed border-pink-200 p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <h3 class="text-lg font-bold text-pink-700 mb-1">✂️ Mode Impression : Cartes de Rituel</h3>
-            <p class="text-xs text-gray-500 font-medium mb-3">Découpez le long des pointillés gris pour fabriquer vos étiquettes de présence du matin.</p>
+            <p class="text-xs text-gray-500 font-medium mb-3">Découpez le long des pointillés pour fabriquer vos étiquettes.</p>
             <div class="flex gap-2 justify-center">
-                <button onclick="window.print()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">🖨️ Lancer l'Impression</button>
-                <button onclick="fermerPlancheCartesRituel()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">⬅️ Revenir au Journal</button>
+                <button onclick="window.print()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">🖨️ Imprimer</button>
+                <button onclick="fermerPlancheCartesRituel()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">⬅️ Revenir</button>
             </div>
         </div>
         <div id="grilleCartesImpression" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-5xl mx-auto"></div>
     </div>
 
-    <!-- SCRIPT LOGICIEL INDEXEDDB -->
+    <!-- ================= IMPRESSION LIVRET DE REUSSITES COMPLET ================= -->
+    <div id="zoneImpressionCahier" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
+        <div class="no-print mb-8 bg-teal-50 border-2 border-dashed border-teal-200 p-4 rounded-2xl text-center max-w-2xl mx-auto">
+            <h3 class="text-lg font-bold text-teal-700 mb-1">🖨️ Mode Impression : Cahier de Réussites Évolutif</h3>
+            <p class="text-xs text-gray-500 font-medium mb-3">Impression complète du dossier administratif, assiduité, acquis officiels et notes flash de l'enfant.</p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="window.print()" class="bg-emerald-400 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">🖨️ Imprimer le Dossier</button>
+                <button onclick="fermerPlancheCahier()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">⬅️ Revenir</button>
+            </div>
+        </div>
+        <div id="contenuImpressionCahier" class="max-w-3xl mx-auto space-y-6 text-sm"></div>
+    </div>
+
+    <!-- ================= WINDOW MODAL GAZETTE RESUME PARENTS ================= -->
+    <div id="modalGazette" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white p-6 rounded-3xl max-w-xl w-full border-2 border-teal-100 shadow-xl space-y-4">
+            <h3 class="text-lg font-bold text-teal-600">📰 Gazette de la Semaine pour les Familles</h3>
+            <p class="text-xs text-gray-400 font-semibold">Ce texte compile et structure vos descriptifs d'ateliers récents pour alimenter votre canal de communication parents.</p>
+            <textarea id="texteGazette" rows="10" class="w-full border-2 border-gray-100 rounded-xl p-3 font-medium text-xs outline-none focus:border-teal-300 bg-gray-50/50 text-gray-700"></textarea>
+            <div class="flex justify-end gap-2 text-xs font-bold">
+                <button onclick="copierTexteGazette()" class="bg-teal-400 hover:bg-teal-500 text-white px-4 py-2 rounded-xl shadow-sm transition">📋 Copier le résumé</button>
+                <button onclick="document.getElementById('modalGazette').classList.add('hidden')" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-xl shadow-sm transition">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGICIEL INDEXEDDB SÉCURISÉ -->
     <script>
         const objectifsParDomaine = {
             transversal: ["🤝 Coopérer, respecter les règles collectives et vivre ensemble", "🌱 Construire son identité, la confiance en soi et l'autonomie", "💬 S'exprimer, communiquer ses émotions et écouter l'autre", "💡 Développer sa curiosité, sa créativité et l'esprit d'initiative"],
@@ -321,16 +392,19 @@
             math: "🧮 3. Mathématiques", sciences: "🧪 4. Sciences & Philo", sante: "🤸‍♀️ 5. Psychomotricité"
         };
 
-        let classesData = []; let elevesData = []; let journalData = []; let presencesData = {};
-        let currentClasse = ""; let tempPhotosArray = []; let tempElevePhotoBase64 = ""; let db;
+        let classesData = []; let elevesData = []; let journalData = []; let presencesData = {}; let flashData = [];
+        let currentClasse = ""; let tempPhotosArray = []; let tempElevePhotoBase64 = ""; let db; let globalCodePIN = "";
 
-        const request = indexedDB.open("MaternelleEspaceDB", 1);
+        // CREATION SCHEMA V2 SUITE AUX COMPILATIONS FLASH ET SECURE
+        const request = indexedDB.open("MaternelleEspaceDB", 2);
         request.onupgradeneeded = function(e) {
             let database = e.target.result;
             if(!database.objectStoreNames.contains("classes")) database.createObjectStore("classes", { keyPath: "id" });
             if(!database.objectStoreNames.contains("eleves")) database.createObjectStore("eleves", { keyPath: "id" });
             if(!database.objectStoreNames.contains("journal")) database.createObjectStore("journal", { keyPath: "id" });
             if(!database.objectStoreNames.contains("presences")) database.createObjectStore("presences", { keyPath: "date" });
+            if(!database.objectStoreNames.contains("flash")) database.createObjectStore("flash", { keyPath: "id" });
+            if(!database.objectStoreNames.contains("config")) database.createObjectStore("config", { keyPath: "id" });
         };
 
         request.onsuccess = function(e) {
@@ -343,6 +417,11 @@
                 currentClasse = classesData[0];
                 const domSelect = document.getElementById('domaineInput');
                 domSelect.innerHTML = Object.entries(labelsDomaines).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+                
+                // VERIFICATION LOCK ACTIF
+                if (globalCodePIN && globalCodePIN.trim().length === 4) {
+                    document.getElementById('lockScreen').classList.remove('hidden');
+                }
                 initApp();
             });
         };
@@ -365,11 +444,16 @@
 
         function chargerToutesLesDonneesDB() {
             return new Promise((resolve) => {
-                let count = 0; const check = () => { count++; if(count === 4) resolve(); };
+                let count = 0; const check = () => { count++; if(count === 5) resolve(); };
                 getAllFromStore("classes", (res) => { if(res.length > 0) classesData = res.map(x => x.name); check(); });
                 getAllFromStore("eleves", (res) => { elevesData = res; check(); });
                 getAllFromStore("journal", (res) => { journalData = res; check(); });
+                getAllFromStore("flash", (res) => { flashData = res; check(); });
                 getAllFromStore("presences", (res) => { res.forEach(p => presencesData[p.date] = p.data); check(); });
+                getAllFromStore("config", (res) => {
+                    let searchPin = res.find(x => x.id === "security_pin");
+                    if (searchPin) globalCodePIN = searchPin.value;
+                });
             });
         }
 
@@ -383,7 +467,32 @@
             if(classeForcee) currentClasse = classeForcee;
             else currentClasse = document.getElementById('globalClasseSelect').value;
             afficherGestionEleves(); mettreAJourObjectifs(); chargerRegistrePresences();
-            configurerFiltresEleves(); afficherJournal(); genererStatistiquesGlobales(); configurerSelectProfilsEleves();
+            configurerFiltresEleves(); afficherJournal(); genererStatistiquesGlobales(); configurerSelectProfilsEleves(); populateFlashSelectEleve();
+        }
+
+        // MANAGEMENT CODE PIN SECURITY
+        function configurerCodePIN() {
+            let code = prompt("Entrez un code PIN de sécurisation à 4 chiffres (Laissez vide pour désactiver le verrouillage) :", globalCodePIN || "");
+            if (code === null) return;
+            if (code.trim() !== "" && !/^\d{4}$/.test(code.trim())) {
+                alert("Erreur : Le code PIN doit obligatoirement être composé de 4 chiffres.");
+                return;
+            }
+            globalCodePIN = code.trim();
+            putInStore("config", { id: "security_pin", value: globalCodePIN }, () => {
+                alert(globalCodePIN ? "🔒 Protection par Code PIN activée avec succès !" : "🔓 Sécurisation désactivée.");
+            });
+        }
+
+        function verifierCodePIN() {
+            let input = document.getElementById('inputPinVerify').value;
+            if (input === globalCodePIN) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('inputPinVerify').value = "";
+            } else {
+                alert("❌ Code PIN erroné. Veuillez réessayer.");
+                document.getElementById('inputPinVerify').value = "";
+            }
         }
 
         function creerClasse() {
@@ -410,6 +519,7 @@
             document.getElementById(boutons[onglet]).className = `py-2.5 px-5 font-bold text-sm rounded-2xl shadow-sm whitespace-nowrap transition ${styleActif[onglet]}`;
             
             if (onglet === 'bilan') { genererStatistiquesGlobales(); chargerProfilEleve(); }
+            if (onglet === 'eleves') { afficherGestionEleves(); populateFlashSelectEleve(); }
             if (onglet === 'presences') { chargerRegistrePresences(); }
         }
 
@@ -418,33 +528,50 @@
             document.getElementById('filtreEleveJournal').innerHTML = '<option value="Tous">👦👧 Tous les enfants</option>' + filtrés.map(e => `<option value="${e.id}">👦 ${e.prenom}</option>`).join('');
         }
 
-        function noterTousLesEleves(valeur) { document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur); }
-
-        // GESTIONNAIRES DYNAMIQUES DE CHAMPS FORMULAIRE ENFANT
-        function toggleAdresse2Field() {
-            document.getElementById('containerAdresse2').classList.toggle('hidden');
+        function populateFlashSelectEleve() {
+            const select = document.getElementById('flashSelectEleve');
+            const filtrés = elevesData.filter(e => e.classe === currentClasse);
+            select.innerHTML = filtrés.map(e => `<option value="${e.id}">${e.prenom} ${e.nom}</option>`).join('');
         }
 
+        function noterTousLesEleves(valeur) { document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur); }
+
+        function toggleAdresse2Field() { document.getElementById('containerAdresse2').classList.toggle('hidden'); }
+
         function ajouterChampTelSupp(valeur = "") {
-            const container = document.getElementById('containerTelsSupp');
-            const div = document.createElement('div');
+            const container = document.getElementById('containerTelsSupp'); const div = document.createElement('div');
             div.className = "flex gap-1 items-center mt-1";
-            div.innerHTML = `
-                <input type="tel" placeholder="Autre n° de téléphone" value="${valeur}" class="el-tel-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm hover:text-red-600">×</button>
-            `;
+            div.innerHTML = `<input type="tel" placeholder="Autre n°" value="${valeur}" class="el-tel-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
             container.appendChild(div);
         }
 
         function ajouterChampEmailSupp(valeur = "") {
-            const container = document.getElementById('containerEmailsSupp');
-            const div = document.createElement('div');
+            const container = document.getElementById('containerEmailsSupp'); const div = document.createElement('div');
             div.className = "flex gap-1 items-center mt-1";
-            div.innerHTML = `
-                <input type="email" placeholder="Autre adresse e-mail" value="${valeur}" class="el-email-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
-                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm hover:text-red-600">×</button>
-            `;
+            div.innerHTML = `<input type="email" placeholder="Autre e-mail" value="${valeur}" class="el-email-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none"><button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm">×</button>`;
             container.appendChild(div);
+        }
+
+        // LOGIQUE NOTATION FLASH COMPORTEMENTALE
+        function sauverNoteFlash() {
+            const elId = document.getElementById('flashSelectEleve').value;
+            const texte = document.getElementById('flashTexte').value.trim();
+            if(!elId || !texte) return;
+
+            const note = { id: Date.now().toString(), eleveId: elId, date: new Date().toISOString().split('T')[0], texte: texte };
+            flashData.push(note);
+            putInStore("flash", note, () => {
+                document.getElementById('flashTexte').value = "";
+                alert("✨ Note comportementale fixée avec succès !");
+                afficherGestionEleves();
+            });
+        }
+
+        function supprimerNoteFlash(id) {
+            if(confirm("Supprimer cette note flash ?")) {
+                flashData = flashData.filter(x => x.id !== id);
+                deleteFromStore("flash", id, () => afficherGestionEleves());
+            }
         }
 
         document.getElementById('elPhotoInput').addEventListener('change', function(e) {
@@ -467,7 +594,7 @@
             }
         });
 
-        // VUE DU TROMBINOSCOPE ET RENDU DU DOSSIER SIGNALÉTIQUE
+        // RE-COMPILATION DOSSIERS SIGNALÉTIQUES + NOTE CHRONO FLASH
         function afficherGestionEleves() {
             const grille = document.getElementById('grilleFichesEleves'); const grilleForm = document.getElementById('grilleSuiviFormulaire');
             const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
@@ -475,7 +602,7 @@
             grille.innerHTML = ""; grilleForm.innerHTML = "";
 
             if(listeFiltrée.length === 0) {
-                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border-2 border-dashed rounded-3xl italic">Cette classe est encore vide... Inscrivez le premier petit oiseau !</div>`;
+                grille.innerHTML = `<div class="col-span-full p-8 text-center text-gray-400 bg-white border-2 border-dashed rounded-3xl italic">Cette classe est encore vide.</div>`;
                 return;
             }
 
@@ -488,76 +615,53 @@
                 if(e.telsSupp && e.telsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">📞 <strong>Tél. sup :</strong> ${e.telsSupp.join(' | ')}</p>`;
                 if(e.emailsSupp && e.emailsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">✉️ <strong>E-mails sup :</strong> ${e.emailsSupp.join(' | ')}</p>`;
                 
+                // Compilation notes flash enfants
+                let notesChildHtml = "";
+                let notesFiltrées = flashData.filter(n => n.eleveId === e.id);
+                if(notesFiltrées.length > 0) {
+                    notesChildHtml = `<div class="mt-2 bg-indigo-50/50 p-2 rounded-2xl border text-[11px] space-y-1"><span class="font-bold text-indigo-700 block">📝 Notes à la volée :</span>`;
+                    notesFiltrées.forEach(nf => {
+                        notesChildHtml += `<div class="flex justify-between items-start gap-2 border-b border-gray-100 pb-0.5"><span>• ${nf.texte}</span><button onclick="supprimerNoteFlash('${nf.id}')" class="text-red-400 hover:text-red-600 font-bold">×</button></div>`;
+                    });
+                    notesChildHtml += `</div>`;
+                }
+
                 grille.innerHTML += `
                     <div class="bg-white p-5 rounded-3xl shadow-sm border-2 ${e.sante ? 'border-red-200 bg-red-50/20' : 'border-pink-50'} space-y-2 relative page-break-inside-avoid hover:shadow-md transition">
                         <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-3">${avatar}<div><h3 class="text-md font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3><p class="text-[11px] text-gray-400">🎈 Gâteau le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p></div></div>
+                            <div class="flex items-center gap-3">${avatar}<div><h3 class="text-md font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3><p class="text-[11px] text-gray-400">🎈 Gâteau : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p></div></div>
                             <div class="no-print flex gap-2 text-[11px] font-bold text-gray-400"><button onclick="editerEleve('${e.id}')" class="text-pink-500 hover:underline">Modifier</button><button onclick="supprimerEleve('${e.id}')" class="text-red-400 hover:underline">Supprimer</button></div>
                         </div>
-
                         <div class="text-xs space-y-1 bg-gray-50/70 p-3 rounded-2xl border border-gray-100">
-                            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">📍 Situation & Adresses</p>
-                            <p><strong>Parents :</strong> ${e.statutMarital || 'Non spécifié'}</p>
-                            <p>🏠 <strong>Adresse 1 :</strong> ${e.adresse1 || '/'}</p>
-                            ${e.adresse2 ? `<p class="text-pink-600">🏠 <strong>Adresse 2 :</strong> ${e.adresse2}</p>` : ''}
+                            <p><strong>Parents :</strong> ${e.statutMarital || 'Non spécifié'} | 🏠 <strong>Adr :</strong> ${e.adresse1 || '/'} ${e.adresse2 ? `| <span class="text-pink-600">🏠 ${e.adresse2}</span>` : ''}</p>
                         </div>
-
                         <div class="grid grid-cols-2 gap-2 text-[11px] bg-gray-50/30 p-2.5 rounded-2xl border border-gray-100">
-                            <div class="border-r pr-1 border-gray-200">
-                                <span class="font-bold text-pink-600">👩 Maman</span><br>
-                                ${e.mamanPrenom || e.mamanNom ? `${e.mamanPrenom} ${e.mamanNom}<br>` : ''}
-                                ${e.mamanTel ? `📞 ${e.mamanTel}<br>` : ''}
-                                ${e.mamanEmail ? `<span class="truncate block">✉️ ${e.mamanEmail}</span>` : ''}
-                            </div>
-                            <div class="pl-1">
-                                <span class="font-bold text-sky-600">👨 Papa</span><br>
-                                ${e.papaPrenom || e.papaNom ? `${e.papaPrenom} ${e.papaNom}<br>` : ''}
-                                ${e.papaTel ? `📞 ${e.papaTel}<br>` : ''}
-                                ${e.papaEmail ? `<span class="truncate block">✉️ ${e.papaEmail}</span>` : ''}
-                            </div>
+                            <div><span class="font-bold text-pink-600">👩 Maman :</span> ${e.mamanPrenom} ${e.mamanNom}<br>${e.mamanTel}</div>
+                            <div><span class="font-bold text-sky-600">👨 Papa :</span> ${e.papaPrenom} ${e.papaNom}<br>${e.papaTel}</div>
                         </div>
-
-                        ${extraContactsHtml || e.contactUrgence ? `
-                            <div class="bg-indigo-50/30 p-2.5 rounded-2xl border border-indigo-50 space-y-0.5">
-                                ${e.contactUrgence ? `<p class="text-[11px] text-gray-600">🚨 <strong>Urgence :</strong> ${e.contactUrgence}</p>` : ''}
-                                ${extraContactsHtml}
-                            </div>` : ''}
-
-                        ${e.sante ? `<div class="bg-red-50 p-2 rounded-xl text-xs text-red-900 border border-red-200 font-bold">🚑 Fiche d'Attention :<br>${e.sante}</div>` : ''}
-                        ${e.notes ? `<p class="text-xs text-gray-500 bg-amber-50/50 p-2 rounded-xl italic">⭐️ ${e.notes}</p>` : ''}
+                        ${extraContactsHtml || e.contactUrgence ? `<div class="text-[11px] text-gray-500 bg-gray-50/60 p-2 rounded-xl">${e.contactUrgence ? `🚨 <strong>Urgence :</strong> ${e.contactUrgence}<br>` : ''}${extraContactsHtml}</div>` : ''}
+                        ${e.sante ? `<div class="bg-red-50 p-2 rounded-xl text-xs text-red-900 border border-red-200 font-bold">🚑 Fiche Santé : ${e.sante}</div>` : ''}
+                        ${notesChildHtml}
                     </div>`;
             });
         }
 
         function sauverEleve(e) {
             e.preventDefault(); const id = document.getElementById('editEleveId').value;
-            
             const telsSupp = Array.from(document.querySelectorAll('.el-tel-supp')).map(i => i.value.trim()).filter(v => v);
             const emailsSupp = Array.from(document.querySelectorAll('.el-email-supp')).map(i => i.value.trim()).filter(v => v);
 
             const nouvelEleve = {
-                id: id || Date.now().toString(),
-                prenom: document.getElementById('elPrenom').value.trim(),
-                nom: document.getElementById('elNom').value.trim(),
-                classe: currentClasse,
-                naissance: document.getElementById('elNaissance').value,
-                adresse1: document.getElementById('elAdresse1').value.trim(),
+                id: id || Date.now().toString(), prenom: document.getElementById('elPrenom').value.trim(), nom: document.getElementById('elNom').value.trim(),
+                classe: currentClasse, naissance: document.getElementById('elNaissance').value, adresse1: document.getElementById('elAdresse1').value.trim(),
                 adresse2: document.getElementById('containerAdresse2').classList.contains('hidden') ? "" : document.getElementById('elAdresse2').value.trim(),
-                statutMarital: document.getElementById('elStatutMarital').value,
-                mamanNom: document.getElementById('elMamanNom').value.trim(),
-                mamanPrenom: document.getElementById('elMamanPrenom').value.trim(),
-                mamanTel: document.getElementById('elMamanTel').value.trim(),
-                mamanEmail: document.getElementById('elMamanEmail').value.trim(),
-                papaNom: document.getElementById('elPapaNom').value.trim(),
-                papaPrenom: document.getElementById('elPapaPrenom').value.trim(),
-                papaTel: document.getElementById('elPapaTel').value.trim(),
-                papaEmail: document.getElementById('elPapaEmail').value.trim(),
-                telsSupp: telsSupp,
-                emailsSupp: emailsSupp,
-                contactUrgence: document.getElementById('elContactUrgence').value.trim(),
-                sante: document.getElementById('elSante').value.trim(),
-                notes: document.getElementById('elNotes').value.trim(),
-                photo: tempElevePhotoBase64
+                statutMarital: document.getElementById('elStatutMarital').value, mamanNom: document.getElementById('elMamanNom').value.trim(),
+                mamanPrenom: document.getElementById('elMamanPrenom').value.trim(), mamanTel: document.getElementById('elMamanTel').value.trim(),
+                mamanEmail: document.getElementById('elMamanEmail').value.trim(), papaNom: document.getElementById('elPapaNom').value.trim(),
+                papaPrenom: document.getElementById('elPapaPrenom').value.trim(), papaTel: document.getElementById('elPapaTel').value.trim(),
+                papaEmail: document.getElementById('elPapaEmail').value.trim(), telsSupp: telsSupp, emailsSupp: emailsSupp,
+                contactUrgence: document.getElementById('elContactUrgence').value.trim(), sante: document.getElementById('elSante').value.trim(),
+                notes: document.getElementById('elNotes').value.trim(), photo: tempElevePhotoBase64
             };
 
             if(id) elevesData = elevesData.map(x => x.id === id ? nouvelEleve : x); else elevesData.push(nouvelEleve);
@@ -567,35 +671,20 @@
         function editerEleve(id) {
             const target = elevesData.find(x => x.id === id);
             if(target) {
-                document.getElementById('editEleveId').value = target.id;
-                document.getElementById('elPrenom').value = target.prenom;
-                document.getElementById('elNom').value = target.nom;
-                document.getElementById('elNaissance').value = target.naissance || "";
-                document.getElementById('elAdresse1').value = target.adresse1 || "";
+                document.getElementById('editEleveId').value = target.id; document.getElementById('elPrenom').value = target.prenom; document.getElementById('elNom').value = target.nom;
+                document.getElementById('elNaissance').value = target.naissance || ""; document.getElementById('elAdresse1').value = target.adresse1 || "";
                 document.getElementById('elAdresse2').value = target.adresse2 || "";
-                
                 if(target.adresse2) document.getElementById('containerAdresse2').classList.remove('hidden');
                 else document.getElementById('containerAdresse2').classList.add('hidden');
-
                 document.getElementById('elStatutMarital').value = target.statutMarital || "Mariés";
-                document.getElementById('elMamanNom').value = target.mamanNom || "";
-                document.getElementById('elMamanPrenom').value = target.mamanPrenom || "";
-                document.getElementById('elMamanTel').value = target.mamanTel || "";
-                document.getElementById('elMamanEmail').value = target.mamanEmail || "";
-                document.getElementById('elPapaNom').value = target.papaNom || "";
-                document.getElementById('elPapaPrenom').value = target.papaPrenom || "";
-                document.getElementById('elPapaTel').value = target.papaTel || "";
-                document.getElementById('elPapaEmail').value = target.papaEmail || "";
-                document.getElementById('elContactUrgence').value = target.contactUrgence || "";
-                document.getElementById('elSante').value = target.sante || "";
+                document.getElementById('elMamanNom').value = target.mamanNom || ""; document.getElementById('elMamanPrenom').value = target.mamanPrenom || "";
+                document.getElementById('elMamanTel').value = target.mamanTel || ""; document.getElementById('elMamanEmail').value = target.mamanEmail || "";
+                document.getElementById('elPapaNom').value = target.papaNom || ""; document.getElementById('elPapaPrenom').value = target.papaPrenom || "";
+                document.getElementById('elPapaTel').value = target.papaTel || ""; document.getElementById('elPapaEmail').value = target.papaEmail || "";
+                document.getElementById('elContactUrgence').value = target.contactUrgence || ""; document.getElementById('elSante').value = target.sante || "";
                 document.getElementById('elNotes').value = target.notes || "";
-                
-                document.getElementById('containerTelsSupp').innerHTML = "";
-                if(target.telsSupp) target.telsSupp.forEach(t => ajouterChampTelSupp(t));
-                
-                document.getElementById('containerEmailsSupp').innerHTML = "";
-                if(target.emailsSupp) target.emailsSupp.forEach(em => ajouterChampEmailSupp(em));
-
+                document.getElementById('containerTelsSupp').innerHTML = ""; if(target.telsSupp) target.telsSupp.forEach(t => ajouterChampTelSupp(t));
+                document.getElementById('containerEmailsSupp').innerHTML = ""; if(target.emailsSupp) target.emailsSupp.forEach(em => ajouterChampEmailSupp(em));
                 tempElevePhotoBase64 = target.photo || "";
                 document.getElementById('wrapperPhotoEleve').innerHTML = tempElevePhotoBase64 ? `<img src="${tempElevePhotoBase64}" class="w-full h-full object-cover">` : "<span>Pas de photo</span>";
                 document.getElementById('btnAnnulerEdit').classList.remove('hidden');
@@ -605,10 +694,8 @@
         function annulerEditionEleve() {
             document.getElementById('editEleveId').value = ""; document.getElementById('eleveForm').reset();
             tempElevePhotoBase64 = ""; document.getElementById('wrapperPhotoEleve').innerHTML = "<span>Pas de photo</span>";
-            document.getElementById('containerTelsSupp').innerHTML = "";
-            document.getElementById('containerEmailsSupp').innerHTML = "";
-            document.getElementById('containerAdresse2').classList.add('hidden');
-            document.getElementById('btnAnnulerEdit').classList.add('hidden');
+            document.getElementById('containerTelsSupp').innerHTML = ""; document.getElementById('containerEmailsSupp').innerHTML = "";
+            document.getElementById('containerAdresse2').classList.add('hidden'); document.getElementById('btnAnnulerEdit').classList.add('hidden');
         }
 
         function supprimerEleve(id) { if(confirm("Supprimer l'enfant ?")) { elevesData = elevesData.filter(x => x.id !== id); deleteFromStore("eleves", id, () => changerClasseGlobale()); } }
@@ -645,75 +732,152 @@
             document.getElementById('objectifInput').innerHTML = objectifsParDomaine[dom].map(o => `<option value="${o}">${o}</option>`).join('');
         }
 
+        // ENREGISTREMENT ACTIVITÉ / PLANIFICATION BROUILLON
         form.addEventListener('submit', function(e) {
             e.preventDefault(); const suivi = {};
             document.querySelectorAll('.eleve-statut-select').forEach(s => { const id = s.getAttribute('data-eleveid'); if(s.value) suivi[id] = s.value; });
             const domSelect = document.getElementById('domaineInput');
+            const isDraft = document.getElementById('draftCheckbox').checked;
+
             const nouvelleActivite = {
                 id: Date.now(), classe: currentClasse, date: document.getElementById('dateInput').value, moment: document.getElementById('momentInput').value,
                 titre: document.getElementById('titreInput').value, domaineCle: domSelect.value, domaineTexte: domSelect.options[domSelect.selectedIndex].text,
-                objective: document.getElementById('objectifInput').value, suivi, description: document.getElementById('descInput').value, observations: document.getElementById('obsInput').value, photos: tempPhotosArray
+                objective: document.getElementById('objectifInput').value, suivi, description: document.getElementById('descInput').value, observations: document.getElementById('obsInput').value, photos: tempPhotosArray,
+                isDraft: isDraft
             };
             journalData.push(nouvelleActivite);
             putInStore("journal", nouvelleActivite, () => { form.reset(); tempPhotosArray = []; document.getElementById('dateInput').valueAsDate = new Date(); changerClasseGlobale(); });
         });
 
+        window.validerBrouillon = function(id) {
+            let item = journalData.find(x => x.id === id);
+            if(item) {
+                item.isDraft = false;
+                putInStore("journal", item, () => changerClasseGlobale());
+            }
+        };
+
+        window.supprimerActivite = function(id) {
+            if(confirm("Supprimer définitivement cet atelier de la liste ?")) {
+                journalData = journalData.filter(x => x.id !== id);
+                deleteFromStore("journal", id, () => changerClasseGlobale());
+            }
+        };
+
+        // RENDU CHRONOLOGIE COMPILÉE (OFFICIEL VS PLANIFICATEUR)
         function afficherJournal() {
-            const container = document.getElementById('journalEntries'); const search = document.getElementById('rechercheTexte').value.toLowerCase();
-            const fEleve = document.getElementById('filtreEleveJournal').value; container.innerHTML = "";
+            const zBrouillons = document.getElementById('zoneBrouillons');
+            const zOfficiel = document.getElementById('zoneJournalOfficiel');
+            const search = document.getElementById('rechercheTexte').value.toLowerCase();
+            const fEleve = document.getElementById('filtreEleveJournal').value;
+
+            zBrouillons.innerHTML = ""; zOfficiel.innerHTML = "";
+
             const filtrées = journalData.filter(f => f.classe === currentClasse && (fEleve === "Tous" || (f.suivi && f.suivi[fEleve])) && (!search || f.titre.toLowerCase().includes(search) || f.description.toLowerCase().includes(search)));
 
-            if(filtrées.length === 0) { container.innerHTML = `<p class="text-gray-400 italic text-center py-6">Pas d'ateliers enregistrés pour cette recherche. 🎈</p>`; return; }
+            let drafts = filtrées.filter(x => x.isDraft);
+            let officials = filtrées.filter(x => !x.isDraft);
 
-            [...filtrées].reverse().forEach(entry => {
-                const dateFr = new Date(entry.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
-                let bSuivi = "";
-                if(entry.suivi && Object.keys(entry.suivi).length > 0) {
-                    bSuivi = `<div class="mt-2 pt-2 border-t border-dashed flex flex-wrap gap-1 text-[11px] font-bold">`;
-                    for(const [id, stat] of Object.entries(entry.suivi)) {
-                        const kid = elevesData.find(x => x.id === id);
-                        if(kid) {
-                            let c = stat.includes("Acquis") ? "bg-emerald-50 text-emerald-700 border-emerald-100" : stat.includes("cours") ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-rose-50 text-rose-700 border-rose-100";
-                            bSuivi += `<span class="px-2 py-0.5 rounded-lg border ${c}">${kid.prenom} ${stat}</span>`;
-                        }
+            if(drafts.length > 0) {
+                zBrouillons.innerHTML = `<h3 class="text-orange-500 font-bold text-sm mb-2 border-b pb-1">⏳ Semainier / Brouillons de préparation</h3>`;
+                drafts.forEach(entry => zBrouillons.appendChild(creerCarteAtelierElement(entry, true)));
+            }
+            if(officials.length > 0) {
+                zOfficiel.innerHTML = `<h3 class="text-indigo-600 font-bold text-sm mb-2 border-b pb-1">📋 Journal de classe officiel</h3>`;
+                officials.forEach(entry => zOfficiel.appendChild(creerCarteAtelierElement(entry, false)));
+            }
+            if(filtrées.length === 0) {
+                zOfficiel.innerHTML = `<p class="text-gray-400 italic text-center py-6">Pas d'ateliers enregistrés. 🎈</p>`;
+            }
+        }
+
+        function creerCarteAtelierElement(entry, isDraftMode) {
+            const div = document.createElement('div');
+            div.className = "p-4 border-2 border-orange-50 rounded-2xl bg-white shadow-sm space-y-2 page-break-inside-avoid relative hover:shadow-md transition";
+            const dateFr = new Date(entry.date).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' });
+            
+            let bSuivi = "";
+            if(entry.suivi && Object.keys(entry.suivi).length > 0) {
+                bSuivi = `<div class="mt-2 pt-2 border-t border-dashed flex flex-wrap gap-1 text-[11px] font-bold">`;
+                for(const [id, stat] of Object.entries(entry.suivi)) {
+                    const kid = elevesData.find(x => x.id === id);
+                    if(kid) {
+                        let c = stat.includes("Acquis") ? "bg-emerald-50 text-emerald-700 border-emerald-100" : stat.includes("cours") ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-rose-50 text-rose-700 border-rose-100";
+                        bSuivi += `<span class="px-2 py-0.5 rounded-lg border ${c}">${kid.prenom} ${stat}</span>`;
                     }
-                    bSuivi += `</div>`;
                 }
+                bSuivi += `</div>`;
+            }
 
-                let galerieHtml = "";
-                if(entry.photos && entry.photos.length > 0) {
-                    galerieHtml = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">`;
-                    entry.photos.forEach(p => { galerieHtml += `<img src="${p}" class="max-h-20 w-full object-cover rounded-xl border border-gray-100 shadow-sm">`; });
-                    galerieHtml += `</div>`;
-                }
+            let galerieHtml = "";
+            if(entry.photos && entry.photos.length > 0) {
+                galerieHtml = `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">`;
+                entry.photos.forEach(p => { galerieHtml += `<img src="${p}" class="max-h-20 w-full object-cover rounded-xl border shadow-sm">`; });
+                galerieHtml += `</div>`;
+            }
 
-                const card = document.createElement('div'); card.className = "p-5 border-2 border-orange-50 rounded-2xl bg-white shadow-sm space-y-2 page-break-inside-avoid relative hover:shadow-md transition";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start border-b-2 border-dashed border-gray-50 pb-1.5 flex-wrap gap-2 pr-12">
-                        <div><span class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-xl uppercase">${entry.moment}</span><h3 class="text-md font-bold text-gray-800 inline-block ml-1">${entry.titre}</h3></div>
-                        <span class="text-xs text-gray-400 font-bold capitalize">${dateFr}</span>
-                    </div>
-                    <button onclick="clonerActivite(${entry.id})" class="no-print absolute top-4 right-4 bg-gray-50 hover:bg-orange-50 text-gray-400 hover:text-orange-600 text-xs px-2 py-1 rounded-xl transition font-bold border">👯 Copier</button>
-                    <div class="flex flex-wrap gap-1.5 text-[10px] font-bold">
-                        <span class="text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-lg border border-emerald-100">🎯 ${entry.domaineTexte}</span>
-                        <span class="text-sky-700 bg-sky-50/60 px-2 py-0.5 rounded-lg border border-sky-100">🔑 ${entry.objective || entry.objectif}</span>
-                    </div>
-                    <p class="text-xs text-gray-600 leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
-                    ${entry.observations ? `<div class="text-xs bg-amber-50/60 p-2.5 rounded-xl text-amber-900 border-l-4 border-amber-300 font-medium"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
-                    ${galerieHtml}${bSuivi}`;
-                container.appendChild(card);
+            let btnAction = isDraftMode ? 
+                `<button onclick="validerBrouillon(${entry.id})" class="no-print bg-emerald-400 hover:bg-emerald-500 text-white text-xs px-2.5 py-1 rounded-xl transition font-bold shadow-sm">🚀 Valider l'Atelier</button>` :
+                `<button onclick="clonerActivite(${entry.id})" class="no-print bg-gray-50 hover:bg-orange-50 text-gray-400 hover:text-orange-600 text-xs px-2 py-1 rounded-xl transition font-bold border">👯 Copier</button>`;
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start border-b-2 border-dashed border-gray-50 pb-1.5 flex-wrap gap-2 pr-24">
+                    <div><span class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-xl uppercase">${entry.moment}</span><h3 class="text-md font-bold text-gray-800 inline-block ml-1">${entry.titre}</h3></div>
+                    <span class="text-xs text-gray-400 font-bold capitalize">${dateFr}</span>
+                </div>
+                <div class="absolute top-4 right-4 flex gap-1 no-print">
+                    ${btnAction}
+                    <button onclick="supprimerActivite(${entry.id})" class="text-red-400 hover:text-red-600 font-bold px-1 text-sm">×</button>
+                </div>
+                <div class="flex flex-wrap gap-1.5 text-[10px] font-bold">
+                    <span class="text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-lg border border-emerald-100">🎯 ${entry.domaineTexte}</span>
+                    <span class="text-sky-700 bg-sky-50/60 px-2 py-0.5 rounded-lg border border-sky-100">🔑 ${entry.objective || entry.objectif}</span>
+                </div>
+                <p class="text-xs text-gray-600 leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
+                ${entry.observations ? `<div class="text-xs bg-amber-50/60 p-2.5 rounded-xl text-amber-900 border-l-4 border-amber-300 font-medium"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
+                ${galerieHtml}${bSuivi}`;
+            return div;
+        }
+
+        // CONFECTIONNEUR AUTOMATISÉ GAZETTE PARENTS
+        function ouvrirGenerateurGazette() {
+            const officials = journalData.filter(f => f.classe === currentClasse && !f.isDraft);
+            if(officials.length === 0) {
+                alert("Aucun atelier officiel n'est enregistré pour structurer une gazette.");
+                return;
+            }
+            // Tri décroissant pour récupérer les plus récents
+            officials.sort((a,b) => b.id - a.id);
+            let selection = officials.slice(0, 4); // Prend les 4 derniers ateliers
+
+            let texte = `📰 CHERS PARENTS, VOICI LE RÉSUMÉ DE NOS DÉCOUVERTES DE LA SEMAINE EN ${currentClasse.toUpperCase()} !\n\n`;
+            selection.forEach(at => {
+                texte += `✨ ${at.titre.toUpperCase()}\n`;
+                texte += `🎯 [${at.domaineTexte.split('. ').pop()}]\n`;
+                texte += `👉 ${at.description || 'Les enfants ont beaucoup manipulé et exploré cette notion.'}\n\n`;
             });
+            texte += `Bon week-end à tous ! ✨\nVotre institutrice.`;
+            
+            document.getElementById('texteGazette').value = texte;
+            document.getElementById('modalGazette').classList.remove('hidden');
+        }
+
+        function copierTexteGazette() {
+            const area = document.getElementById('texteGazette');
+            area.select();
+            document.execCommand('copy');
+            alert("📋 Gazette copiée dans votre presse-papiers ! Vous pouvez la coller dans votre e-mail ou application école.");
         }
 
         function genererStatistiquesGlobales() {
             const container = document.getElementById('statistiquesDomaines'); container.innerHTML = "";
-            const fichesClasse = journalData.filter(f => f.classe === currentClasse); const total = fichesClasse.length;
+            const fichesClasse = journalData.filter(f => f.classe === currentClasse && !f.isDraft); const total = fichesClasse.length;
 
             Object.entries(labelsDomaines).forEach(([cle, label]) => {
                 const count = fichesClasse.filter(f => f.domaineCle === cle).length; const pct = total > 0 ? Math.round((count / total) * 100) : 0;
                 container.innerHTML += `
                     <div class="space-y-1 bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 shadow-inner">
-                        <div class="flex justify-between text-gray-600"><span>${label.split(' ')[0]} ${label.substring(label.indexOf(' ')+1)}</span><strong>${count} j.</strong></div>
+                        <div class="flex justify-between text-gray-600"><span>${label.substring(label.indexOf(' ')+1)}</span><strong>${count} j.</strong></div>
                         <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-teal-400 to-emerald-400 h-2 rounded-full" style="width: ${pct}%"></div></div>
                     </div>`;
             });
@@ -741,7 +905,7 @@
                 statsPresences.classList.remove('hidden');
             }
 
-            const fiches = journalData.filter(f => f.suivi && f.suivi[id]);
+            const fiches = journalData.filter(f => f.suivi && f.suivi[id] && !f.isDraft);
             if(fiches.length === 0) { container.innerHTML = `<p class="text-center text-gray-400 italic py-4">Aucune étoile récoltée pour le moment. ✨</p>`; return; }
 
             fiches.reverse().forEach(f => {
@@ -754,6 +918,69 @@
                     </div>`;
             });
         }
+
+        // EDITEUR COMPLET ET COMPILATION DU CAHIER DE REUSSITES (IMPRIMABLE)
+        window.imprimerCahierReussites = function() {
+            const elId = document.getElementById('selectProfilEleve').value;
+            if(!elId) return;
+            const kid = elevesData.find(x => x.id === elId);
+            const pr = document.getElementById('contenuImpressionCahier');
+            pr.innerHTML = "";
+
+            // Calcul assiduité
+            let totalJours = 0, presents = 0, absents = 0;
+            for (const d in presencesData) { if (presencesData[d][elId]) { totalJours++; if (presencesData[d][elId] === 'P') presents++; else absents++; } }
+            let assiduitéStr = totalJours > 0 ? `${Math.round((presents / totalJours) * 100)}% (Présence : ${presents} jours / Absences : ${absents} jours)` : "Non calculée";
+
+            const avatar = kid.photo ? `<img src="${kid.photo}" class="w-24 h-24 object-cover rounded-3xl border shadow mx-auto md:mx-0">` : `<div class="w-24 h-24 rounded-3xl bg-pink-100 text-pink-600 font-bold text-3xl flex items-center justify-center border shadow mx-auto md:mx-0">${kid.prenom[0]}</div>`;
+            
+            let htmlComp = `<div class="space-y-4 pt-4 border-t-2 border-dashed">`;
+            const fichesNotees = journalData.filter(f => f.suivi && f.suivi[elId] && !f.isDraft);
+            if(fichesNotees.length === 0) {
+                htmlComp += `<p class="italic text-gray-400">Aucun atelier validé à cette période.</p>`;
+            } else {
+                fichesNotees.forEach(f => {
+                    htmlComp += `<div class="p-2 border rounded-xl bg-gray-50/50 flex justify-between items-center text-xs"><div><strong>${f.titre}</strong><br><span class="text-[10px] text-gray-400">${f.domaineTexte} — ${f.objective || f.objectif}</span></div><span class="font-bold text-emerald-700">${f.suivi[elId]}</span></div>`;
+                });
+            }
+            htmlComp += `</div>`;
+
+            let flashNotes = flashData.filter(x => x.eleveId === elId);
+            let htmlFlash = "";
+            if(flashNotes.length > 0) {
+                htmlFlash = `<div class="mt-4 pt-4 border-t-2 border-dashed"><h4 class="font-bold text-indigo-700 mb-2">📝 OBSERVATIONS CONTINUES & ÉVOLUTIONS :</h4><div class="space-y-1 text-xs italic text-gray-600">`;
+                flashNotes.forEach(fn => { htmlFlash += `<p>• Le ${fn.date} : ${fn.texte}</p>`; });
+                htmlFlash += `</div></div>`;
+            }
+
+            pr.innerHTML = `
+                <div class="border-4 border-double border-teal-200 rounded-3xl p-6 bg-white space-y-4 shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-center border-b pb-4 gap-4">
+                        <div class="flex items-center gap-4 flex-col md:flex-row text-center md:text-left">
+                            ${avatar}
+                            <div>
+                                <h2 class="text-2xl text-teal-600">${kid.prenom} ${kid.nom.toUpperCase()}</h2>
+                                <p class="text-xs text-gray-400 font-bold">Classe de : ${currentClasse} | Né(e) le : ${kid.naissance ? new Date(kid.naissance).toLocaleDateString('fr-BE') : 'Inconnue'}</p>
+                                <p class="text-xs text-gray-500 mt-1">📊 <strong>Assiduité scolaire :</strong> ${assiduitéStr}</p>
+                            </div>
+                        </div>
+                        <div class="text-center md:text-right border-t pt-2 md:pt-0 md:border-0 text-xs font-bold text-gray-400 uppercase tracking-widest">Cahier de Progrès<br>Féd. Wallonie-Bruxelles</div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-teal-600 mb-2">🎯 COMPÉTENCES ET ATENDUS VALIDES :</h4>
+                        ${htmlComp}
+                    </div>
+                    ${htmlFlash}
+                </div>`;
+
+            document.getElementById('appWrapper').classList.add('hidden');
+            document.getElementById('zoneImpressionCahier').classList.remove('hidden');
+        };
+
+        window.fermerPlancheCahier = function() {
+            document.getElementById('zoneImpressionCahier').classList.add('hidden');
+            document.getElementById('appWrapper').classList.remove('hidden');
+        };
 
         window.genererPlancheCartesRituel = function() {
             const container = document.getElementById('grilleCartesImpression'); container.innerHTML = "";
@@ -793,7 +1020,7 @@
         }
 
         function exporterTout() {
-            const pack = { classes: classesData, eleves: elevesData, journal: journalData, presences: presencesData };
+            const pack = { classes: classesData, eleves: elevesData, journal: journalData, presences: presencesData, flash: flashData };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(pack));
             const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", "journal_maternelle_ludique.json");
             document.body.appendChild(a); a.click(); a.remove();
@@ -806,10 +1033,11 @@
                     try {
                         const p = JSON.parse(e.target.result);
                         if(p.classes && p.eleves && p.journal) {
-                            classesData = p.classes; elevesData = p.eleves; journalData = p.journal; presencesData = p.presences || {};
+                            classesData = p.classes; elevesData = p.eleves; journalData = p.journal; presencesData = p.presences || {}; flashData = p.flash || [];
                             let txC = db.transaction("classes", "readwrite"); txC.objectStore("classes").clear(); classesData.forEach(c => txC.objectStore("classes").put({id: c, name: c}));
                             let txE = db.transaction("eleves", "readwrite"); txE.objectStore("eleves").clear(); elevesData.forEach(el => txE.objectStore("eleves").put(el));
                             let txJ = db.transaction("journal", "readwrite"); txJ.objectStore("journal").clear(); journalData.forEach(jf => txJ.objectStore("journal").put(jf));
+                            let txF = db.transaction("flash", "readwrite"); txF.objectStore("flash").clear(); flashData.forEach(fl => txF.objectStore("flash").put(fl));
                             let txP = db.transaction("presences", "readwrite"); txP.objectStore("presences").clear(); Object.entries(presencesData).forEach(([d, dt]) => txP.objectStore("presences").put({date: d, data: dt}));
                             remplirSelectClasses(); changerClasseGlobale(classesData[0]);
                         }
