@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Journal Maternelle — Univers Ludique & Rituels</title>
+    <title>Mon Journal & Gestion Maternelle — FWB Pro Max</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; }
         h1, h2, h3 { font-family: 'Fredoka One', cursive; }
@@ -83,7 +83,7 @@
                         </div>
                         <div>
                             <label class="text-gray-400 block mb-1">OBJECTIF VISÉ</label>
-                            <select id="objectiveInput" class="w-full rounded-xl border-2 border-gray-50 p-2 text-xs bg-amber-50/30 text-amber-900 outline-none"></select>
+                            <select id="objectifInput" class="w-full rounded-xl border-2 border-gray-50 p-2 text-xs bg-amber-50/30 text-amber-900 outline-none"></select>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
@@ -169,10 +169,72 @@
                         <label class="text-gray-400 block mb-0.5">DATE DE NAISSANCE</label>
                         <input type="date" id="elNaissance" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                     </div>
+
+                    <!-- ADRESSES -->
                     <div>
-                        <label class="text-gray-400 block mb-0.5">CONTACTS DES PARENTS</label>
-                        <textarea id="elContact" rows="2" placeholder="Ex: Maman (0470/...) - Papa (0485/...)" class="w-full rounded-xl border-2 border-gray-100 p-2 font-normal text-xs outline-none focus:border-pink-300"></textarea>
+                        <label class="text-gray-400 block mb-0.5">ADRESSE PRINCIPALE</label>
+                        <input type="text" id="elAdresse1" placeholder="Rue de l'Église 12, 7130 Binche" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
                     </div>
+                    <div id="containerAdresse2" class="hidden">
+                        <label class="text-pink-400 block mb-0.5">SECONDE ADRESSE (PARENTS SÉPARÉS)</label>
+                        <input type="text" id="elAdresse2" placeholder="Rue de la Station 45, 1000 Bruxelles" class="w-full rounded-xl border-2 border-pink-200 p-2 text-sm outline-none focus:border-pink-300">
+                    </div>
+                    <div class="text-right">
+                        <button type="button" onclick="toggleAdresse2Field()" class="text-[11px] text-pink-500 font-bold hover:underline">➕ Gérer la seconde adresse</button>
+                    </div>
+
+                    <!-- SITUATION FAMILIALE -->
+                    <div>
+                        <label class="text-gray-400 block mb-0.5">STATUT MARITAL DES PARENTS</label>
+                        <select id="elStatutMarital" class="w-full rounded-xl border-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300">
+                            <option value="Mariés">💍 Mariés</option>
+                            <option value="Cohabitants">🏡 Cohabitants légaux / de fait</option>
+                            <option value="Séparés / Divorcés">💔 Séparés / Divorcés</option>
+                            <option value="Célibataire">👤 Parent célibataire</option>
+                        </select>
+                    </div>
+
+                    <!-- COORDONNÉES MAMAN -->
+                    <div class="bg-pink-50/40 p-2.5 rounded-2xl border-2 border-pink-100 space-y-2">
+                        <span class="text-[10px] uppercase font-bold text-pink-600 block">👩 MAMAN</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="elMamanNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <input type="text" id="elMamanPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="tel" id="elMamanTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <input type="email" id="elMamanEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        </div>
+                    </div>
+
+                    <!-- COORDONNÉES PAPA -->
+                    <div class="bg-sky-50/40 p-2.5 rounded-2xl border-2 border-sky-100 space-y-2">
+                        <span class="text-[10px] uppercase font-bold text-sky-600 block">👨 PAPA</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="elPapaNom" placeholder="Nom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <input type="text" id="elPapaPrenom" placeholder="Prénom" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="tel" id="elPapaTel" placeholder="Téléphone" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                            <input type="email" id="elPapaEmail" placeholder="E-mail" class="w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                        </div>
+                    </div>
+
+                    <!-- NUMÉROS ET EMAILS EXTRA -->
+                    <div class="space-y-2 bg-gray-50/50 p-2 rounded-2xl border border-gray-100">
+                        <div id="containerTelsSupp" class="space-y-1"></div>
+                        <button type="button" onclick="ajouterChampTelSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">📞 Ajouter un téléphone supplémentaire</button>
+                        
+                        <div id="containerEmailsSupp" class="space-y-1 pt-1 border-t border-dashed border-gray-200"></div>
+                        <button type="button" onclick="ajouterChampEmailSupp('')" class="text-[11px] text-indigo-500 font-bold hover:underline flex items-center gap-0.5">✉️ Ajouter un e-mail supplémentaire</button>
+                    </div>
+
+                    <!-- AUTRE NUMÉRO DE CONTACT / URGENCE -->
+                    <div>
+                        <label class="text-gray-400 block mb-0.5">🚨 PERSONNE DE CONTACT ALTERNATIVE (Urgence)</label>
+                        <input type="text" id="elContactUrgence" placeholder="Ex: Grand-Mère Nicole (0477/12.34.56)" class="w-full rounded-xl border-2 border-gray-100 p-2 text-xs outline-none focus:border-pink-300">
+                    </div>
+
                     <div class="bg-red-50 p-2.5 rounded-2xl border-2 border-red-100">
                         <label class="block text-xs font-bold text-red-600 flex items-center gap-1">⚠️ ALLERGIES / SANTÉ / FIP</label>
                         <textarea id="elSante" rows="2" placeholder="Allergie laitière, asthme, protocole PAI..." class="mt-1 w-full rounded-xl border-2 border-red-200 p-2 font-normal text-xs outline-none focus:border-red-400 bg-white"></textarea>
@@ -229,7 +291,7 @@
 
     </div>
 
-    <!-- ================= ZONE SPECIALE ÉTIQUETTES DE RITUEL (S'AFFICHE PAR-DESSUS) ================= -->
+    <!-- ================= ZONE SPECIALE ÉTIQUETTES DE RITUEL ================= -->
     <div id="zoneImpressionCartes" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto p-6 md:p-12">
         <div class="no-print mb-8 bg-pink-50 border-2 border-dashed border-pink-200 p-4 rounded-2xl text-center max-w-2xl mx-auto">
             <h3 class="text-lg font-bold text-pink-700 mb-1">✂️ Mode Impression : Cartes de Rituel</h3>
@@ -239,7 +301,6 @@
                 <button onclick="fermerPlancheCartesRituel()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition">⬅️ Revenir au Journal</button>
             </div>
         </div>
-        <!-- Conteneur de la grille des étiquettes -->
         <div id="grilleCartesImpression" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 max-w-5xl mx-auto"></div>
     </div>
 
@@ -358,6 +419,33 @@
 
         function noterTousLesEleves(valeur) { document.querySelectorAll('.eleve-statut-select').forEach(s => s.value = valeur); }
 
+        // GESTIONNAIRES DYNAMIQUES DE CHAMPS FORMULAIRE ENFANT
+        function toggleAdresse2Field() {
+            document.getElementById('containerAdresse2').classList.toggle('hidden');
+        }
+
+        function ajouterChampTelSupp(valeur = "") {
+            const container = document.getElementById('containerTelsSupp');
+            const div = document.createElement('div');
+            div.className = "flex gap-1 items-center mt-1";
+            div.innerHTML = `
+                <input type="tel" placeholder="Autre n° de téléphone" value="${valeur}" class="el-tel-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm hover:text-red-600">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function ajouterChampEmailSupp(valeur = "") {
+            const container = document.getElementById('containerEmailsSupp');
+            const div = document.createElement('div');
+            div.className = "flex gap-1 items-center mt-1";
+            div.innerHTML = `
+                <input type="email" placeholder="Autre adresse e-mail" value="${valeur}" class="el-email-supp w-full rounded-xl border border-gray-200 p-1.5 text-xs outline-none">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 font-bold px-1 text-sm hover:text-red-600">×</button>
+            `;
+            container.appendChild(div);
+        }
+
         document.getElementById('elPhotoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
@@ -378,6 +466,7 @@
             }
         });
 
+        // VUE DU TROMBINOSCOPE ET RENDU DU DOSSIER SIGNALÉTIQUE
         function afficherGestionEleves() {
             const grille = document.getElementById('grilleFichesEleves'); const grilleForm = document.getElementById('grilleSuiviFormulaire');
             const listeFiltrée = elevesData.filter(e => e.classe === currentClasse);
@@ -394,14 +483,47 @@
                 const age = e.naissance ? `${Math.floor((new Date() - new Date(e.naissance)) / 31557600000)} ans` : "Âge inconnu";
                 const avatar = e.photo ? `<img src="${e.photo}" class="w-14 h-14 rounded-full object-cover border-2 border-pink-200 shadow-sm">` : `<div class="w-14 h-14 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg border-2 border-pink-200">${e.prenom[0]}</div>`;
                 
+                // Traitement et rendu dynamique des tableaux d'extras (tél/emails)
+                let extraContactsHtml = "";
+                if(e.telsSupp && e.telsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">📞 <strong>Tél. sup :</strong> ${e.telsSupp.join(' | ')}</p>`;
+                if(e.emailsSupp && e.emailsSupp.length > 0) extraContactsHtml += `<p class="text-[11px] text-gray-500">✉️ <strong>E-mails sup :</strong> ${e.emailsSupp.join(' | ')}</p>`;
+                
                 grille.innerHTML += `
                     <div class="bg-white p-5 rounded-3xl shadow-sm border-2 ${e.sante ? 'border-red-200 bg-red-50/20' : 'border-pink-50'} space-y-2 relative page-break-inside-avoid">
                         <div class="flex justify-between items-start">
                             <div class="flex items-center gap-3">${avatar}<div><h3 class="text-md font-bold text-gray-800">${e.prenom} ${e.nom.toUpperCase()}</h3><p class="text-[11px] text-gray-400">🎈 Gâteau le : ${e.naissance ? new Date(e.naissance).toLocaleDateString('fr-BE') : '/'} (${age})</p></div></div>
                             <div class="no-print flex gap-2 text-[11px] font-bold text-gray-400"><button onclick="editerEleve('${e.id}')" class="text-pink-500 hover:underline">Modifier</button><button onclick="supprimerEleve('${e.id}')" class="text-red-400 hover:underline">Supprimer</button></div>
                         </div>
+
+                        <div class="text-xs space-y-1 bg-gray-50/70 p-3 rounded-2xl border border-gray-100">
+                            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">📍 Situation & Adresses</p>
+                            <p><strong>Parents :</strong> ${e.statutMarital || 'Non spécifié'}</p>
+                            <p>🏠 <strong>Adresse 1 :</strong> ${e.adresse1 || '/'}</p>
+                            ${e.adresse2 ? `<p class="text-pink-600">🏠 <strong>Adresse 2 :</strong> ${e.adresse2}</p>` : ''}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-[11px] bg-gray-50/30 p-2.5 rounded-2xl border border-gray-100">
+                            <div class="border-r pr-1 border-gray-200">
+                                <span class="font-bold text-pink-600">👩 Maman</span><br>
+                                ${e.mamanPrenom || e.mamanNom ? `${e.mamanPrenom} ${e.mamanNom}<br>` : ''}
+                                ${e.mamanTel ? `📞 ${e.mamanTel}<br>` : ''}
+                                ${e.mamanEmail ? `<span class="truncate block">✉️ ${e.mamanEmail}</span>` : ''}
+                            </div>
+                            <div class="pl-1">
+                                <span class="font-bold text-sky-600">👨 Papa</span><br>
+                                ${e.papaPrenom || e.papaNom ? `${e.papaPrenom} ${e.papaNom}<br>` : ''}
+                                ${e.papaTel ? `📞 ${e.papaTel}<br>` : ''}
+                                ${e.papaEmail ? `<span class="truncate block">✉️ ${e.papaEmail}</span>` : ''}
+                            </div>
+                        </div>
+
+                        ${extraContactsHtml || e.contactUrgence ? `
+                            <div class="bg-indigo-50/30 p-2.5 rounded-2xl border border-indigo-50 space-y-0.5">
+                                ${e.contactUrgence ? `<p class="text-[11px] text-gray-600">🚨 <strong>Urgence :</strong> ${e.contactUrgence}</p>` : ''}
+                                ${extraContactsHtml}
+                            </div>` : ''}
+
                         ${e.sante ? `<div class="bg-red-50 p-2 rounded-xl text-xs text-red-900 border border-red-200 font-bold">🚑 Fiche d'Attention :<br>${e.sante}</div>` : ''}
-                        <p class="text-xs text-gray-600">📞 <strong>Parents :</strong> ${e.contact || '/'}</p>
                         ${e.notes ? `<p class="text-xs text-gray-500 bg-amber-50/50 p-2 rounded-xl italic">⭐️ ${e.notes}</p>` : ''}
                     </div>`;
             });
@@ -409,11 +531,35 @@
 
         function sauverEleve(e) {
             e.preventDefault(); const id = document.getElementById('editEleveId').value;
+            
+            const telsSupp = Array.from(document.querySelectorAll('.el-tel-supp')).map(i => i.value.trim()).filter(v => v);
+            const emailsSupp = Array.from(document.querySelectorAll('.el-email-supp')).map(i => i.value.trim()).filter(v => v);
+
             const nouvelEleve = {
-                id: id || Date.now().toString(), prenom: document.getElementById('elPrenom').value.trim(), nom: document.getElementById('elNom').value.trim(),
-                classe: currentClasse, naissance: document.getElementById('elNaissance').value, contact: document.getElementById('elContact').value.trim(),
-                sante: document.getElementById('elSante').value.trim(), notes: document.getElementById('elNotes').value.trim(), photo: tempElevePhotoBase64
+                id: id || Date.now().toString(),
+                prenom: document.getElementById('elPrenom').value.trim(),
+                nom: document.getElementById('elNom').value.trim(),
+                classe: currentClasse,
+                naissance: document.getElementById('elNaissance').value,
+                adresse1: document.getElementById('elAdresse1').value.trim(),
+                adresse2: document.getElementById('containerAdresse2').classList.contains('hidden') ? "" : document.getElementById('elAdresse2').value.trim(),
+                statutMarital: document.getElementById('elStatutMarital').value,
+                mamanNom: document.getElementById('elMamanNom').value.trim(),
+                mamanPrenom: document.getElementById('elMamanPrenom').value.trim(),
+                mamanTel: document.getElementById('elMamanTel').value.trim(),
+                mamanEmail: document.getElementById('elMamanEmail').value.trim(),
+                papaNom: document.getElementById('elPapaNom').value.trim(),
+                papaPrenom: document.getElementById('elPapaPrenom').value.trim(),
+                papaTel: document.getElementById('elPapaTel').value.trim(),
+                papaEmail: document.getElementById('elPapaEmail').value.trim(),
+                telsSupp: telsSupp,
+                emailsSupp: emailsSupp,
+                contactUrgence: document.getElementById('elContactUrgence').value.trim(),
+                sante: document.getElementById('elSante').value.trim(),
+                notes: document.getElementById('elNotes').value.trim(),
+                photo: tempElevePhotoBase64
             };
+
             if(id) elevesData = elevesData.map(x => x.id === id ? nouvelEleve : x); else elevesData.push(nouvelEleve);
             putInStore("eleves", nouvelEleve, () => { annulerEditionEleve(); changerClasseGlobale(); });
         }
@@ -421,9 +567,36 @@
         function editerEleve(id) {
             const target = elevesData.find(x => x.id === id);
             if(target) {
-                document.getElementById('editEleveId').value = target.id; document.getElementById('elPrenom').value = target.prenom; document.getElementById('elNom').value = target.nom;
-                document.getElementById('elNaissance').value = target.naissance; document.getElementById('elContact').value = target.contact; document.getElementById('elSante').value = target.sante;
-                document.getElementById('elNotes').value = target.notes; tempElevePhotoBase64 = target.photo || "";
+                document.getElementById('editEleveId').value = target.id;
+                document.getElementById('elPrenom').value = target.prenom;
+                document.getElementById('elNom').value = target.nom;
+                document.getElementById('elNaissance').value = target.naissance || "";
+                document.getElementById('elAdresse1').value = target.adresse1 || "";
+                document.getElementById('elAdresse2').value = target.adresse2 || "";
+                
+                if(target.adresse2) document.getElementById('containerAdresse2').classList.remove('hidden');
+                else document.getElementById('containerAdresse2').classList.add('hidden');
+
+                document.getElementById('elStatutMarital').value = target.statutMarital || "Mariés";
+                document.getElementById('elMamanNom').value = target.mamanNom || "";
+                document.getElementById('elMamanPrenom').value = target.mamanPrenom || "";
+                document.getElementById('elMamanTel').value = target.mamanTel || "";
+                document.getElementById('elMamanEmail').value = target.mamanEmail || "";
+                document.getElementById('elPapaNom').value = target.papaNom || "";
+                document.getElementById('elPapaPrenom').value = target.papaPrenom || "";
+                document.getElementById('elPapaTel').value = target.papaTel || "";
+                document.getElementById('elPapaEmail').value = target.papaEmail || "";
+                document.getElementById('elContactUrgence').value = target.contactUrgence || "";
+                document.getElementById('elSante').value = target.sante || "";
+                document.getElementById('elNotes').value = target.notes || "";
+                
+                document.getElementById('containerTelsSupp').innerHTML = "";
+                if(target.telsSupp) target.telsSupp.forEach(t => ajouterChampTelSupp(t));
+                
+                document.getElementById('containerEmailsSupp').innerHTML = "";
+                if(target.emailsSupp) target.emailsSupp.forEach(em => ajouterChampEmailSupp(em));
+
+                tempElevePhotoBase64 = target.photo || "";
                 document.getElementById('wrapperPhotoEleve').innerHTML = tempElevePhotoBase64 ? `<img src="${tempElevePhotoBase64}" class="w-full h-full object-cover">` : "<span>Pas de photo</span>";
                 document.getElementById('btnAnnulerEdit').classList.remove('hidden');
             }
@@ -432,6 +605,9 @@
         function annulerEditionEleve() {
             document.getElementById('editEleveId').value = ""; document.getElementById('eleveForm').reset();
             tempElevePhotoBase64 = ""; document.getElementById('wrapperPhotoEleve').innerHTML = "<span>Pas de photo</span>";
+            document.getElementById('containerTelsSupp').innerHTML = "";
+            document.getElementById('containerEmailsSupp').innerHTML = "";
+            document.getElementById('containerAdresse2').classList.add('hidden');
             document.getElementById('btnAnnulerEdit').classList.add('hidden');
         }
 
@@ -524,7 +700,7 @@
                     </div>
                     <p class="text-xs text-gray-600 leading-relaxed font-medium"><strong>Déroulement :</strong><br>${entry.description || '/'}</p>
                     ${entry.observations ? `<div class="text-xs bg-amber-50/60 p-2.5 rounded-xl text-amber-900 border-l-4 border-amber-300 font-medium"><strong>Observations :</strong> ${entry.observations}</div>` : ''}
-                    ${galerieHtml Pall/}${galerieHtml}${bSuivi}`;
+                    ${galerieHtml}${bSuivi}`;
                 container.appendChild(card);
             });
         }
@@ -579,33 +755,23 @@
             });
         }
 
-        // GENERATION DE LA PLANCHE DE CARTES INDIVIDUELLES
         window.genererPlancheCartesRituel = function() {
-            const container = document.getElementById('grilleCartesImpression');
-            container.innerHTML = "";
+            const container = document.getElementById('grilleCartesImpression'); container.innerHTML = "";
             const filtrés = elevesData.filter(e => e.classe === currentClasse);
-
-            if(filtrés.length === 0) {
-                alert("Il n'y a aucun élève inscrit dans cette classe pour générer des étiquettes.");
-                return;
-            }
+            if(filtrés.length === 0) { alert("Aucun élève inscrit."); return; }
 
             filtrés.forEach(e => {
                 const vignette = e.photo ? `<img src="${e.photo}" class="w-28 h-28 object-cover rounded-2xl border-2 border-gray-100 shadow-sm mx-auto mb-2">` : `<div class="w-28 h-28 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-4xl border border-pink-200 mx-auto mb-2">${e.prenom[0]}</div>`;
                 container.innerHTML += `
                     <div class="border-4 border-dashed border-gray-400 rounded-[2rem] p-4 text-center bg-white flex flex-col justify-between h-48 w-44 mx-auto page-break-inside-avoid shadow-inner">
-                        ${vignette}
-                        <div class="text-xl font-bold text-gray-800 tracking-wide font-['Fredoka_One'] truncate">${e.prenom}</div>
+                        ${vignette}<div class="text-xl font-bold text-gray-800 tracking-wide font-['Fredoka_One'] truncate">${e.prenom}</div>
                     </div>`;
             });
-
-            document.getElementById('appWrapper').classList.add('hidden');
-            document.getElementById('zoneImpressionCartes').classList.remove('hidden');
+            document.getElementById('appWrapper').classList.add('hidden'); document.getElementById('zoneImpressionCartes').classList.remove('hidden');
         };
 
         window.fermerPlancheCartesRituel = function() {
-            document.getElementById('zoneImpressionCartes').classList.add('hidden');
-            document.getElementById('appWrapper').classList.remove('hidden');
+            document.getElementById('zoneImpressionCartes').classList.add('hidden'); document.getElementById('appWrapper').classList.remove('hidden');
         };
 
         window.clonerActivite = function(id) {
